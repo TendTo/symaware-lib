@@ -13,6 +13,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
   set_property(GLOBAL PROPERTY USE_FOLDERS ON)
   # If this is the main app, we want to enable testing
   include(CTest)
+  enable_testing()
   # If this is the main app, we want to enable doxygen
   find_package(Doxygen)
   if(Doxygen_FOUND)

@@ -1,0 +1,6 @@
+add_executable(test_util_exception test_exception.cpp)
+target_link_libraries(test_util_exception symaware_util)
+target_link_libraries(test_util_exception GTest::gtest_main)
+
+include(GoogleTest)
+gtest_discover_tests(test_util_exception)
