@@ -8,4 +8,4 @@
 #pragma once
 
 #include "symaware/prescan/environment.h"
-#include "symaware/prescan/simulator.h"
+#include "symaware/prescan/simulation_model.h"

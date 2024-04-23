@@ -1,12 +1,15 @@
 #pragma once
 
 #include <prescan/sim/ISimulationModel.hpp>
+#include <prescan/sim/StateActuatorUnit.hpp>
+#include <string>
+#include <vector>
 
 namespace symaware {
 
-class Simulator : public prescan::sim::ISimulationModel {
+class SimulationModel : public prescan::sim::ISimulationModel {
  public:
-  Simulator() = default;
+  SimulationModel(const std::vector<std::string>& controllable_agents);
   void registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                prescan::sim::ISimulation* simulation) override;
   void initialize(prescan::sim::ISimulation* simulation) override;
@@ -14,12 +17,8 @@ class Simulator : public prescan::sim::ISimulationModel {
   void terminate(prescan::sim::ISimulation* simulation) override;
 
  private:
-  // prescan::sim::StateActuatorUnit* m_egoStateUnit;
-  // prescan::sim::SelfSensorUnit* m_egoSelfUnit;
-  // prescan::sim::PathUnit* m_pathUnit;
-  // prescan::sim::SpeedProfileUnit* m_speedProfileUnit;
-  // prescan::sim::AirSensorUnit* m_airSensorUnit;
-  // prescan::sim::CameraSensorUnit* m_cameraSensorUnit;
+  const std::vector<std::string>& controllable_agents_;
+  prescan::sim::StateActuatorUnit* egoStateUnit_{nullptr};
 };
 
 }  // namespace symaware

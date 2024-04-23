@@ -51,3 +51,11 @@ docs/html
 
 # VsCode
 .vscode
+
+# Prescan simulation and experiment files
+*.pb
+*.osgb
+*.psscene
+*.psdb
+*.md5
+*.log
