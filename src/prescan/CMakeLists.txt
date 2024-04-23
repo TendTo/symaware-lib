@@ -1,9 +1,14 @@
 set(HEADER_LIST
     "${symaware_SOURCE_DIR}/include/symaware/prescan.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/environment.h"
+    "${symaware_SOURCE_DIR}/include/symaware/prescan/experiment_guard.h"
+    "${symaware_SOURCE_DIR}/include/symaware/prescan/simulation.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/simulation_model.h")
-set(SOURCE_LIST "${symaware_SOURCE_DIR}/src/prescan/environment.cpp"
-                "${symaware_SOURCE_DIR}/src/prescan/simulation_model.cpp")
+    set(SOURCE_LIST
+    "${symaware_SOURCE_DIR}/src/prescan/environment.cpp"
+    "${symaware_SOURCE_DIR}/src/prescan/experiment_guard.cpp"
+    "${symaware_SOURCE_DIR}/src/prescan/simulation.cpp"
+    "${symaware_SOURCE_DIR}/src/prescan/simulation_model.cpp")
 
 # libraries
 add_library(symaware_prescan ${SOURCE_LIST} ${HEADER_LIST})

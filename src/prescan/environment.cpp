@@ -6,10 +6,9 @@
 
 namespace symaware {
 
-Environment::Environment() : saved_experiment_{false}, experiment_{prescan::api::experiment::createExperiment()} {}
+Environment::Environment() : experiment_{prescan::api::experiment::createExperiment()} {}
 
 void Environment::setWeather(const WeatherType weather_type, const double fog_visibility) {
-  invalidateExperiment();
   prescan::api::types::Weather weather{experiment_.weather()};
   switch (weather_type) {
     case WeatherType::SUNNY:
@@ -33,7 +32,6 @@ void Environment::setWeather(const WeatherType weather_type, const double fog_vi
 }
 
 void Environment::setSky(const SkyType sky_type, const prescan::api::types::SkyLightPollution light_pollution) {
-  invalidateExperiment();
   prescan::api::types::Sky sky{experiment_.sky()};
   switch (sky_type) {
     case SkyType::DAWN:
@@ -55,19 +53,17 @@ void Environment::setSky(const SkyType sky_type, const prescan::api::types::SkyL
 }
 
 void Environment::setScheduler(const std::int32_t simulation_frequency, const std::int32_t integration_frequency) {
-  invalidateExperiment();
   experiment_.scheduler().setFrequencies(simulation_frequency, integration_frequency);
 }
 
-std::string Environment::addObject(const ObjectType object_type, const Orientation& orientation) {
-  return addObject(object_type, {0, 0, 0}, orientation);
+std::string Environment::addObject(const ObjectType object_type, const Orientation& orientation, const bool movable) {
+  return addObject(object_type, {0, 0, 0}, orientation, movable);
 }
 std::string Environment::addObject(const ObjectType object_type, const bool movable) {
   return addObject(object_type, {0, 0, 0}, {0, 0, 0}, movable);
 }
 std::string Environment::addObject(const ObjectType object_type, const Position& position,
                                    const Orientation& orientation, const bool movable) {
-  invalidateExperiment();
   prescan::api::types::WorldObject object{experiment_.createObject(to_string(object_type))};
   object.setMovable(movable);
   object.pose().orientation().setRPY(orientation.roll, orientation.pitch, orientation.yaw);
@@ -75,7 +71,15 @@ std::string Environment::addObject(const ObjectType object_type, const Position&
   return object.name();
 }
 
-void Environment::invalidateExperiment() { saved_experiment_ = false; }
+const std::string& Environment::addAgent(const ObjectType object_type, const Position& position,
+                                         const Orientation& orientation) {
+  controllable_agents_.emplace_back(addObject(object_type, position, orientation, true));
+  return controllable_agents_.back();
+}
+const std::string& Environment::addAgent(const ObjectType object_type, const Orientation& orientation) {
+  controllable_agents_.emplace_back(addObject(object_type, orientation, true));
+  return controllable_agents_.back();
+}
 
 std::string to_string(const Environment::WeatherType weather_type) {
   switch (weather_type) {

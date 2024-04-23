@@ -9,6 +9,8 @@
 
 #include <cstdint>
 #include <prescan/api/experiment.hpp>
+#include <string>
+#include <vector>
 
 #include "symaware/prescan/data.h"
 
@@ -347,17 +349,40 @@ class Environment {
    * @return name of the object inside the simulation acting as a reference
    */
   std::string addObject(ObjectType object_type, const Position& position = {0, 0, 0},
-                        const Orientation& orientation = {0, 0, 0}, bool movable = true);
+                        const Orientation& orientation = {0, 0, 0}, bool movable = false);
   /** @overload */
-  std::string addObject(ObjectType object_type, const Orientation& position);
+  std::string addObject(ObjectType object_type, const Orientation& position, bool movable = false);
   /** @overload */
   std::string addObject(ObjectType object_type, bool movable);
+
+  /**
+   * @brief Add a controllable agent to the environment.
+   *
+   * The agent will be placed in the world at the specified position and orientation.
+   * If the operation is successful, the function will return the agent name inside the simulation,
+   * as well as store it in the @ref controllable_agents_ vector.
+   * The name can then be used to reference the agent in other functions.
+   * @param object_type type of agent
+   * @param position position of the agent
+   * @param orientation orientation of the agent
+   * @return name of the agent inside the simulation acting as a reference
+   */
+  const std::string& addAgent(ObjectType object_type, const Position& position = {0, 0, 0},
+                              const Orientation& orientation = {0, 0, 0});
+  /** @overload */
+  const std::string& addAgent(ObjectType object_type, const Orientation& position);
 
   /**
    * @brief Get the experiment object of the environment
    * @return experiment object
    */
-  prescan::api::experiment::Experiment experiment() const { return experiment_; }
+  const prescan::api::experiment::Experiment& experiment() const { return experiment_; }
+
+  /**
+   * @brief Get the names of the controllable agents in the environment
+   * @return names of the controllable agents
+   */
+  const std::vector<std::string>& controllable_agents() const { return controllable_agents_; }
 
   /**
    * @brief Get an object from the environment by name
@@ -372,11 +397,8 @@ class Environment {
   }
 
  private:
-  /** @brief Invalidate the current experiment file, forcing the environment to save it again   */
-  void invalidateExperiment();
-
-  bool saved_experiment_;
   prescan::api::experiment::Experiment experiment_;
+  std::vector<std::string> controllable_agents_;
 };
 
 std::string to_string(Environment::WeatherType weather_type);
