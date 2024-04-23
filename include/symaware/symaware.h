@@ -9,4 +9,5 @@
  */
 #pragma once
 
-#include "symaware/prescan/prescan.h"
+#include "symaware/prescan.h"
+#include "symaware/util.h"
