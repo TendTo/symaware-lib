@@ -3,9 +3,7 @@
  * @author Ernesto Casablanca (casablancaernesto@gmail.com)
  * @copyright 2024
  * @licence Apache-2.0 license
- * @brief Collection of headers
- *
- * Contains all the headers of the prescan module of the symaware library
+ * @brief Public header of the prescan module of the symaware library
  */
 #pragma once
 

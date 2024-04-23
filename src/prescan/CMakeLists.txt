@@ -1,5 +1,5 @@
 set(HEADER_LIST
-    "${symaware_SOURCE_DIR}/include/symaware/prescan/prescan.h"
+    "${symaware_SOURCE_DIR}/include/symaware/prescan.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/environment.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/simulator.h")
 set(SOURCE_LIST "${symaware_SOURCE_DIR}/src/prescan/simulator.cpp"
@@ -14,6 +14,7 @@ target_include_directories(symaware_prescan
 
 # link libraries
 target_link_libraries(symaware_prescan Prescan::Prescan)
+target_link_libraries(symaware_prescan symaware_util)
 
 # enforce C++11
 target_compile_features(symaware_prescan PUBLIC cxx_std_11)
