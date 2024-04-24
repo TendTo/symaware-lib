@@ -1,0 +1,70 @@
+[build-system]
+requires = ["scikit-build-core"]
+build-backend = "scikit_build_core.build"
+
+# Metadata of the project
+[project]
+name = "symaware-prescan"
+description = "SymAware Precan module"
+readme = "README.md"
+version = "0.1.0"
+requires-python = ">=3.9"
+license.file = "LICENSE"
+authors = [
+    { name = "Arabinda Ghosh", email = "arabinda@mpi-sws.org" },
+    { name = "Sadegh Soudjani", email = "sadegh@mpi-sws.org" },
+    { name = "Gregorio Marchesini", email = "gremar@kth.se" },
+    { name = "Zengjie Zhang", email = "z.zhang3@tue.nl" },
+    { name = "Ernesto Casablanca", email = "casablancaernesto@gmail.com" },
+]
+maintainers = [
+    { name = "Arabinda Ghosh", email = "arabinda@mpi-sws.org" },
+    { name = "Gregorio Marchesini", email = "gremar@kth.se" },
+    { name = "Zengjie Zhang", email = "z.zhang3@tue.nl" },
+    { name = "Ernesto Casablanca", email = "casablancaernesto@gmail.com" },
+]
+keywords = [
+    "python",
+    "autonomous agents",
+    "situational awareness",
+    "multi-agent systems",
+]
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3 :: Only",
+    "Framework :: tox",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "Typing :: Typed",
+]
+dependencies = []
+
+# URLs of the project
+[project.urls]
+Homepage = "https://www.symaware.eu/"
+Documentation = "https://sadegh.pages.mpi-sws.org/eicsymaware/"
+Repository = "https://gitlab.mpi-sws.org/sadegh/eicsymaware"
+Changelog = "https://gitlab.mpi-sws.org/sadegh/eicsymaware/blob/main/CHANGELOG.md"
+
+# Install the dependencies from the requirements.txt file in the root of the project
+
+# All the optional dependencies of the project
+# Can be installed with `pip install symaware-base[dependency]`
+# e.g. `pip install symaware-base[test]`
+[project.optional-dependencies]
+test = ["pytest", "pytest-cov", "pytest-mock", "pytest-asyncio"]
+lint = ["pylint", "black", "isort", "mypy", "types-PyYAML"]
+
+[tool.scikit-build]
+cmake.verbose = true
+logging.level = "INFO"
+
+[tool.scikit-build.cmake.define]
+MINGW = "ON"
