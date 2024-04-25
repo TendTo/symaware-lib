@@ -2,13 +2,14 @@
 
 #include <iostream>
 
+#include "symaware/prescan/entity.h"
 #include "symaware/util/exception.h"
 
 namespace symaware {
 
 Environment::Environment() : experiment_{prescan::api::experiment::createExperiment()} {}
 
-void Environment::setWeather(const WeatherType weather_type, const double fog_visibility) {
+Environment& Environment::setWeather(const WeatherType weather_type, const double fog_visibility) {
   prescan::api::types::Weather weather{experiment_.weather()};
   switch (weather_type) {
     case WeatherType::SUNNY:
@@ -29,9 +30,10 @@ void Environment::setWeather(const WeatherType weather_type, const double fog_vi
     weather.fog().setEnabled(true);
     weather.fog().setVisibility(fog_visibility);
   }
+  return *this;
 }
 
-void Environment::setSky(const SkyType sky_type, const prescan::api::types::SkyLightPollution light_pollution) {
+Environment& Environment::setSky(const SkyType sky_type, const prescan::api::types::SkyLightPollution light_pollution) {
   prescan::api::types::Sky sky{experiment_.sky()};
   switch (sky_type) {
     case SkyType::DAWN:
@@ -50,35 +52,13 @@ void Environment::setSky(const SkyType sky_type, const prescan::api::types::SkyL
       SYMAWARE_UNREACHABLE();
   }
   sky.setLightPollution(light_pollution);
+  return *this;
 }
 
-void Environment::setScheduler(const std::int32_t simulation_frequency, const std::int32_t integration_frequency) {
-  experiment_.scheduler().setFrequencies(simulation_frequency, integration_frequency);
-}
-
-std::string Environment::addObject(const ObjectType object_type, const Orientation& orientation, const bool movable) {
-  return addObject(object_type, {0, 0, 0}, orientation, movable);
-}
-std::string Environment::addObject(const ObjectType object_type, const bool movable) {
-  return addObject(object_type, {0, 0, 0}, {0, 0, 0}, movable);
-}
-std::string Environment::addObject(const ObjectType object_type, const Position& position,
-                                   const Orientation& orientation, const bool movable) {
-  prescan::api::types::WorldObject object{experiment_.createObject(to_string(object_type))};
-  object.setMovable(movable);
-  object.pose().orientation().setRPY(orientation.roll, orientation.pitch, orientation.yaw);
-  object.pose().position().setXYZ(position.x, position.y, position.z);
-  return object.name();
-}
-
-const std::string& Environment::addAgent(const ObjectType object_type, const Position& position,
-                                         const Orientation& orientation) {
-  controllable_agents_.emplace_back(addObject(object_type, position, orientation, true));
-  return controllable_agents_.back();
-}
-const std::string& Environment::addAgent(const ObjectType object_type, const Orientation& orientation) {
-  controllable_agents_.emplace_back(addObject(object_type, orientation, true));
-  return controllable_agents_.back();
+Environment& Environment::addEntity(Entity& entity) {
+  prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
+  entity.initialise(object);
+  return *this;
 }
 
 std::string to_string(const Environment::WeatherType weather_type) {

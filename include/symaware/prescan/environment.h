@@ -16,6 +16,9 @@
 
 namespace symaware {
 
+// Forward declaration
+class Entity;
+
 class Environment {
  public:
   enum class WeatherType { SUNNY, RAINY, SNOWY };
@@ -318,59 +321,40 @@ class Environment {
    * A negative value for fog_visibility will disable the fog all together
    * @param weather_type type of weather
    * @param fog_visibility visibility of the fog
+   * @return reference to the environment
    */
-  void setWeather(WeatherType weather_type = WeatherType::SUNNY, double fog_visibility = -1);
+  Environment& setWeather(WeatherType weather_type = WeatherType::SUNNY, double fog_visibility = -1);
   /**
    * @brief Set the environment sky to the specified type and light pollution
    * @param sky_type moment of the day
    * @param light_pollution level of light pollution. Can be disabled with SkyLightPollutionNone
+   * @return reference to the environment
    */
-  void setSky(SkyType sky_type = SkyType::DAY, prescan::api::types::SkyLightPollution light_pollution =
-                                                   prescan::api::types::SkyLightPollution::SkyLightPollutionNone);
+  Environment& setSky(SkyType sky_type = SkyType::DAY,
+                      prescan::api::types::SkyLightPollution light_pollution =
+                          prescan::api::types::SkyLightPollution::SkyLightPollutionNone);
   /**
    * @brief Set the scheduler frequencies
    *
    * Only used if the simulation step is not handled manually by the user
    * @param simulation_frequency the frequency at which the simulation will run
    * @param integration_frequency the frequency at which the integration will run
+   * @return reference to the environment
    */
-  void setScheduler(std::int32_t simulation_frequency, std::int32_t integration_frequency);
+  Environment& setScheduler(std::int32_t simulation_frequency, std::int32_t integration_frequency);
 
   /**
-   * @brief Add an object to the environment.
+   * @brief Add an entity to the environment.
    *
-   * The object will be placed in the world at the specified position and orientation.
-   * If the operation is successful, the function will return the object name inside the simulation.
-   * The name can then be used to reference the object in other functions.
-   * @param object_type type of object
-   * @param position position of the object
-   * @param orientation orientation of the object
-   * @param movable if the object can move. If false, the simulator can operate more efficiently
-   * @return name of the object inside the simulation acting as a reference
+   * The entity will be placed in the world at the specified position and orientation.
+   * If the operation is successful, the @p entity will be initialised with the object created in the simulation.
+   * Futhermore, if the @p entity is controllable, meaning it is associated with a dynamical model,
+   * it will be registered in the simulation as a controllable agent.
+   * @param[in,out] entity entity representing the new object to be added
+   * The entity will be initialised with the object created in the simulation
+   * @param position position of the object in the world
    */
-  std::string addObject(ObjectType object_type, const Position& position = {0, 0, 0},
-                        const Orientation& orientation = {0, 0, 0}, bool movable = false);
-  /** @overload */
-  std::string addObject(ObjectType object_type, const Orientation& position, bool movable = false);
-  /** @overload */
-  std::string addObject(ObjectType object_type, bool movable);
-
-  /**
-   * @brief Add a controllable agent to the environment.
-   *
-   * The agent will be placed in the world at the specified position and orientation.
-   * If the operation is successful, the function will return the agent name inside the simulation,
-   * as well as store it in the @ref controllable_agents_ vector.
-   * The name can then be used to reference the agent in other functions.
-   * @param object_type type of agent
-   * @param position position of the agent
-   * @param orientation orientation of the agent
-   * @return name of the agent inside the simulation acting as a reference
-   */
-  const std::string& addAgent(ObjectType object_type, const Position& position = {0, 0, 0},
-                              const Orientation& orientation = {0, 0, 0});
-  /** @overload */
-  const std::string& addAgent(ObjectType object_type, const Orientation& position);
+  Environment& addEntity(Entity& entity);
 
   /**
    * @brief Get the experiment object of the environment
