@@ -37,6 +37,7 @@ void DynamicalModel::terminate(prescan::sim::ISimulation* simulation) {
 }
 
 void DynamicalModel::updateState() {
+  SYMAWARE_ASSERT(state_ != nullptr, "DynamicalModel has not been registered to a state");
   if (!std::isnan(model_state_.acceleration.x))
     state_->stateActuatorInput().AccelerationX = model_state_.acceleration.x;
   if (!std::isnan(model_state_.acceleration.y))
