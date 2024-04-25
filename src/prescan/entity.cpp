@@ -21,8 +21,6 @@ void Entity::initialiseObject(const prescan::api::types::WorldObject object) {
 
   object_ = object;
   updateObject();
-
-  if (model_ != nullptr) model_->initialiseObject(object_);
 }
 
 void Entity::updateObject() {
@@ -42,7 +40,12 @@ void Entity::updateObject() {
 
 void Entity::registerUnit(const prescan::api::experiment::Experiment& experiment,
                           prescan::sim::ISimulation* const simulation) {
-  if (model_ != nullptr) model_->registerUnit(experiment, simulation);
+  object_ = experiment.getObjectByName<prescan::api::types::WorldObject>(object_.name());
+  updateObject();
+  if (model_ != nullptr) {
+    model_->initialiseObject(object_);
+    model_->registerUnit(experiment, simulation);
+  }
 }
 void Entity::initialise(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->initialise(simulation);
