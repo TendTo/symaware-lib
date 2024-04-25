@@ -7,24 +7,23 @@
 
 namespace symaware {
 
-SimulationModel::SimulationModel(const Environment& environment) : entities_{environment.entities()} {};
-SimulationModel::SimulationModel(const std::vector<Entity*>& entities) : entities_{entities} {};
+SimulationModel::SimulationModel(const Environment& environment) : environment_{environment} {};
 
 void SimulationModel::registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                               prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : entities_) entity->registerUnit(experiment, simulation);
+  for (Entity* const entity : environment_.entities()) entity->registerUnit(experiment, simulation);
 };
 
 void SimulationModel::initialize(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : entities_) entity->initialise(simulation);
+  for (Entity* const entity : environment_.entities()) entity->initialise(simulation);
 };
 
 void SimulationModel::step(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : entities_) entity->step(simulation);
+  for (Entity* const entity : environment_.entities()) entity->step(simulation);
 };
 
 void SimulationModel::terminate(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : entities_) entity->terminate(simulation);
+  for (Entity* const entity : environment_.entities()) entity->terminate(simulation);
 };
 
 }  // namespace symaware

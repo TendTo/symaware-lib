@@ -23,8 +23,6 @@ void DynamicalModel::registerUnit(const prescan::api::experiment::Experiment& ex
 
 void DynamicalModel::initialise(prescan::sim::ISimulation* simulation) {
   if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has not been registered to a state");
-  fmt::println("DynamicalModel::step\nState: {}", model_state_);
-  fmt::println("Current state: {}", state_->stateActuatorInput());
   updateState();
 }
 

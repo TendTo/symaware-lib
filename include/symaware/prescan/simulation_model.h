@@ -19,7 +19,6 @@ namespace symaware {
 class SimulationModel : public prescan::sim::ISimulationModel {
  public:
   SimulationModel(const Environment& environment);
-  SimulationModel(const std::vector<Entity*>& environment);
   void registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                prescan::sim::ISimulation* simulation) override;
   void initialize(prescan::sim::ISimulation* simulation) override;
@@ -27,7 +26,7 @@ class SimulationModel : public prescan::sim::ISimulationModel {
   void terminate(prescan::sim::ISimulation* simulation) override;
 
  private:
-  const std::vector<Entity*>& entities_;
+  const Environment& environment_;
 };
 
 }  // namespace symaware
