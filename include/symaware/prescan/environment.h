@@ -315,6 +315,7 @@ class Environment {
   };
 
   Environment();
+  explicit Environment(const std::string& file_path);
 
   /**
    * @brief Set the environment weather to the specified type and fog visibility
@@ -346,7 +347,7 @@ class Environment {
 
   /**
    * @brief Create a free camera viewer for the environment.
-   * 
+   *
    * The viewer will allow for the visualisation of the environment using the Prescan viewer using a free camera.
    * @return the new viewer
    */

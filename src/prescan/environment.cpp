@@ -8,6 +8,8 @@
 namespace symaware {
 
 Environment::Environment() : experiment_{prescan::api::experiment::createExperiment()} {}
+Environment::Environment(const std::string& filename)
+    : experiment_{prescan::api::experiment::loadExperimentFromFile(filename)} {}
 
 Environment& Environment::setWeather(const WeatherType weather_type, const double fog_visibility) {
   prescan::api::types::Weather weather{experiment_.weather()};
