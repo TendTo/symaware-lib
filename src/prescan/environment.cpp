@@ -62,6 +62,15 @@ Environment& Environment::addEntity(Entity& entity) {
   return *this;
 }
 
+prescan::api::viewer::Viewer Environment::createFreeViewer() {
+  prescan::api::viewer::Viewer viewer{prescan::api::viewer::createViewer(experiment_)};
+  viewer.assignFreeCamera();
+  return viewer;
+}
+void Environment::removeAllViewers() {
+  for (prescan::api::viewer::Viewer& viewer : prescan::api::viewer::getViewers(experiment_).asVector()) viewer.remove();
+}
+
 std::string to_string(const Environment::WeatherType weather_type) {
   switch (weather_type) {
     case Environment::WeatherType::SUNNY:

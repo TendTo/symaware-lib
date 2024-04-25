@@ -8,6 +8,7 @@
 #pragma once
 
 #include <cstdint>
+#include <prescan/api/Viewer.hpp>
 #include <prescan/api/experiment.hpp>
 #include <string>
 #include <vector>
@@ -342,6 +343,19 @@ class Environment {
    * @return reference to the environment
    */
   Environment& setScheduler(std::int32_t simulation_frequency, std::int32_t integration_frequency);
+
+  /**
+   * @brief Create a free camera viewer for the environment.
+   * 
+   * The viewer will allow for the visualisation of the environment using the Prescan viewer using a free camera.
+   * @return the new viewer
+   */
+  prescan::api::viewer::Viewer createFreeViewer();
+  /**
+   * @brief Remove all viewers from the environment.
+   * @warning All previously created viewers will be invalidated
+   */
+  void removeAllViewers();
 
   /**
    * @brief Add an entity to the environment.
