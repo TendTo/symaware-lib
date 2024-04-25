@@ -20,6 +20,9 @@ class Simulation {
  public:
   Simulation(const Environment& environment);
 
+  Simulation(const Simulation&) = delete;
+  Simulation& operator=(const Simulation&) = delete;
+
   /**
    * @brief Run the simulation automatically for the given amount of @p seconds
    * If @p seconds is negative, the simulation will run indefinitely
