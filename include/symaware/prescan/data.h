@@ -113,7 +113,22 @@ struct ModelState {
 
 struct EntityState {
   EntityState() = default;
-  EntityState(Position position, Orientation orientation, CenterOfGravityOffset cog_offset,
+  EntityState(Position position, Orientation orientation, double velocity, double yaw_rate)
+      : position{position}, orientation{orientation}, velocity{velocity}, yaw_rate{yaw_rate} {}
+  explicit EntityState(bool zero_init)
+      : position{zero_init},
+        orientation{zero_init},
+        velocity{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        yaw_rate{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
+  Position position;
+  Orientation orientation;
+  double velocity;
+  double yaw_rate;
+};
+
+struct EntitySetup {
+  EntitySetup() = default;
+  EntitySetup(Position position, Orientation orientation, CenterOfGravityOffset cog_offset,
               bool is_collision_detectable, bool is_movable,
               prescan::api::types::SensorDetectability sensor_detectability)
       : position{position},
@@ -122,7 +137,7 @@ struct EntityState {
         is_collision_detectable{is_collision_detectable},
         is_movable{is_movable},
         sensor_detectability{sensor_detectability} {}
-  explicit EntityState(bool zero_init, bool is_collision_detectable, bool is_movable,
+  explicit EntitySetup(bool zero_init, bool is_collision_detectable, bool is_movable,
                        prescan::api::types::SensorDetectability sensor_detectability)
       : position{zero_init},
         orientation{zero_init},
@@ -145,7 +160,8 @@ std::ostream& operator<<(std::ostream& os, const Acceleration& acceleration);
 std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_velocity);
 std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offset);
 std::ostream& operator<<(std::ostream& os, const ModelState& model_state);
-std::ostream& operator<<(std::ostream& os, const EntityState& entity_state);
+std::ostream& operator<<(std::ostream& os, const EntityState& model_state);
+std::ostream& operator<<(std::ostream& os, const EntitySetup& entity_state);
 
 }  // namespace symaware
 
@@ -165,3 +181,5 @@ template <>
 struct fmt::formatter<symaware::ModelState> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::EntityState> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::EntitySetup> : fmt::ostream_formatter {};

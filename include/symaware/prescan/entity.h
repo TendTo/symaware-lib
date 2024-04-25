@@ -8,6 +8,7 @@
 #pragma once
 
 #include <prescan/api/types/WorldObject.hpp>
+#include <prescan/sim/SelfSensorUnit.hpp>
 #include <string>
 
 #include "symaware/prescan/data.h"
@@ -18,8 +19,8 @@ namespace symaware {
 class Entity {
  public:
   Entity(Environment::ObjectType type, DynamicalModel& model);
-  Entity(Environment::ObjectType type, EntityState state, DynamicalModel& model);
-  Entity(Environment::ObjectType type, EntityState state = {}, DynamicalModel* model = nullptr);
+  Entity(Environment::ObjectType type, EntitySetup setup, DynamicalModel& model);
+  Entity(Environment::ObjectType type, EntitySetup setup = {}, DynamicalModel* model = nullptr);
 
   void initialiseObject(prescan::api::types::WorldObject object);
 
@@ -53,8 +54,10 @@ class Entity {
    */
   void terminate(prescan::sim::ISimulation* simulation);
 
+
+  EntityState state() const;
   Environment::ObjectType type() const { return type_; }
-  const EntityState& state() const { return state_; }
+  const EntitySetup& setup() const { return setup_; }
   const DynamicalModel* model() const { return model_; }
   const prescan::api::types::WorldObject& object() const { return object_; }
   bool is_initialized() const { return is_initialized_; }
@@ -64,9 +67,10 @@ class Entity {
 
   bool is_initialized_{false};    ///< Whether the entity has been initialized
   Environment::ObjectType type_;  ///< The type of the entity
-  EntityState state_;             ///< The initial state of the entity
+  EntitySetup setup_;             ///< The initial state of the entity
   DynamicalModel* model_;         ///< The dynamical model of the entity. Only present if the entity is controllable
-  prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
+  prescan::api::types::WorldObject object_;    ///< The object that represents the entity in the simulation
+  const prescan::sim::SelfSensorUnit* state_;  ///< The state of the entity in the simulation
 };
 
 }  // namespace symaware

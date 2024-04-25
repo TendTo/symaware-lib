@@ -31,10 +31,15 @@ std::ostream& operator<<(std::ostream& os, const ModelState& model_state) {
             << model_state.acceleration << ", " << model_state.velocity << ", " << model_state.angular_velocity << ")";
 }
 std::ostream& operator<<(std::ostream& os, const EntityState& entity_state) {
+  return os << "EntittyState: (" << entity_state.position << ", " << entity_state.orientation << ", velocity: "
+            << entity_state.velocity << ", yaw_rate: " << entity_state.yaw_rate << ")";
+}
+std::ostream& operator<<(std::ostream& os, const EntitySetup& entity_setup) {
   return os << std::boolalpha  // Enable the boolalpha
-            << "EntityState: (" << entity_state.position << ", " << entity_state.orientation << ", "
-            << entity_state.cog_offset << ", collision_detectable: " << entity_state.is_collision_detectable << ", movable: "
-            << entity_state.is_movable << ", sensor_detecatbility: " << entity_state.sensor_detectability << ")"
+            << "EntitySetup: (" << entity_setup.position << ", " << entity_setup.orientation << ", "
+            << entity_setup.cog_offset << ", collision_detectable: " << entity_setup.is_collision_detectable
+            << ", movable: " << entity_setup.is_movable
+            << ", sensor_detecatbility: " << entity_setup.sensor_detectability << ")"
             << std::noboolalpha;  // Remove the boolalpha
 }
 
