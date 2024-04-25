@@ -62,11 +62,11 @@ class Entity {
  private:
   void updateObject();
 
+  bool is_initialized_{false};    ///< Whether the entity has been initialized
   Environment::ObjectType type_;  ///< The type of the entity
   EntityState state_;             ///< The initial state of the entity
   DynamicalModel* model_;         ///< The dynamical model of the entity. Only present if the entity is controllable
   prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
-  bool is_initialized_{false};               ///< Whether the entity has been initialized
 };
 
 }  // namespace symaware

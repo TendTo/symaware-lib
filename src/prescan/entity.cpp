@@ -7,13 +7,13 @@
 namespace symaware {
 
 Entity::Entity(const Environment::ObjectType type, DynamicalModel& model)
-    : type_{type}, state_{}, model_{&model}, object_{}, is_initialized_{false} {}
+    : is_initialized_{false}, type_{type}, state_{}, model_{&model}, object_{} {}
 
 Entity::Entity(const Environment::ObjectType type, EntityState state, DynamicalModel& model)
-    : type_{type}, state_{std::move(state)}, model_{&model}, object_{}, is_initialized_{false} {}
+    : is_initialized_{false}, type_{type}, state_{std::move(state)}, model_{&model}, object_{} {}
 
 Entity::Entity(const Environment::ObjectType type, EntityState state, DynamicalModel* const model)
-    : type_{type}, state_{std::move(state)}, model_{model}, object_{}, is_initialized_{false} {}
+    : is_initialized_{false}, type_{type}, state_{std::move(state)}, model_{model}, object_{} {}
 
 void Entity::initialiseObject(const prescan::api::types::WorldObject object) {
   if (is_initialized_) SYMAWARE_RUNTIME_ERROR("Entity has already been initialized");

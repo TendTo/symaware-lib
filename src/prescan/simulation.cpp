@@ -8,17 +8,14 @@
 
 namespace symaware {
 
-Simulation::Simulation(const Environment& environment, prescan::sim::ISimulationModel& simulation_model)
-    : is_initialised_{false}, experiment_{environment.experiment()}, simulation_{&simulation_model} {}
-Simulation::Simulation(const prescan::api::experiment::Experiment experiment,
-                       prescan::sim::ISimulationModel& simulation_model)
-    : is_initialised_{false}, experiment_{std::move(experiment)}, simulation_{&simulation_model} {}
+Simulation::Simulation(const Environment& environment)
+    : is_initialised_{false}, environment_{environment}, model_{environment}, simulation_{&model_} {}
 
 void Simulation::run(double seconds) {
   if (is_initialised_) SYMAWARE_RUNTIME_ERROR("Simulation is already initialised. Cannot run again.");
-  ExperimentGuard guard{experiment_};
+  ExperimentGuard guard{const_cast<prescan::api::experiment::Experiment&>(environment_.experiment())};
   is_initialised_ = true;
-  simulation_.run(experiment_, seconds);
+  simulation_.run(environment_.experiment(), seconds);
   is_initialised_ = false;
 }
 
@@ -28,8 +25,8 @@ void Simulation::step() {
 }
 
 void Simulation::initialise() {
-  ExperimentGuard guard{experiment_};
-  simulation_.initialize(experiment_);
+  ExperimentGuard guard{const_cast<prescan::api::experiment::Experiment&>(environment_.experiment())};
+  simulation_.initialize(environment_.experiment());
   is_initialised_ = true;
 }
 

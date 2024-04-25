@@ -12,13 +12,13 @@
 #include <prescan/sim/ManualSimulation.hpp>
 
 #include "symaware/prescan/environment.h"
+#include "symaware/prescan/simulation_model.h"
 
 namespace symaware {
 
 class Simulation {
  public:
-  Simulation(const Environment& environment, prescan::sim::ISimulationModel& simulation_model);
-  Simulation(prescan::api::experiment::Experiment environment, prescan::sim::ISimulationModel& simulation_model);
+  Simulation(const Environment& environment);
 
   /**
    * @brief Run the simulation automatically for the given amount of @p seconds
@@ -53,7 +53,8 @@ class Simulation {
   void initialise();
 
   bool is_initialised_;
-  prescan::api::experiment::Experiment experiment_;
+  const Environment& environment_;
+  SimulationModel model_;
   prescan::sim::ManualSimulation simulation_;
 };
 
