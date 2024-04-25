@@ -15,7 +15,7 @@ Entity::Entity(const Environment::ObjectType type, EntityState state, DynamicalM
 Entity::Entity(const Environment::ObjectType type, EntityState state, DynamicalModel* const model)
     : type_{type}, state_{std::move(state)}, model_{model}, object_{}, is_initialized_{false} {}
 
-void Entity::initialise(const prescan::api::types::WorldObject object) {
+void Entity::initialiseObject(const prescan::api::types::WorldObject object) {
   if (is_initialized_) SYMAWARE_RUNTIME_ERROR("Entity has already been initialized");
   is_initialized_ = true;
 
@@ -40,7 +40,7 @@ void Entity::updateObject() {
   if (!std::isnan(state_.position.z)) object_.pose().position().setZ(state_.position.z);
 }
 
-void Entity::registerUnit(prescan::api::experiment::Experiment& experiment,
+void Entity::registerUnit(const prescan::api::experiment::Experiment& experiment,
                           prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->registerUnit(experiment, simulation);
 }

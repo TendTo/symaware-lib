@@ -363,10 +363,10 @@ class Environment {
   const prescan::api::experiment::Experiment& experiment() const { return experiment_; }
 
   /**
-   * @brief Get the names of the controllable agents in the environment
-   * @return names of the controllable agents
+   * @brief Get the names of the entities in the environment
+   * @return names of the entities
    */
-  const std::vector<std::string>& controllable_agents() const { return controllable_agents_; }
+  const std::vector<Entity*>& entities() const { return entities_; }
 
   /**
    * @brief Get an object from the environment by name
@@ -382,7 +382,7 @@ class Environment {
 
  private:
   prescan::api::experiment::Experiment experiment_;
-  std::vector<std::string> controllable_agents_;
+  std::vector<Entity*> entities_;
 };
 
 std::string to_string(Environment::WeatherType weather_type);

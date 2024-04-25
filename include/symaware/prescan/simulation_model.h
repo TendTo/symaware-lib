@@ -8,18 +8,18 @@
 #pragma once
 
 #include <prescan/sim/ISimulationModel.hpp>
-#include <prescan/sim/StateActuatorUnit.hpp>
 #include <string>
 #include <vector>
 
+#include "symaware/prescan/entity.h"
 #include "symaware/prescan/environment.h"
 
 namespace symaware {
 
 class SimulationModel : public prescan::sim::ISimulationModel {
  public:
-  SimulationModel(std::vector<std::string> controllable_agents);
   SimulationModel(const Environment& environment);
+  SimulationModel(const std::vector<Entity*>& environment);
   void registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                prescan::sim::ISimulation* simulation) override;
   void initialize(prescan::sim::ISimulation* simulation) override;
@@ -27,8 +27,7 @@ class SimulationModel : public prescan::sim::ISimulationModel {
   void terminate(prescan::sim::ISimulation* simulation) override;
 
  private:
-  const std::vector<std::string>& controllable_agents_;
-  prescan::sim::StateActuatorUnit* egoStateUnit_{nullptr};
+  const std::vector<Entity*>& entities_;
 };
 
 }  // namespace symaware

@@ -7,38 +7,24 @@
 
 namespace symaware {
 
-const double min_vel = -50;
-const double max_vel = 50;
-double multiplier = 1.0;
-
-SimulationModel::SimulationModel(std::vector<std::string> controllable_agents)
-    : controllable_agents_(std::move(controllable_agents)){};
-SimulationModel::SimulationModel(const Environment& environment)
-    : controllable_agents_(environment.controllable_agents()){};
+SimulationModel::SimulationModel(const Environment& environment) : entities_{environment.entities()} {};
+SimulationModel::SimulationModel(const std::vector<Entity*>& entities) : entities_{entities} {};
 
 void SimulationModel::registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                               prescan::sim::ISimulation* simulation) {
-  for (const std::string& agent : controllable_agents_) {
-    prescan::api::types::WorldObject obj = experiment.getObjectByName<prescan::api::types::WorldObject>(agent);
-    egoStateUnit_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, obj);
-  }
+  for (Entity* const entity : entities_) entity->registerUnit(experiment, simulation);
 };
+
 void SimulationModel::initialize(prescan::sim::ISimulation* simulation) {
-  egoStateUnit_->stateActuatorInput().VelocityX = 36;
+  for (Entity* const entity : entities_) entity->initialise(simulation);
 };
 
 void SimulationModel::step(prescan::sim::ISimulation* simulation) {
-  if (egoStateUnit_->stateActuatorInput().VelocityX > max_vel) {
-    multiplier *= -1.0;
-    egoStateUnit_->stateActuatorInput().VelocityX = max_vel;
-  } else if (egoStateUnit_->stateActuatorInput().VelocityX < min_vel) {
-    multiplier *= -1.0;
-    egoStateUnit_->stateActuatorInput().VelocityX = min_vel;
-  }
-
-  egoStateUnit_->stateActuatorInput().VelocityX += multiplier;
+  for (Entity* const entity : entities_) entity->step(simulation);
 };
 
-void SimulationModel::terminate(prescan::sim::ISimulation* simulation){};
+void SimulationModel::terminate(prescan::sim::ISimulation* simulation) {
+  for (Entity* const entity : entities_) entity->terminate(simulation);
+};
 
 }  // namespace symaware

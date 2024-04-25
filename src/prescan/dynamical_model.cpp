@@ -15,7 +15,7 @@ void DynamicalModel::initialiseObject(prescan::api::types::WorldObject object) {
 
 void DynamicalModel::setState(ModelState state) { model_state_ = std::move(state); }
 
-void DynamicalModel::registerUnit(prescan::api::experiment::Experiment& experiment,
+void DynamicalModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
                                   prescan::sim::ISimulation* simulation) {
   if (state_ != nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has alreasy been registered to a state");
   state_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, object_);

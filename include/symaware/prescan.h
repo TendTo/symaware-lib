@@ -8,6 +8,8 @@
 #pragma once
 
 #include "symaware/prescan/data.h"
+#include "symaware/prescan/dynamical_model.h"
+#include "symaware/prescan/entity.h"
 #include "symaware/prescan/environment.h"
 #include "symaware/prescan/experiment_guard.h"
 #include "symaware/prescan/simulation.h"

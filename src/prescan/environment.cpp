@@ -57,7 +57,8 @@ Environment& Environment::setSky(const SkyType sky_type, const prescan::api::typ
 
 Environment& Environment::addEntity(Entity& entity) {
   prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
-  entity.initialise(object);
+  entity.initialiseObject(object);
+  entities_.push_back(&entity);
   return *this;
 }
 
