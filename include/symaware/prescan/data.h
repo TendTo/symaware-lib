@@ -7,6 +7,9 @@
  */
 #pragma once
 
+#include <fmt/ostream.h>
+
+#include <iosfwd>
 #include <limits>
 #include <prescan/api/types/WorldObject.hpp>
 
@@ -135,4 +138,30 @@ struct EntityState {
   prescan::api::types::SensorDetectability sensor_detectability;
 };
 
+std::ostream& operator<<(std::ostream& os, const Position& position);
+std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
+std::ostream& operator<<(std::ostream& os, const Velocity& velocity);
+std::ostream& operator<<(std::ostream& os, const Acceleration& acceleration);
+std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_velocity);
+std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offset);
+std::ostream& operator<<(std::ostream& os, const ModelState& model_state);
+std::ostream& operator<<(std::ostream& os, const EntityState& entity_state);
+
 }  // namespace symaware
+
+template <>
+struct fmt::formatter<symaware::Position> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::Orientation> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::Velocity> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::Acceleration> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::AngularVelocity> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::CenterOfGravityOffset> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::ModelState> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::EntityState> : fmt::ostream_formatter {};
