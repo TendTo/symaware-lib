@@ -19,10 +19,10 @@ namespace symaware {
 class DynamicalModel {
  public:
  /**
-  * @brief Construct a new Dynamical Model object with an initial state input.
-  * @param state initial state input 
+  * @brief Construct a new Dynamical Model object with an initial model state.
+  * @param state initial model state 
   */
-  explicit DynamicalModel(State state = State{false});
+  explicit DynamicalModel(ModelState state = ModelState{false});
 
   /**
    * @brief Initialise the model by assigning the object in the simulation.
@@ -30,10 +30,10 @@ class DynamicalModel {
    */
   void initialiseObject(prescan::api::types::WorldObject object);
   /**
-   * @brief Set the new state input of the model.
-   * @param state state input to be set 
+   * @brief Set the new model state of the model.
+   * @param state model state to be set 
    */
-  void setState(State state);
+  void setState(ModelState state);
 
   /**
    * @brief Register the unit inside the @p simulaiton.
@@ -61,6 +61,8 @@ class DynamicalModel {
   void step(prescan::sim::ISimulation* simulation);
   /**
    * @brief Dissaociate the model from the @p simulation.
+   * 
+   * Called at the end of the @p simulation.
    * @param simulation simulation that has run the experiment
    */
   void terminate(prescan::sim::ISimulation* simulation);
@@ -80,7 +82,7 @@ class DynamicalModel {
 
   prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
   prescan::sim::StateActuatorUnit* state_;   ///< The state of the entity in the simulation
-  State state_input_;                        ///< The state input of the entity that will be applied each step
+  ModelState model_state_;                        ///< The model state of the entity that will be applied each step
 };
 
 }  // namespace symaware

@@ -8,6 +8,7 @@
 #pragma once
 
 #include <limits>
+#include <prescan/api/types/WorldObject.hpp>
 
 static_assert(std::numeric_limits<double>::has_quiet_NaN, "IEEE 754 required");
 
@@ -63,8 +64,18 @@ struct AngularVelocity {
   double yaw;
 };
 
-struct State {
-  explicit State(bool zero_init = true)
+struct CenterOfGravityOffset {
+  explicit CenterOfGravityOffset(bool zero_init = true)
+      : x{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        y{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        z{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
+  double x;
+  double y;
+  double z;
+};
+
+struct ModelState {
+  explicit ModelState(bool zero_init = true)
       : position{zero_init},
         orientation{zero_init},
         acceleration{zero_init},
@@ -75,6 +86,15 @@ struct State {
   Acceleration acceleration;
   Velocity velocity;
   AngularVelocity angular_velocity;
+};
+
+struct EntityState {
+  Position position;
+  Orientation orientation;
+  CenterOfGravityOffset cog_offset;
+  bool is_collision_detectable;
+  bool is_movable;
+  prescan::api::types::SensorDetectability sensor_detectability;
 };
 
 }  // namespace symaware
