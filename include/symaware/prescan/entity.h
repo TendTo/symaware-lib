@@ -22,7 +22,7 @@ class Entity {
   Entity(Environment::ObjectType type, EntitySetup setup, DynamicalModel& model);
   Entity(Environment::ObjectType type, EntitySetup setup = {}, DynamicalModel* model = nullptr);
 
-  void initialiseObject(prescan::api::types::WorldObject object);
+  void initialiseObject(prescan::api::experiment::Experiment& experiment, prescan::api::types::WorldObject object);
 
   /**
    * @brief Forwards the registration of the model to the model itself, if present.
@@ -53,7 +53,6 @@ class Entity {
    * @param simulation simulation that has run the experiment
    */
   void terminate(prescan::sim::ISimulation* simulation);
-
 
   EntityState state() const;
   Environment::ObjectType type() const { return type_; }

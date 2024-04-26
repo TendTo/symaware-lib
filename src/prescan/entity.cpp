@@ -14,13 +14,14 @@ Entity::Entity(const Environment::ObjectType type, EntitySetup setup, DynamicalM
 Entity::Entity(const Environment::ObjectType type, EntitySetup setup, DynamicalModel* const model)
     : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
 
-void Entity::initialiseObject(const prescan::api::types::WorldObject object) {
+void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
+                              const prescan::api::types::WorldObject object) {
   if (is_initialized_) SYMAWARE_RUNTIME_ERROR("Entity has already been initialized");
   is_initialized_ = true;
 
   object_ = object;
-  model_->initialiseObject(object_);
   updateObject();
+  model_->initialiseObject(experiment, object_);
 }
 
 EntityState Entity::state() const {
