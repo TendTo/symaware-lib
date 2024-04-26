@@ -9,6 +9,7 @@
 
 #include <prescan/api/experiment/Experiment.hpp>
 #include <prescan/api/types/WorldObject.hpp>
+#include <prescan/sim/AmesimVehicleDynamicsUnit.hpp>
 #include <prescan/sim/Simulation.hpp>
 #include <prescan/sim/StateActuatorUnit.hpp>
 
@@ -22,18 +23,18 @@ class DynamicalModel {
    * @brief Construct a new Dynamical Model object with an initial model state.
    * @param state initial model state
    */
-  explicit DynamicalModel(ModelState state = ModelState{false});
+  explicit DynamicalModel(DynamicalModelInput initial_input = DynamicalModelInput{false});
 
   /**
    * @brief Initialise the model by assigning the object in the simulation.
    * @param object simulation object this model will control
    */
-  void initialiseObject(prescan::api::types::WorldObject object);
+  void initialiseObject(prescan::api::experiment::Experiment& experiment, prescan::api::types::WorldObject object);
   /**
-   * @brief Set the new model state of the model.
-   * @param state model state to be set
+   * @brief Set the new control input of the model.
+   * @param input model input to set
    */
-  void setState(ModelState state);
+  void setInput(DynamicalModelInput input);
 
   /**
    * @brief Register the unit inside the @p simulaiton.
@@ -82,7 +83,8 @@ class DynamicalModel {
 
   prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
   prescan::sim::StateActuatorUnit* state_;   ///< The state of the entity in the simulation
-  ModelState model_state_;                   ///< The model state of the entity that will be applied each step
+  prescan::sim::AmesimVehicleDynamicsUnit* dynamics_; ///< The dynamics of the entity in the simulation
+  DynamicalModelInput input_;  ///< The model state of the entity that will be applied each step
 };
 
 }  // namespace symaware

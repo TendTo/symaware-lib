@@ -5,6 +5,21 @@
 
 namespace symaware {
 
+std::string to_string(const Gear gear) {
+  switch (gear) {
+    case Gear::Forward:
+      return "Forward";
+    case Gear::Neutral:
+      return "Neutral";
+    case Gear::Reverse:
+      return "Reverse";
+    case Gear::Undefined:
+      return "Undefined";
+    default:
+      return "Unknown";
+  }
+}
+
 std::ostream& operator<<(std::ostream& os, const Position& position) {
   return os << "Position: (x: " << position.x << ", y: " << position.y << ", z: " << position.z << ")";
 }
@@ -26,13 +41,15 @@ std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offs
   return os << "CenterOfGravityOffset: (x: " << cog_offset.x << ", y: " << cog_offset.y << ", z: " << cog_offset.z
             << ")";
 }
-std::ostream& operator<<(std::ostream& os, const ModelState& model_state) {
-  return os << "ModelState: (" << model_state.position << ", " << model_state.orientation << ", "
-            << model_state.acceleration << ", " << model_state.velocity << ", " << model_state.angular_velocity << ")";
+std::ostream& operator<<(std::ostream& os, const DynamicalModelInput& dynamical_model_input) {
+  return os << "DynamicalModelInput: (throttle: " << dynamical_model_input.throttle
+            << ", brake: " << dynamical_model_input.brake
+            << ", steering_wheel_angle(rad): " << dynamical_model_input.steering_wheel_angle
+            << ", gear: " << to_string(dynamical_model_input.gear) << ")";
 }
 std::ostream& operator<<(std::ostream& os, const EntityState& entity_state) {
-  return os << "EntittyState: (" << entity_state.position << ", " << entity_state.orientation << ", velocity: "
-            << entity_state.velocity << ", yaw_rate: " << entity_state.yaw_rate << ")";
+  return os << "EntittyState: (" << entity_state.position << ", " << entity_state.orientation
+            << ", velocity: " << entity_state.velocity << ", yaw_rate: " << entity_state.yaw_rate << ")";
 }
 std::ostream& operator<<(std::ostream& os, const EntitySetup& entity_setup) {
   return os << std::boolalpha  // Enable the boolalpha

@@ -17,6 +17,13 @@ static_assert(std::numeric_limits<double>::has_quiet_NaN, "IEEE 754 required");
 
 namespace symaware {
 
+enum Gear {
+  Forward = 1,
+  Neutral = 0,
+  Reverse = -1,
+  Undefined = 2,
+};
+
 struct Position {
   Position() = default;
   Position(double x, double y, double z) : x{x}, y{y}, z{z} {}
@@ -89,26 +96,19 @@ struct CenterOfGravityOffset {
   double z;
 };
 
-struct ModelState {
-  ModelState() = default;
-  ModelState(Position position, Orientation orientation, Acceleration acceleration, Velocity velocity,
-             AngularVelocity angular_velocity)
-      : position{position},
-        orientation{orientation},
-        acceleration{acceleration},
-        velocity{velocity},
-        angular_velocity{angular_velocity} {}
-  explicit ModelState(bool zero_init)
-      : position{zero_init},
-        orientation{zero_init},
-        acceleration{zero_init},
-        velocity{zero_init},
-        angular_velocity{zero_init} {}
-  Position position;
-  Orientation orientation;
-  Acceleration acceleration;
-  Velocity velocity;
-  AngularVelocity angular_velocity;
+struct DynamicalModelInput {
+  DynamicalModelInput() = default;
+  DynamicalModelInput(double throttle, double brake, double steering_wheel_angle, Gear gear)
+      : throttle{throttle}, brake{brake}, steering_wheel_angle{steering_wheel_angle}, gear{gear} {}
+  explicit DynamicalModelInput(bool zero_init)
+      : throttle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        brake{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        steering_wheel_angle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+        gear{zero_init ? Gear::Neutral : Gear::Undefined} {}
+  double throttle;
+  double brake;
+  double steering_wheel_angle;
+  Gear gear;
 };
 
 struct EntityState {
@@ -153,13 +153,14 @@ struct EntitySetup {
   prescan::api::types::SensorDetectability sensor_detectability;
 };
 
+std::string to_string(Gear gear);
 std::ostream& operator<<(std::ostream& os, const Position& position);
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
 std::ostream& operator<<(std::ostream& os, const Velocity& velocity);
 std::ostream& operator<<(std::ostream& os, const Acceleration& acceleration);
 std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_velocity);
 std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offset);
-std::ostream& operator<<(std::ostream& os, const ModelState& model_state);
+std::ostream& operator<<(std::ostream& os, const DynamicalModelInput& dynamical_model_input);
 std::ostream& operator<<(std::ostream& os, const EntityState& model_state);
 std::ostream& operator<<(std::ostream& os, const EntitySetup& entity_state);
 
@@ -178,7 +179,7 @@ struct fmt::formatter<symaware::AngularVelocity> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::CenterOfGravityOffset> : fmt::ostream_formatter {};
 template <>
-struct fmt::formatter<symaware::ModelState> : fmt::ostream_formatter {};
+struct fmt::formatter<symaware::DynamicalModelInput> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::EntityState> : fmt::ostream_formatter {};
 template <>

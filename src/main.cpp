@@ -23,22 +23,26 @@
 
 using namespace std::chrono_literals;
 
+#define M_PI 3.14159265358979323846
+
+#if 1
+
 int main() {
   symaware::Environment env;
-  env.createFreeViewer();
+  auto viewer = env.createFreeViewer();
   env.setSky(symaware::Environment::SkyType::DAY);
-  env.setWeather(symaware::Environment::WeatherType::SNOWY);
+  env.setWeather(symaware::Environment::WeatherType::SUNNY);
 
-  symaware::DynamicalModel audi_a3_model;
-  symaware::DynamicalModel audi_a8_model;
+  symaware::DynamicalModel audi_a3_model{};
+  symaware::DynamicalModel audi_a8_model{};
 
   symaware::Entity audi_a3{
       symaware::Environment::ObjectType::Audi_A3,
-      symaware::EntityState{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
+      symaware::EntitySetup{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       audi_a3_model};
   symaware::Entity audi_a8{
       symaware::Environment::ObjectType::Audi_A8_Sedan,
-      symaware::EntityState{{10, 10, 10},
+      symaware::EntitySetup{{-10, -10, 0},
                             {0, 0, 0},
                             {0, 0, 0},
                             true,
@@ -50,13 +54,40 @@ int main() {
 
   symaware::Simulation simulation(env);
   simulation.setLogLever(prescan::sim::ISimulationLogger::LogLevel::LogLevelInfo);
+#if 0
+  simulation.run(1000);
+#else
+  const int max_steps = 150;
+  for (int i = 0; i < max_steps; i++) {
+    audi_a8_model.setInput({1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward});
+    simulation.step();
+    std::this_thread::sleep_for(100ms);
+  }
 
+  simulation.terminate();
+#endif
+
+  return 0;
+}
+
+#else
+
+int main() {
+  symaware::Environment env{
+      "C:/Users/Public/Documents/Experiments/DemoExperiments/Demo_3D_Dynamics/Demo_3D_Dynamics.pb"};
+
+  symaware::Simulation simulation(env);
+#if 0
+  simulation.run(1000);
+#else
   for (int i = 0; i < 100; i++) {
     simulation.step();
     std::this_thread::sleep_for(100ms);
   }
 
   simulation.terminate();
-
+#endif
   return 0;
 }
+
+#endif

@@ -3,22 +3,32 @@
 #include <fmt/core.h>
 
 #include <cmath>
+#include <prescan/api/Vehicledynamics.hpp>
 #include <prescan/api/types/WorldObject.hpp>
+#include <prescan/api/vehicledynamics/AmesimPreconfiguredDynamics.hpp>
 
 #include "symaware/util/exception.h"
 
 namespace symaware {
 
-DynamicalModel::DynamicalModel(ModelState state) : object_{}, state_{nullptr}, model_state_{std::move(state)} {}
+DynamicalModel::DynamicalModel(DynamicalModelInput initial_input)
+    : object_{}, state_{nullptr}, input_{std::move(initial_input)} {}
 
-void DynamicalModel::initialiseObject(prescan::api::types::WorldObject object) { object_ = object; }
+void DynamicalModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
+                                      prescan::api::types::WorldObject object) {
+  object_ = object;
+  prescan::api::vehicledynamics::createAmesimPreconfiguredDynamics(object_).setFlatGround(true);
+}
 
-void DynamicalModel::setState(ModelState state) { model_state_ = std::move(state); }
+void DynamicalModel::setInput(const DynamicalModelInput input) { input_ = std::move(input); }
 
 void DynamicalModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
                                   prescan::sim::ISimulation* simulation) {
   if (state_ != nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has alreasy been registered to a state");
   state_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, object_);
+  prescan::api::vehicledynamics::AmesimPreconfiguredDynamics dynamics =
+      prescan::api::vehicledynamics::getAttachedAmesimPreconfiguredDynamics(object_);
+  dynamics_ = prescan::sim::registerUnit<prescan::sim::AmesimVehicleDynamicsUnit>(simulation, dynamics);
 }
 
 void DynamicalModel::initialise(prescan::sim::ISimulation* simulation) {
@@ -38,32 +48,14 @@ void DynamicalModel::terminate(prescan::sim::ISimulation* simulation) {
 
 void DynamicalModel::updateState() {
   SYMAWARE_ASSERT(state_ != nullptr, "DynamicalModel has not been registered to a state");
-  if (!std::isnan(model_state_.acceleration.x))
-    state_->stateActuatorInput().AccelerationX = model_state_.acceleration.x;
-  if (!std::isnan(model_state_.acceleration.y))
-    state_->stateActuatorInput().AccelerationY = model_state_.acceleration.y;
-  if (!std::isnan(model_state_.acceleration.z))
-    state_->stateActuatorInput().AccelerationZ = model_state_.acceleration.z;
+  fmt::println("Updating state with input: {}", input_);
 
-  if (!std::isnan(model_state_.position.x)) state_->stateActuatorInput().PositionX = model_state_.position.x;
-  if (!std::isnan(model_state_.position.y)) state_->stateActuatorInput().PositionY = model_state_.position.y;
-  if (!std::isnan(model_state_.position.z)) state_->stateActuatorInput().PositionZ = model_state_.position.z;
+  if (!std::isnan(input_.throttle)) dynamics_->vehicleControlInput().Throttle = input_.throttle;
+  if (!std::isnan(input_.brake)) dynamics_->vehicleControlInput().Brake = input_.brake;
+  if (!std::isnan(input_.steering_wheel_angle))
+    dynamics_->vehicleControlInput().SteeringWheelAngle = input_.steering_wheel_angle;
+  if (input_.gear != Gear::Undefined) dynamics_->vehicleControlInput().Gear = input_.gear;
 
-  if (!std::isnan(model_state_.orientation.roll))
-    state_->stateActuatorInput().OrientationPitch = model_state_.orientation.roll;
-  if (!std::isnan(model_state_.orientation.pitch))
-    state_->stateActuatorInput().OrientationRoll = model_state_.orientation.pitch;
-  if (!std::isnan(model_state_.orientation.yaw))
-    state_->stateActuatorInput().OrientationYaw = model_state_.orientation.yaw;
-  if (!std::isnan(model_state_.angular_velocity.pitch))
-    state_->stateActuatorInput().AngularVelocityPitch = model_state_.angular_velocity.pitch;
-  if (!std::isnan(model_state_.angular_velocity.roll))
-    state_->stateActuatorInput().AngularVelocityRoll = model_state_.angular_velocity.roll;
-  if (!std::isnan(model_state_.angular_velocity.yaw))
-    state_->stateActuatorInput().AngularVelocityYaw = model_state_.angular_velocity.yaw;
-
-  if (!std::isnan(model_state_.velocity.x)) state_->stateActuatorInput().VelocityX = model_state_.velocity.x;
-  if (!std::isnan(model_state_.velocity.y)) state_->stateActuatorInput().VelocityY = model_state_.velocity.y;
-  if (!std::isnan(model_state_.velocity.z)) state_->stateActuatorInput().VelocityZ = model_state_.velocity.z;
+  state_->stateActuatorInput() = dynamics_->stateActuatorOutput();
 }
 }  // namespace symaware
