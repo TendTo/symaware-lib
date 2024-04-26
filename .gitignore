@@ -47,7 +47,7 @@ build
 
 # Doxygen
 doxygen*
-docs/html
+docs/
 
 # VsCode
 .vscode
