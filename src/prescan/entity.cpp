@@ -23,7 +23,7 @@ Entity::Entity(const std::string& name, Environment& environment, EntityModel* c
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
       state_{nullptr} {
   if (model_ != nullptr) model_->setObject(object_);
-  environment.appendEntitiy(*this);
+  environment.addEntity(*this);
 }
 
 Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model)
@@ -37,7 +37,7 @@ Entity::Entity(const std::string& name, Environment& environment, Setup setup, E
       state_{nullptr} {
   updateObject();
   if (model_ != nullptr) model_->setObject(object_);
-  environment.appendEntitiy(*this);
+  environment.addEntity(*this);
 }
 
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,

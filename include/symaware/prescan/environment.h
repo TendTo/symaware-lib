@@ -366,20 +366,13 @@ class Environment {
    * If the operation is successful, the @p entity will be initialised with the object created in the simulation.
    * Futhermore, if the @p entity is controllable, meaning it is associated with a dynamical model,
    * it will be registered in the simulation as a controllable agent.
+   * @note The entity will not be initialised if its type is @ref ObjectType::Object ,
+   * since this type is used to represent already existing objects in the simulation.
    * @param[in,out] entity entity representing the new object to be added
    * The entity will be initialised with the object created in the simulation
    * @param position position of the object in the world
    */
   Environment& addEntity(Entity& entity);
-
-  /**
-   * @brief Add an entity to the environment.
-   *
-   * The entity is assumed to have been initialised with the object created in the simulation.
-   * No further initialisation will be performed.
-   * @param entity entity representing the new object to be added
-   */
-  void appendEntitiy(Entity& entity) { entities_.push_back(&entity); }
 
   /**
    * @brief Get the experiment object of the environment

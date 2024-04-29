@@ -58,13 +58,10 @@ Environment& Environment::setSky(const SkyType sky_type, const prescan::api::typ
 }
 
 Environment& Environment::addEntity(Entity& entity) {
-  if (entity.type() == Environment::ObjectType::Object) {
-    SYMAWARE_RUNTIME_ERROR(
-        "An entity of type 'Object' represents an exiting object in the environment.\n"
-        "No need to add it to the environment again, since the Entity's constructor takes care of that.");
+  if (entity.type() != Environment::ObjectType::Object) {
+    prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
+    entity.initialiseObject(experiment_, object);
   }
-  prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
-  entity.initialiseObject(experiment_, object);
   entities_.push_back(&entity);
   return *this;
 }
