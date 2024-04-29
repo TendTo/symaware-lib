@@ -1,5 +1,5 @@
 /**
- * @file dynamical_model.h
+ * @file amesim_dynamical_model.h
  * @author Ernesto Casablanca (casablancaernesto@gmail.com)
  * @copyright 2024
  * @licence Apache-2.0 license

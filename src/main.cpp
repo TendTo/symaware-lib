@@ -39,11 +39,11 @@ int main()
 
   symaware::Entity toyota{
       symaware::Environment::ObjectType::Toyota_Yaris_Hatchback,
-      symaware::EntitySetup{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
+      symaware::Entity::Setup{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       toyota_model};
   symaware::Entity audi_a8{
       symaware::Environment::ObjectType::Audi_A8_Sedan,
-      symaware::EntitySetup{{0, 3, 0},
+      symaware::Entity::Setup{{0, 3, 0},
                             {0, 0, 0},
                             {0, 0, 0},
                             true,

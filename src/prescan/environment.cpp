@@ -58,6 +58,11 @@ Environment& Environment::setSky(const SkyType sky_type, const prescan::api::typ
 }
 
 Environment& Environment::addEntity(Entity& entity) {
+  if (entity.type() == Environment::ObjectType::Object) {
+    SYMAWARE_RUNTIME_ERROR(
+        "An entity of type 'Object' represents an exiting object in the environment.\n"
+        "No need to add it to the environment again, since the Entity's constructor takes care of that.");
+  }
   prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
   entity.initialiseObject(experiment_, object);
   entities_.push_back(&entity);
@@ -437,6 +442,8 @@ std::string to_string(const Environment::ObjectType object_type) {
       return "Nissan_Ariya";
     case Environment::ObjectType::Nissan_Cabstar_Boxtruck:
       return "Nissan_Cabstar_Boxtruck";
+    case Environment::ObjectType::Object:
+      return "Object";
     case Environment::ObjectType::OfficeBrownFlat:
       return "OfficeBrownFlat";
     case Environment::ObjectType::OfficeBrownTall1:

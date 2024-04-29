@@ -1,18 +1,42 @@
 #include "symaware/prescan/entity.h"
 
 #include <cmath>
+#include <ostream>
 
 #include "symaware/util/exception.h"
 
 namespace symaware {
 
-Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{type, EntitySetup{}, &model} {}
-
-Entity::Entity(const Environment::ObjectType type, EntitySetup setup, EntityModel& model)
+Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{type, Setup{}, &model} {}
+Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}
-
-Entity::Entity(const Environment::ObjectType type, EntitySetup setup, EntityModel* const model)
+Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* const model)
     : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
+
+Entity::Entity(const std::string& name, Environment& environment, EntityModel& model)
+    : Entity{name, environment, &model} {}
+Entity::Entity(const std::string& name, Environment& environment, EntityModel* const model)
+    : is_initialized_{false},
+      type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
+      setup_{},
+      model_{model},
+      object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
+      state_{nullptr} {
+  environment.appendEntitiy(*this);
+}
+
+Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model)
+    : Entity{name, environment, std::move(setup), &model} {}
+Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* const model)
+    : is_initialized_{false},
+      type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
+      setup_{std::move(setup)},
+      model_{model},
+      object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
+      state_{nullptr} {
+  updateObject();
+  environment.appendEntitiy(*this);
+}
 
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
@@ -24,14 +48,13 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
   model_->initialiseObject(experiment, object_);
 }
 
-EntityState Entity::state() const {
+Entity::State Entity::state() const {
   if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("Entity has not been registered to a state in the simulation");
-  return EntityState{
-      Position{state_->selfSensorOutput().PositionX, state_->selfSensorOutput().PositionY,
-               state_->selfSensorOutput().PositionZ},
-      Orientation{state_->selfSensorOutput().OrientationRoll, state_->selfSensorOutput().OrientationPitch,
-                  state_->selfSensorOutput().OrientationYaw},
-      state_->selfSensorOutput().Velocity, state_->selfSensorOutput().Yaw_rate};
+  return State{Position{state_->selfSensorOutput().PositionX, state_->selfSensorOutput().PositionY,
+                        state_->selfSensorOutput().PositionZ},
+               Orientation{state_->selfSensorOutput().OrientationRoll, state_->selfSensorOutput().OrientationPitch,
+                           state_->selfSensorOutput().OrientationYaw},
+               state_->selfSensorOutput().Velocity, state_->selfSensorOutput().Yaw_rate};
 }
 
 void Entity::updateObject() {
@@ -62,6 +85,17 @@ void Entity::step(prescan::sim::ISimulation* const simulation) {
 }
 void Entity::terminate(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->terminate(simulation);
+}
+
+std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup) {
+  return os << "Entity::Setup: (position: " << setup.position << ", orientation: " << setup.orientation
+            << ", cog_offset: " << setup.cog_offset << ", is_movable: " << setup.is_movable
+            << ", sensor_detectability: " << setup.sensor_detectability
+            << ", is_collision_detectable: " << setup.is_collision_detectable << ")";
+}
+std::ostream& operator<<(std::ostream& os, const Entity::State& state) {
+  return os << "Entity::State: (position: " << state.position << ", orientation: " << state.orientation
+            << ", velocity: " << state.velocity << ", yaw_rate: " << state.yaw_rate << ")";
 }
 
 }  // namespace symaware

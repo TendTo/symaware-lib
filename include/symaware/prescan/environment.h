@@ -193,6 +193,7 @@ class Environment {
     NL_Ambulance_Volvo_XC60,
     Nissan_Ariya,
     Nissan_Cabstar_Boxtruck,
+    Object,
     OfficeBrownFlat,
     OfficeBrownTall1,
     OfficeBrownTall2,
@@ -370,6 +371,15 @@ class Environment {
    * @param position position of the object in the world
    */
   Environment& addEntity(Entity& entity);
+
+  /**
+   * @brief Add an entity to the environment.
+   *
+   * The entity is assumed to have been initialised with the object created in the simulation.
+   * No further initialisation will be performed.
+   * @param entity entity representing the new object to be added
+   */
+  void appendEntitiy(Entity& entity) { entities_.push_back(&entity); }
 
   /**
    * @brief Get the experiment object of the environment

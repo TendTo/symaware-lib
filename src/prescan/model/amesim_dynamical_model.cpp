@@ -3,6 +3,7 @@
 #include <fmt/core.h>
 
 #include <cmath>
+#include <ostream>
 #include <prescan/api/Vehicledynamics.hpp>
 #include <prescan/api/types/WorldObject.hpp>
 #include <prescan/api/vehicledynamics/AmesimPreconfiguredDynamics.hpp>
