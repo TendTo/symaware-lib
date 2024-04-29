@@ -27,11 +27,13 @@ using namespace std::chrono_literals;
 
 #if 1
 
-int main() {
+int main()
+{
   symaware::Environment env;
   auto viewer = env.createFreeViewer();
   env.setSky(symaware::Environment::SkyType::DAY);
   env.setWeather(symaware::Environment::WeatherType::SUNNY);
+  symaware::Road r = env.addRoad();
 
   symaware::AmesimDynamicalModel toyota_model{};
   symaware::TrackModel audi_a8_model{{{0, 0, 0},
@@ -71,7 +73,8 @@ int main() {
   simulation.run(1000);
 #else
   const int max_steps = 150;
-  for (int i = 0; i < max_steps; i++) {
+  for (int i = 0; i < max_steps; i++)
+  {
     std::vector<double> input;
     if (i <= 100)
       input = {1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward};
@@ -91,7 +94,8 @@ int main() {
 
 #else
 
-int main() {
+int main()
+{
   symaware::Environment env{
       "C:/Users/Public/Documents/Experiments/DemoExperiments/Demo_3D_Dynamics/Demo_3D_Dynamics.pb"};
 
@@ -99,7 +103,8 @@ int main() {
 #if 0
   simulation.run(1000);
 #else
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 100; i++)
+  {
     simulation.step();
     std::this_thread::sleep_for(100ms);
   }

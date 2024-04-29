@@ -53,6 +53,7 @@ docs/
 .vscode
 
 # Prescan simulation and experiment files
+Models/
 *.pb
 *.osgb
 *.psscene

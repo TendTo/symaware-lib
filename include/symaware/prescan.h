@@ -14,4 +14,5 @@
 #include "symaware/prescan/model/amesim_dynamical_model.h"
 #include "symaware/prescan/model/simulation_model.h"
 #include "symaware/prescan/model/track_model.h"
+#include "symaware/prescan/road.h"
 #include "symaware/prescan/simulation.h"

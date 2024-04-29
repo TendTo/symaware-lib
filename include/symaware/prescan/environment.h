@@ -19,6 +19,7 @@ namespace symaware {
 
 // Forward declaration
 class Entity;
+class Road;
 
 class Environment {
  public:
@@ -382,6 +383,18 @@ class Environment {
    * @param position position of the object in the world
    */
   Environment& addEntity(Entity& entity);
+
+  /**
+   * @brief Add a road to the environment.
+   *
+   * The road will be placed in the world at the specified @p position .
+   * The road the be customised further by altering the returned object.
+   * @note By default the road will not have any lanes.
+   * Add them using the @ref Road::addLane method.
+   * @param position position of the road in the world
+   * @return the new road
+   */
+  Road addRoad(const Position& position = Position{true});
 
   /**
    * @brief Get the experiment object of the environment

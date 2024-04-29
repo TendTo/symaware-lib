@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "symaware/prescan/entity.h"
+#include "symaware/prescan/road.h"
 #include "symaware/util/exception.h"
 
 namespace symaware {
@@ -77,6 +78,10 @@ Environment& Environment::addEntity(Entity& entity) {
   }
   entities_.push_back(&entity);
   return *this;
+}
+
+Road Environment::addRoad(const Position& position) {
+  return Road{*this}.setPosition(position);
 }
 
 prescan::api::viewer::Viewer Environment::createFreeViewer() {
