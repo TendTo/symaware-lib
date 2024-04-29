@@ -57,6 +57,19 @@ Environment& Environment::setSky(const SkyType sky_type, const prescan::api::typ
   return *this;
 }
 
+Environment& Environment::setSchedulerFrequencies(std::int32_t simulation_frequency,
+                                                  std::int32_t integration_frequency) {
+  experiment_.scheduler().setFrequencies(simulation_frequency, integration_frequency);
+  return *this;
+}
+
+Environment& Environment::setSchedulerSpeed(const prescan::api::types::SimulationSpeed simulation_speed,
+                                            const bool ignore_frame_overrun) {
+  experiment_.scheduler().setSimulationSpeed(simulation_speed);
+  experiment_.scheduler().setIgnoreFrameOverrun(ignore_frame_overrun);
+  return *this;
+}
+
 Environment& Environment::addEntity(Entity& entity) {
   if (entity.type() != Environment::ObjectType::Object) {
     prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};

@@ -344,7 +344,16 @@ class Environment {
    * @param integration_frequency the frequency at which the integration will run
    * @return reference to the environment
    */
-  Environment& setScheduler(std::int32_t simulation_frequency, std::int32_t integration_frequency);
+  Environment& setSchedulerFrequencies(std::int32_t simulation_frequency, std::int32_t integration_frequency);
+  /**
+   * @brief Set the scheduler speed
+   *
+   * Only used if the simulation step is not handled manually by the user
+   * @param simulation_speed speed of the simulation
+   * @param ignore_frame_overrun whether to ignore frame overrun
+   * @return reference to the environment
+   */
+  Environment& setSchedulerSpeed(prescan::api::types::SimulationSpeed simulation_speed, bool ignore_frame_overrun);
 
   /**
    * @brief Create a free camera viewer for the environment.
