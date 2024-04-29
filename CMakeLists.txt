@@ -46,6 +46,7 @@ set(Prescan_base_DIR
     "C:/Program Files/Simcenter Prescan/Prescan_2403"
     CACHE STRING "" FORCE)
 set(Prescan_DIR "${Prescan_base_DIR}/lib/cmake")
+set(Prescan_PATH "${Prescan_base_DIR}/bin\\;${Prescan_base_DIR}/Plugins/FullWaveformLidarPlugin/bin\\;${Prescan_base_DIR}/Plugins/PBRadarPlugin/bin\\;${Prescan_base_DIR}/Plugins/PointCloudLidarPlugin/bin\\;${Prescan_base_DIR}/Plugins/ProbabilisticSensorsPlugin/bin\\;${Prescan_base_DIR}/Plugins/V2XPlugin/bin")
 
 find_package(
   Python 3.9
