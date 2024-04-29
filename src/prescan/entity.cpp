@@ -6,12 +6,12 @@
 
 namespace symaware {
 
-Entity::Entity(const Environment::ObjectType type, DynamicalModel& model) : Entity{type, EntitySetup{}, &model} {}
+Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{type, EntitySetup{}, &model} {}
 
-Entity::Entity(const Environment::ObjectType type, EntitySetup setup, DynamicalModel& model)
+Entity::Entity(const Environment::ObjectType type, EntitySetup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}
 
-Entity::Entity(const Environment::ObjectType type, EntitySetup setup, DynamicalModel* const model)
+Entity::Entity(const Environment::ObjectType type, EntitySetup setup, EntityModel* const model)
     : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
 
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,

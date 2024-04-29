@@ -33,6 +33,22 @@ class EntityModel {
                                 prescan::api::types::WorldObject object);
 
   /**
+   * @brief Set the new control input of the model.
+   *
+   * The internal mapping between the vector elements and the input values depends on the model implementation.
+   * @param input model input to set
+   */
+  virtual void setInput(const std::vector<double>& input) = 0;
+  /**
+   * @brief Use the provided @p input to update the @ref input_ .
+   *
+   * Only the non-NaN values in the @p input will overwrite the corresponding values in the @ref input_ .
+   * The internal mapping between the vector elements and the input values depends on the model implementation.
+   * @param input model input used to update the current one
+   */
+  virtual void updateInput(const std::vector<double>& input) = 0;
+
+  /**
    * @brief Register the unit inside the @p simulaiton.
    *
    * Called at the beginning of the @p simulation.

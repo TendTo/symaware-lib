@@ -34,8 +34,8 @@ int main()
   env.setSky(symaware::Environment::SkyType::DAY);
   env.setWeather(symaware::Environment::WeatherType::SUNNY);
 
-  symaware::DynamicalModel toyota_model{};
-  symaware::DynamicalModel audi_a8_model{};
+  symaware::AmesimDynamicalModel toyota_model{};
+  symaware::AmesimDynamicalModel audi_a8_model{};
 
   symaware::Entity toyota{
       symaware::Environment::ObjectType::Toyota_Yaris_Hatchback,
@@ -61,7 +61,7 @@ int main()
   const int max_steps = 150;
   for (int i = 0; i < max_steps; i++)
   {
-    symaware::DynamicalModelInput input{false};
+    std::vector<double> input;
     if (i <= 100)
       input = {1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward};
     else
