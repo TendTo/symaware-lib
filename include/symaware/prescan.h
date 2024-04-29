@@ -12,6 +12,7 @@
 #include "symaware/prescan/environment.h"
 #include "symaware/prescan/experiment_guard.h"
 #include "symaware/prescan/model/amesim_dynamical_model.h"
+#include "symaware/prescan/model/custom_dynamical_model.h"
 #include "symaware/prescan/model/simulation_model.h"
 #include "symaware/prescan/model/track_model.h"
 #include "symaware/prescan/road.h"

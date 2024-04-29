@@ -8,6 +8,7 @@ set(HEADER_LIST
     "${symaware_SOURCE_DIR}/include/symaware/prescan/road.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/model/entity_model.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/model/amesim_dynamical_model.h"
+    "${symaware_SOURCE_DIR}/include/symaware/prescan/model/custom_dynamical_model.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/model/track_model.h"
     "${symaware_SOURCE_DIR}/include/symaware/prescan/model/simulation_model.h")
 set(SOURCE_LIST
@@ -19,6 +20,7 @@ set(SOURCE_LIST
     "${symaware_SOURCE_DIR}/src/prescan/road.cpp"
     "${symaware_SOURCE_DIR}/src/prescan/model/entity_model.cpp"
     "${symaware_SOURCE_DIR}/src/prescan/model/amesim_dynamical_model.cpp"
+    "${symaware_SOURCE_DIR}/src/prescan/model/custom_dynamical_model.cpp"
     "${symaware_SOURCE_DIR}/src/prescan/model/track_model.cpp"
     "${symaware_SOURCE_DIR}/src/prescan/model/simulation_model.cpp")
 
