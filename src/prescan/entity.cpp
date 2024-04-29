@@ -22,6 +22,7 @@ Entity::Entity(const std::string& name, Environment& environment, EntityModel* c
       model_{model},
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
       state_{nullptr} {
+  if (model_ != nullptr) model_->setObject(object_);
   environment.appendEntitiy(*this);
 }
 
@@ -35,6 +36,7 @@ Entity::Entity(const std::string& name, Environment& environment, Setup setup, E
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
       state_{nullptr} {
   updateObject();
+  if (model_ != nullptr) model_->setObject(object_);
   environment.appendEntitiy(*this);
 }
 
@@ -45,7 +47,7 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
 
   object_ = object;
   updateObject();
-  model_->initialiseObject(experiment, object_);
+  if (model_ != nullptr) model_->initialiseObject(experiment, object_);
 }
 
 Entity::State Entity::state() const {
@@ -74,6 +76,7 @@ void Entity::updateObject() {
 
 void Entity::registerUnit(const prescan::api::experiment::Experiment& experiment,
                           prescan::sim::ISimulation* const simulation) {
+  // TODO: a flag may be needed if registering the SelfSensorUnit is expensive over objects that will not be used
   state_ = prescan::sim::registerUnit<prescan::sim::SelfSensorUnit>(simulation, object_);
   if (model_ != nullptr) model_->registerUnit(experiment, simulation);
 }

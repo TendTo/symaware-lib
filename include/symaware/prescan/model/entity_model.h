@@ -26,7 +26,18 @@ class EntityModel {
   explicit EntityModel();
 
   /**
+   * @brief Set the object in the simulation this model will control.
+   *
+   * No initialisation is done in this method.
+   * @param object simulation object this model will control
+   */
+  void setObject(prescan::api::types::WorldObject object);
+
+  /**
    * @brief Initialise the model by assigning the object in the simulation.
+   *
+   * The object is stored in @ref object_ .
+   * @param experiment experiment about to be run
    * @param object simulation object this model will control
    */
   virtual void initialiseObject(prescan::api::experiment::Experiment& experiment,

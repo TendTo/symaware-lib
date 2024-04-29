@@ -13,4 +13,5 @@
 #include "symaware/prescan/experiment_guard.h"
 #include "symaware/prescan/model/amesim_dynamical_model.h"
 #include "symaware/prescan/model/simulation_model.h"
+#include "symaware/prescan/model/track_model.h"
 #include "symaware/prescan/simulation.h"

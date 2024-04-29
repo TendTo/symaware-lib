@@ -13,6 +13,8 @@ namespace symaware {
 
 EntityModel::EntityModel() : object_{}, state_{nullptr} {}
 
+void EntityModel::setObject(prescan::api::types::WorldObject object) { object_ = object; }
+
 void EntityModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
                                    prescan::api::types::WorldObject object) {
   object_ = object;

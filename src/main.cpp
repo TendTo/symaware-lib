@@ -27,28 +27,40 @@ using namespace std::chrono_literals;
 
 #if 1
 
-int main()
-{
+int main() {
   symaware::Environment env;
   auto viewer = env.createFreeViewer();
   env.setSky(symaware::Environment::SkyType::DAY);
   env.setWeather(symaware::Environment::WeatherType::SUNNY);
 
   symaware::AmesimDynamicalModel toyota_model{};
-  symaware::AmesimDynamicalModel audi_a8_model{};
+  symaware::TrackModel audi_a8_model{{{0, 0, 0},
+                                      {1, 1, 0},
+                                      {2, 2, 0},
+                                      {3, 3, 0},
+                                      {4, 4, 0},
+                                      {5, 5, 0},
+                                      {4, 6, 0},
+                                      {3, 7, 0},
+                                      {2, 8, 0},
+                                      {1, 9, 0},
+                                      {0, 10, 0}},
+                                     5,
+                                     0.1};
 
   symaware::Entity toyota{
       symaware::Environment::ObjectType::Toyota_Yaris_Hatchback,
-      symaware::Entity::Setup{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
+      symaware::Entity::Setup{true, true, true,
+                              prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       toyota_model};
   symaware::Entity audi_a8{
       symaware::Environment::ObjectType::Audi_A8_Sedan,
       symaware::Entity::Setup{{0, 3, 0},
-                            {0, 0, 0},
-                            {0, 0, 0},
-                            true,
-                            true,
-                            prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
+                              {0, 0, 0},
+                              {0, 0, 0},
+                              true,
+                              true,
+                              prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       audi_a8_model};
   env.addEntity(toyota);
   env.addEntity(audi_a8);
@@ -59,8 +71,7 @@ int main()
   simulation.run(1000);
 #else
   const int max_steps = 150;
-  for (int i = 0; i < max_steps; i++)
-  {
+  for (int i = 0; i < max_steps; i++) {
     std::vector<double> input;
     if (i <= 100)
       input = {1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward};
@@ -80,8 +91,7 @@ int main()
 
 #else
 
-int main()
-{
+int main() {
   symaware::Environment env{
       "C:/Users/Public/Documents/Experiments/DemoExperiments/Demo_3D_Dynamics/Demo_3D_Dynamics.pb"};
 
@@ -89,8 +99,7 @@ int main()
 #if 0
   simulation.run(1000);
 #else
-  for (int i = 0; i < 100; i++)
-  {
+  for (int i = 0; i < 100; i++) {
     simulation.step();
     std::this_thread::sleep_for(100ms);
   }
