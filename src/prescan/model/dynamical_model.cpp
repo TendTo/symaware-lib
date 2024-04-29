@@ -1,4 +1,4 @@
-#include "symaware/prescan/dynamical_model.h"
+#include "symaware/prescan/model/dynamical_model.h"
 
 #include <fmt/core.h>
 
@@ -11,39 +11,29 @@
 
 namespace symaware {
 
-DynamicalModel::DynamicalModel(DynamicalModelInput initial_input)
-    : object_{}, state_{nullptr}, input_{std::move(initial_input)} {}
+DynamicalModel::DynamicalModel(DynamicalModelInput initial_input) : EntityModel{}, input_{std::move(initial_input)} {}
 
 void DynamicalModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
                                       prescan::api::types::WorldObject object) {
-  object_ = object;
+  EntityModel::initialiseObject(experiment, object);
   prescan::api::vehicledynamics::createAmesimPreconfiguredDynamics(object_).setFlatGround(true);
 }
 
 void DynamicalModel::setInput(const DynamicalModelInput input) { input_ = std::move(input); }
 
+void DynamicalModel::updateInput(const DynamicalModelInput& input) {
+  if (!std::isnan(input.throttle)) input_.throttle = input.throttle;
+  if (!std::isnan(input.brake)) input_.brake = input.brake;
+  if (!std::isnan(input.steering_wheel_angle)) input_.steering_wheel_angle = input.steering_wheel_angle;
+  if (input.gear != Gear::Undefined) input_.gear = input.gear;
+}
+
 void DynamicalModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
                                   prescan::sim::ISimulation* simulation) {
-  if (state_ != nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has alreasy been registered to a state");
-  state_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, object_);
+  EntityModel::registerUnit(experiment, simulation);
   prescan::api::vehicledynamics::AmesimPreconfiguredDynamics dynamics =
       prescan::api::vehicledynamics::getAttachedAmesimPreconfiguredDynamics(object_);
   dynamics_ = prescan::sim::registerUnit<prescan::sim::AmesimVehicleDynamicsUnit>(simulation, dynamics);
-}
-
-void DynamicalModel::initialise(prescan::sim::ISimulation* simulation) {
-  if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has not been registered to a state");
-  updateState();
-}
-
-void DynamicalModel::step(prescan::sim::ISimulation* simulation) {
-  if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has not been registered to a state");
-  updateState();
-}
-
-void DynamicalModel::terminate(prescan::sim::ISimulation* simulation) {
-  if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("DynamicalModel has not been registered to a state");
-  state_ = nullptr;
 }
 
 void DynamicalModel::updateState() {
@@ -58,4 +48,5 @@ void DynamicalModel::updateState() {
 
   state_->stateActuatorInput() = dynamics_->stateActuatorOutput();
 }
+
 }  // namespace symaware

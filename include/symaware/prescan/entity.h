@@ -12,7 +12,7 @@
 #include <string>
 
 #include "symaware/prescan/data.h"
-#include "symaware/prescan/dynamical_model.h"
+#include "symaware/prescan/model/dynamical_model.h"
 #include "symaware/prescan/environment.h"
 
 namespace symaware {

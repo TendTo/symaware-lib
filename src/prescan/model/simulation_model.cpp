@@ -1,4 +1,4 @@
-#include "symaware/prescan/simulation_model.h"
+#include "symaware/prescan/model/simulation_model.h"
 
 #include <iostream>
 #include <prescan/api/Experiment.hpp>

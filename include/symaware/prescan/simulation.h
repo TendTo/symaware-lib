@@ -12,7 +12,7 @@
 #include <prescan/sim/ManualSimulation.hpp>
 
 #include "symaware/prescan/environment.h"
-#include "symaware/prescan/simulation_model.h"
+#include "symaware/prescan/model/simulation_model.h"
 
 namespace symaware {
 

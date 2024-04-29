@@ -14,10 +14,11 @@
 #include <prescan/sim/StateActuatorUnit.hpp>
 
 #include "symaware/prescan/data.h"
+#include "symaware/prescan/model/entity_model.h"
 
 namespace symaware {
 
-class DynamicalModel {
+class DynamicalModel : public EntityModel {
  public:
   /**
    * @brief Construct a new Dynamical Model object with an initial model state.
@@ -35,6 +36,13 @@ class DynamicalModel {
    * @param input model input to set
    */
   void setInput(DynamicalModelInput input);
+  /**
+   * @brief Use the provided @p input to update the @ref input_ .
+   *
+   * Only the non-NaN values in the @p input will overwrite the corresponding values in the @ref input_ .
+   * @param input model input used to update the current one
+   */
+  void updateInput(const DynamicalModelInput& input);
 
   /**
    * @brief Register the unit inside the @p simulaiton.
@@ -45,32 +53,10 @@ class DynamicalModel {
    * @param experiment experiment about to be run
    * @param simulation simulation that will run the experiment
    */
-  void registerUnit(const prescan::api::experiment::Experiment& experiment, prescan::sim::ISimulation* simulation);
-  /**
-   * @brief Set the initial state of the model in the @p simulation.
-   *
-   * Called before the first step of the @p simulation.
-   * @param simulation simulation that is about to run the experiment
-   */
-  void initialise(prescan::sim::ISimulation* simulation);
-  /**
-   * @brief Set the state of the model in the @p simulation.
-   *
-   * Called at each step of the @p simulation.
-   * @param simulation simulation that is running the experiment
-   */
-  void step(prescan::sim::ISimulation* simulation);
-  /**
-   * @brief Dissaociate the model from the @p simulation.
-   *
-   * Called at the end of the @p simulation.
-   * @param simulation simulation that has run the experiment
-   */
-  void terminate(prescan::sim::ISimulation* simulation);
+  void registerUnit(const prescan::api::experiment::Experiment& experiment,
+                    prescan::sim::ISimulation* simulation) override;
 
-  const prescan::api::types::WorldObject& object() const { return object_; }
-  const prescan::sim::StateActuatorUnit& state() const { return *state_; }
-  prescan::sim::StateActuatorUnit& m_state() const { return *state_; }
+  const DynamicalModelInput& input() const { return input_; }
 
  private:
   /**
@@ -79,12 +65,10 @@ class DynamicalModel {
    * Any `NaN` values in the @ref state_input_ are ignored
    * and the corresponding values in the @ref state_ are not changed.
    */
-  void updateState();
+  void updateState() override;
 
-  prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
-  prescan::sim::StateActuatorUnit* state_;   ///< The state of the entity in the simulation
-  prescan::sim::AmesimVehicleDynamicsUnit* dynamics_; ///< The dynamics of the entity in the simulation
-  DynamicalModelInput input_;  ///< The model state of the entity that will be applied each step
+  prescan::sim::AmesimVehicleDynamicsUnit* dynamics_;  ///< The dynamics of the entity in the simulation
+  DynamicalModelInput input_;                          ///< The model state of the entity that will be applied each step
 };
 
 }  // namespace symaware

@@ -27,29 +27,30 @@ using namespace std::chrono_literals;
 
 #if 1
 
-int main() {
+int main()
+{
   symaware::Environment env;
   auto viewer = env.createFreeViewer();
   env.setSky(symaware::Environment::SkyType::DAY);
   env.setWeather(symaware::Environment::WeatherType::SUNNY);
 
-  symaware::DynamicalModel audi_a3_model{};
+  symaware::DynamicalModel toyota_model{};
   symaware::DynamicalModel audi_a8_model{};
 
-  symaware::Entity audi_a3{
-      symaware::Environment::ObjectType::Audi_A3,
+  symaware::Entity toyota{
+      symaware::Environment::ObjectType::Toyota_Yaris_Hatchback,
       symaware::EntitySetup{true, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
-      audi_a3_model};
+      toyota_model};
   symaware::Entity audi_a8{
       symaware::Environment::ObjectType::Audi_A8_Sedan,
-      symaware::EntitySetup{{-10, -10, 0},
+      symaware::EntitySetup{{0, 3, 0},
                             {0, 0, 0},
                             {0, 0, 0},
                             true,
                             true,
                             prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       audi_a8_model};
-  env.addEntity(audi_a3);
+  env.addEntity(toyota);
   env.addEntity(audi_a8);
 
   symaware::Simulation simulation(env);
@@ -58,8 +59,15 @@ int main() {
   simulation.run(1000);
 #else
   const int max_steps = 150;
-  for (int i = 0; i < max_steps; i++) {
-    audi_a8_model.setInput({1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward});
+  for (int i = 0; i < max_steps; i++)
+  {
+    symaware::DynamicalModelInput input{false};
+    if (i <= 100)
+      input = {1, 0, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Forward};
+    else
+      input = {0, 1, 2.0 * M_PI * i / max_steps - M_PI, symaware::Gear::Neutral};
+    toyota_model.setInput(input);
+    audi_a8_model.setInput(input);
     simulation.step();
     std::this_thread::sleep_for(100ms);
   }
@@ -72,7 +80,8 @@ int main() {
 
 #else
 
-int main() {
+int main()
+{
   symaware::Environment env{
       "C:/Users/Public/Documents/Experiments/DemoExperiments/Demo_3D_Dynamics/Demo_3D_Dynamics.pb"};
 
@@ -80,7 +89,8 @@ int main() {
 #if 0
   simulation.run(1000);
 #else
-  for (int i = 0; i < 100; i++) {
+  for (int i = 0; i < 100; i++)
+  {
     simulation.step();
     std::this_thread::sleep_for(100ms);
   }
