@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12.0)
+cmake_minimum_required(VERSION 3.21.0)
 set(SKBUILD_PROJECT_NAME
     symaware
     CACHE INTERNAL "Project name")
