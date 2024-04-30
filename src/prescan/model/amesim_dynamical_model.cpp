@@ -73,4 +73,8 @@ std::ostream& operator<<(std::ostream& os, const AmesimDynamicalModel::Input& in
             << ", steering_wheel_angle: " << input.steering_wheel_angle << ", gear: " << to_string(input.gear) << ")";
 }
 
+std::ostream& operator<<(std::ostream& os, const AmesimDynamicalModel& amesim_dynamical_model) {
+  return os << "AmesimDynamicalModel(input: " << amesim_dynamical_model.input() << ")";
+}
+
 }  // namespace symaware

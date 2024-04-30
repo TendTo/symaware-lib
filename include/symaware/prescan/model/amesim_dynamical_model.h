@@ -77,6 +77,7 @@ class AmesimDynamicalModel : public EntityModel {
 };
 
 std::ostream& operator<<(std::ostream& os, const AmesimDynamicalModel::Input& input);
+std::ostream& operator<<(std::ostream& os, const AmesimDynamicalModel& amesim_dynamical_model);
 
 }  // namespace symaware
 

@@ -102,5 +102,8 @@ std::ostream& operator<<(std::ostream& os, const CustomDynamicalModel::Input& in
   return os << "CustomDynamicalModel::Input: (" << input.position << ", " << input.orientation << ", "
             << input.acceleration << ", " << input.velocity << ", " << input.angular_velocity << ")";
 }
+std::ostream& operator<<(std::ostream& os, const CustomDynamicalModel& custom_dynamical_model) {
+  return os << "CustomDynamicalModel(input: " << custom_dynamical_model.input() << ")";
+}
 
 }  // namespace symaware

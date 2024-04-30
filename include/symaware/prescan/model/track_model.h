@@ -48,6 +48,10 @@ class TrackModel : public EntityModel {
   void registerUnit(const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override;
 
+  const std::vector<Position>& trajectoryPath() const { return trajectory_path_; }
+  double trajectorySpeed() const { return trajectory_speed_; }
+  double trajectoryTolerance() const { return trajectory_tolerance_; }
+
  private:
   void updateState() override;
   std::vector<Position> trajectory_path_;  ///< The sequence of positions in the trajectory
@@ -57,5 +61,7 @@ class TrackModel : public EntityModel {
   prescan::sim::SpeedProfileUnit* speed_profile_;  ///< The speed profile of the entity in the simulation
   prescan::sim::PathUnit* path_;                   ///< The path of the trajectory of the entity in the simulation
 };
+
+std::ostream& operator<<(std::ostream& os, const TrackModel& track_model);
 
 }  // namespace symaware

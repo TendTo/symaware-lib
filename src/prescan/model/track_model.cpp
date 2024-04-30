@@ -61,4 +61,13 @@ void TrackModel::updateState() {
   state_->stateActuatorInput() = path_->stateActuatorOutput();
 }
 
+std::ostream& operator<<(std::ostream& os, const TrackModel& track_model) {
+  return os << "TrackModel(trajectory_path: (";
+  for (const Position& position : track_model.trajectoryPath()) {
+    os << position << ", ";
+  }
+  return os << "), trajectory_speed: " << track_model.trajectorySpeed()
+            << ", trajectory_tolerance: " << track_model.trajectoryTolerance() << ")";
+}
+
 }  // namespace symaware

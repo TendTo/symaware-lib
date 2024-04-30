@@ -77,6 +77,7 @@ class CustomDynamicalModel : public EntityModel {
 };
 
 std::ostream& operator<<(std::ostream& os, const CustomDynamicalModel::Input& input);
+std::ostream& operator<<(std::ostream& os, const CustomDynamicalModel& custom_dynamical_model);
 
 }  // namespace symaware
 
