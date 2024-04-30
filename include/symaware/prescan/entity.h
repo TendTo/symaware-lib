@@ -106,7 +106,7 @@ class Entity {
    */
   Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model);
   /** @overload */
-  Entity(const std::string& name, Environment& environment, Setup setup = {}, EntityModel* model = nullptr);
+  Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* model = nullptr);
 
   /**
    * @brief Initialise the object once the entity has been added to the environment.
@@ -165,6 +165,7 @@ class Entity {
 
 std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup);
 std::ostream& operator<<(std::ostream& os, const Entity::State& state);
+std::ostream& operator<<(std::ostream& os, const Entity& entity);
 
 }  // namespace symaware
 
@@ -172,3 +173,5 @@ template <>
 struct fmt::formatter<symaware::Entity::State> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::Entity::Setup> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::Entity> : fmt::ostream_formatter {};

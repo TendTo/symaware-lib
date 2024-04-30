@@ -80,9 +80,7 @@ Environment& Environment::addEntity(Entity& entity) {
   return *this;
 }
 
-Road Environment::addRoad(const Position& position) {
-  return Road{*this}.setPosition(position);
-}
+Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }
 
 prescan::api::viewer::Viewer Environment::createFreeViewer() {
   prescan::api::viewer::Viewer viewer{prescan::api::viewer::createViewer(experiment_)};
@@ -91,6 +89,14 @@ prescan::api::viewer::Viewer Environment::createFreeViewer() {
 }
 void Environment::removeAllViewers() {
   for (prescan::api::viewer::Viewer& viewer : prescan::api::viewer::getViewers(experiment_).asVector()) viewer.remove();
+}
+
+std::ostream& operator<<(std::ostream& os, const Environment::WeatherType weather_type) {
+  return os << to_string(weather_type);
+}
+std::ostream& operator<<(std::ostream& os, const Environment::SkyType sky_type) { return os << to_string(sky_type); }
+std::ostream& operator<<(std::ostream& os, const Environment::ObjectType object_type) {
+  return os << to_string(object_type);
 }
 
 std::string to_string(const Environment::WeatherType weather_type) {

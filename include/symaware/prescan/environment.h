@@ -429,4 +429,8 @@ std::string to_string(Environment::WeatherType weather_type);
 std::string to_string(Environment::SkyType sky_type);
 std::string to_string(Environment::ObjectType object_type);
 
+std::ostream& operator<<(std::ostream& os, Environment::WeatherType weather_type);
+std::ostream& operator<<(std::ostream& os, Environment::SkyType sky_type);
+std::ostream& operator<<(std::ostream& os, Environment::ObjectType object_type);
+
 }  // namespace symaware

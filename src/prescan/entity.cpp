@@ -16,7 +16,7 @@ Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* con
 Entity::Entity(const std::string& name, Environment& environment, EntityModel& model)
     : Entity{name, environment, &model} {}
 Entity::Entity(const std::string& name, Environment& environment, EntityModel* const model)
-    : is_initialized_{false},
+    : is_initialized_{true},
       type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
       setup_{},
       model_{model},
@@ -29,7 +29,7 @@ Entity::Entity(const std::string& name, Environment& environment, EntityModel* c
 Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model)
     : Entity{name, environment, std::move(setup), &model} {}
 Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* const model)
-    : is_initialized_{false},
+    : is_initialized_{true},
       type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
       setup_{std::move(setup)},
       model_{model},
@@ -51,7 +51,7 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
 }
 
 Entity::State Entity::state() const {
-  if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("Entity has not been registered to a state in the simulation");
+  if (state_ == nullptr) return State{false};
   return State{Position{state_->selfSensorOutput().PositionX, state_->selfSensorOutput().PositionY,
                         state_->selfSensorOutput().PositionZ},
                Orientation{state_->selfSensorOutput().OrientationRoll, state_->selfSensorOutput().OrientationPitch,
@@ -99,6 +99,15 @@ std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup) {
 std::ostream& operator<<(std::ostream& os, const Entity::State& state) {
   return os << "Entity::State: (position: " << state.position << ", orientation: " << state.orientation
             << ", velocity: " << state.velocity << ", yaw_rate: " << state.yaw_rate << ")";
+}
+std::ostream& operator<<(std::ostream& os, const Entity& entity) {
+  os << std::boolalpha;
+  os << "Entity: (type: " << entity.type() << ", setup: " << entity.setup();
+  if (entity.model() != nullptr) os << ", model: " << entity.model();
+  if (entity.is_initialized()) os << ", object: " << entity.object();
+  os << ", state: " << entity.state() << ")";
+  os << std::noboolalpha;
+  return os;
 }
 
 }  // namespace symaware
