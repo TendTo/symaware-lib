@@ -15,8 +15,8 @@ void init_road(py::module_ &m) {
            "Add a cubic polynomial section to the road", py::arg("length"), py::arg("a"), py::arg("b"), py::arg("c"),
            py::arg("d"))
       .def("add_lane", &symaware::Road::addLane, "Add a lane to the road", py::arg("road_side"), py::arg("width"),
-           py::arg("lane_type") = prescan::api::roads::types::LaneType::LaneTypeDriving, py::arg("start_offset") = 0.0,
-           py::arg("end_offset") = std::numeric_limits<double>::infinity())
+           py::arg("lane_type") = prescan::api::roads::types::LaneType::LaneTypeDriving, "LaneType.LaneTypeDriving",
+           py::arg("start_offset") = 0.0, py::arg("end_offset") = std::numeric_limits<double>::infinity())
       .def("add_parametric_cubic_polynomial_section", &symaware::Road::addParametricCubicPolynomialSection,
            "Add a parametric cubic polynomial section to the road", py::arg("length"), py::arg("aU"), py::arg("bU"),
            py::arg("cU"), py::arg("dU"), py::arg("aV"), py::arg("bV"), py::arg("cV"), py::arg("dV"),
@@ -24,13 +24,14 @@ void init_road(py::module_ &m) {
       .def("add_parking_space", &symaware::Road::addParkingSpace, "Add a parking space to the road", py::arg("length"),
            py::arg("width"), py::arg("yaw") = 0,
            py::arg("road_side") = prescan::api::roads::types::RoadSideType::RoadSideTypeLeft,
-           py::arg("side_offset") = 0, py::arg("offset") = 0)
+           "RoadSideType.RoadSideTypeLeft", py::arg("side_offset") = 0, py::arg("offset") = 0)
       .def("add_spiral_section", &symaware::Road::addSpiralSection, "Add a spiral section to the road",
            py::arg("length"), py::arg("start_curvature"), py::arg("end_curvature"))
       .def("add_straight_section", &symaware::Road::addStraightSection, "Add a straight section to the road",
            py::arg("length"))
       .def("set_speed_limit_profile", &symaware::Road::setSpeedLimitProfile, "Set the speed limit profile",
-           py::arg("value"), py::arg("start_offset") = 0.0, py::arg("end_offset") = std::numeric_limits<double>::infinity())
+           py::arg("value"), py::arg("start_offset") = 0.0,
+           py::arg("end_offset") = std::numeric_limits<double>::infinity())
       .def("set_traffic_side", &symaware::Road::setTrafficSide, "Set the traffic side of the road",
            py::arg("traffic_side"))
       .def("set_asphalt_color", &symaware::Road::setAsphaltColor, "Set the asphalt color", py::arg("r"), py::arg("g"),

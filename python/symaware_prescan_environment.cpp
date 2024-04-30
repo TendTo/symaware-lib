@@ -1,3 +1,5 @@
+#include <pybind11/stl.h>
+
 #include <iostream>
 
 #include "symaware/prescan/entity.h"
@@ -317,10 +319,12 @@ void init_environment(py::module_ &m) {
   environment.def(py::init<>())
       .def(py::init<const std::string &>())
       .def("set_weather", &symaware::Environment::setWeather, "Set the weather of the environment",
-           py::arg("weather_type") = symaware::Environment::WeatherType::SUNNY, py::arg("fog_visibility") = -1)
+           py::arg("weather_type") = symaware::Environment::WeatherType::SUNNY, "._Environment.WeatherType.SUNNY",
+           py::arg("fog_visibility") = -1)
       .def("set_sky", &symaware::Environment::setSky, "Set the sky of the environment",
-           py::arg("sky_type") = symaware::Environment::SkyType::DAY,
-           py::arg("light_pollution") = prescan::api::types::SkyLightPollution::SkyLightPollutionNone)
+           py::arg("sky_type") = symaware::Environment::SkyType::DAY, "._Environment.SkyType.DAY",
+           py::arg("light_pollution") = prescan::api::types::SkyLightPollution::SkyLightPollutionNone,
+           "SkyLightPollution.SkyLightPollutionNone")
       .def("set_scheduler_frequencies", &symaware::Environment::setSchedulerFrequencies,
            "Set the scheduler frequencies of the environment", py::arg("simulation_frequency"),
            py::arg("integration_frequency"))
@@ -328,7 +332,7 @@ void init_environment(py::module_ &m) {
            "Set the scheduler speed of the environment", py::arg("simulation_speed"), py::arg("ignore_frame_overrun"))
       .def("add_entity", &symaware::Environment::addEntity, "Add an entity to the environment", py::arg("entity"))
       .def("add_road", &symaware::Environment::addRoad, "Add a road to the environment",
-           py::arg("position") = symaware::Position{true})
+           py::arg("position") = symaware::Position{true}, "Position(true)")
       .def("create_free_viewer", &symaware::Environment::createFreeViewer, "Create a free viewer in the environment")
       .def("remove_all_viewers", &symaware::Environment::removeAllViewers, "Remove all viewers from the environment")
 

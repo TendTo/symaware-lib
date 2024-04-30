@@ -1,14 +1,30 @@
+#include <pybind11/stl.h>
+
 #include <prescan/api/Experiment.hpp>
 #include <prescan/api/Roads.hpp>
 #include <prescan/api/Viewer.hpp>
 #include <prescan/api/types/WindowSettings.hpp>
 #include <prescan/api/types/WorldObject.hpp>
+#include <prescan/sim/ISimulation.hpp>
 #include <prescan/sim/ISimulationLogger.hpp>
+#include <prescan/sim/Unit.hpp>
 
 #include "symaware/prescan/data.h"
 #include "symaware_prescan.h"
 
 namespace py = pybind11;
+
+class PyISimulation : public prescan::sim::ISimulation {
+ public:
+  prescan::sim::Unit* registerUnit(std::unique_ptr<prescan::sim::Unit> unit) override {
+    PYBIND11_OVERLOAD_PURE(prescan::sim::Unit*, prescan::sim::ISimulation, registerUnit, std::move(unit));
+  }
+  const std::string& getSimulationPath() const override {
+    PYBIND11_OVERLOAD_PURE(const std::string&, prescan::sim::ISimulation, getSimulationPath, );
+  }
+  void stop() override { PYBIND11_OVERLOAD_PURE(void, prescan::sim::ISimulation, stop, ); }
+  double getSampleTime() const override { PYBIND11_OVERLOAD_PURE(double, prescan::sim::ISimulation, getSampleTime, ); }
+};
 
 void init_api(py::module_& m) {
   py::enum_<prescan::sim::ISimulationLogger::LogLevel>(m, "LogLevel")
@@ -22,6 +38,14 @@ void init_api(py::module_& m) {
       .value("LogLevelNotice", prescan::sim::ISimulationLogger::LogLevel::LogLevelNotice)
       .value("LogLevelOff", prescan::sim::ISimulationLogger::LogLevel::LogLevelOff)
       .value("LogLevelWarning", prescan::sim::ISimulationLogger::LogLevel::LogLevelWarning)
+      .export_values();
+
+  py::enum_<prescan::api::types::SimulationSpeed>(m, "SimulationSpeed")
+      .value("SimulationSpeedAsFastAsPossible", prescan::api::types::SimulationSpeed::SimulationSpeedAsFastAsPossible)
+      .value("SimulationSpeedHalfWallClockTime", prescan::api::types::SimulationSpeed::SimulationSpeedHalfWallClockTime)
+      .value("SimulationSpeedQuarterWallClockTime",
+             prescan::api::types::SimulationSpeed::SimulationSpeedQuarterWallClockTime)
+      .value("SimulationSpeedWallClockTime", prescan::api::types::SimulationSpeed::SimulationSpeedWallClockTime)
       .export_values();
 
   py::enum_<prescan::api::roads::types::RoadSideType>(m, "RoadSideType")
@@ -83,15 +107,17 @@ void init_api(py::module_& m) {
       .value("SkyLightPollutionSuburbanUrban", prescan::api::types::SkyLightPollution::SkyLightPollutionSuburbanUrban)
       .export_values();
 
+  py::class_<prescan::sim::Unit>(m, "_Unit");
+
+  py::class_<prescan::sim::ISimulation, PyISimulation>(m, "_ISimulation")
+      .def("get_simulation_path", &prescan::sim::ISimulation::getSimulationPath)
+      .def("stop", &prescan::sim::ISimulation::stop)
+      .def("get_sample_time", &prescan::sim::ISimulation::getSampleTime);
+
   py::class_<prescan::api::experiment::Experiment>(m, "_Experiment")
       .def_static("create_experiment", &prescan::api::experiment::createExperiment)
       .def_static("load_experiment_from_file", &prescan::api::experiment::loadExperimentFromFile, py::arg("filename"))
       .def("object_types", &prescan::api::experiment::Experiment::objectTypes);
-
-  py::class_<prescan::api::viewer::Viewer>(m, "_Viewer")
-      .def_static("create_viewer", &prescan::api::viewer::createViewer, py::arg("experiment"))
-      .def("remove", &prescan::api::viewer::Viewer::remove)
-      .def("window_settings", &prescan::api::viewer::Viewer::windowSettings);
 
   py::class_<prescan::api::types::WindowSettings>(m, "_WindowSettings")
       .def_property("always_on_top", &prescan::api::types::WindowSettings::alwaysOnTop,
@@ -112,6 +138,11 @@ void init_api(py::module_& m) {
                     &prescan::api::types::WindowSettings::setVisualizationFrequency)
       .def_property("window_decoration", &prescan::api::types::WindowSettings::windowDecoration,
                     &prescan::api::types::WindowSettings::setWindowDecoration);
+
+  py::class_<prescan::api::viewer::Viewer>(m, "_Viewer")
+      .def_static("create_viewer", &prescan::api::viewer::createViewer, py::arg("experiment"))
+      .def("remove", &prescan::api::viewer::Viewer::remove)
+      .def("window_settings", &prescan::api::viewer::Viewer::windowSettings);
 
   py::class_<prescan::api::types::WorldObject>(m, "_WorldObject")
       .def("remove", prescan::api::types::WorldObject::remove)
