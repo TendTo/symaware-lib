@@ -38,8 +38,9 @@ class Road {
     // lane.getLaneMarker(prescan::api::roads::types::LaneSideType::LaneSideTypeInner).
     return *this;
   }
-  Road& addLane(double length, double aU, double bU, double cU, double dU, double aV, double bV, double cV, double dV,
-                prescan::api::roads::types::ParameterRange parameterRange) {
+  Road& addParametricCubicPolynomialSection(double length, double aU, double bU, double cU, double dU, double aV,
+                                            double bV, double cV, double dV,
+                                            prescan::api::roads::types::ParameterRange parameterRange) {
     road_.addParametricCubicPolynomialSection(length, aU, bU, cU, dU, aV, bV, cV, dV, parameterRange);
     return *this;
   }
