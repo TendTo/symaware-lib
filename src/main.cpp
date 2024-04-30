@@ -79,7 +79,7 @@ int main() {
   env.addEntity(audi_a8);
 
   symaware::Simulation simulation(env);
-  simulation.setLogLever(prescan::sim::ISimulationLogger::LogLevel::LogLevelInfo);
+  simulation.setLogLevel(prescan::sim::ISimulationLogger::LogLevel::LogLevelInfo);
 #if 0
   simulation.run(1000);
 #else

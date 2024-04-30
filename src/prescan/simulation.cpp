@@ -35,7 +35,7 @@ void Simulation::terminate() {
   is_initialised_ = false;
 }
 
-void Simulation::setLogLever(const prescan::sim::ISimulationLogger::LogLevel log_level) {
+void Simulation::setLogLevel(const prescan::sim::ISimulationLogger::LogLevel log_level) {
   simulation_.setLogLevel(log_level);
 }
 

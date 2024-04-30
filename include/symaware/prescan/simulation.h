@@ -49,7 +49,7 @@ class Simulation {
    * @brief Set the log level of the underlying simulation logger
    * @param log_level log level
    */
-  void setLogLever(prescan::sim::ISimulationLogger::LogLevel log_level);
+  void setLogLevel(prescan::sim::ISimulationLogger::LogLevel log_level);
 
  private:
   /** @brief Initialise the simulation in the case of a manual step */
