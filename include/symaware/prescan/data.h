@@ -11,7 +11,6 @@
 
 #include <iosfwd>
 #include <limits>
-#include <prescan/api/types/WorldObject.hpp>
 
 static_assert(std::numeric_limits<double>::has_quiet_NaN, "IEEE 754 required");
 

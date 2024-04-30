@@ -57,8 +57,6 @@ void AmesimDynamicalModel::registerUnit(const prescan::api::experiment::Experime
 
 void AmesimDynamicalModel::updateState() {
   SYMAWARE_ASSERT(state_ != nullptr, "AmesimDynamicalModel has not been registered to a state");
-  fmt::println("Updating state with input: {}", input_);
-
   if (!std::isnan(input_.throttle)) dynamics_->vehicleControlInput().Throttle = input_.throttle;
   if (!std::isnan(input_.brake)) dynamics_->vehicleControlInput().Brake = input_.brake;
   if (!std::isnan(input_.steering_wheel_angle))
