@@ -4,8 +4,12 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(_symaware_prescan, m) {
   init_data(m);
+  init_api(m);
   init_road(m);
-  // init_environment(m);
+  init_model(m);
+  init_entity(m);
+  init_environment(m);
+  init_simulation(m);
 
   m.doc() = "Python binding for the symaware prescan library";
 #ifdef VERSION_INFO

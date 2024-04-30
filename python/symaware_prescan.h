@@ -9,4 +9,7 @@
 void init_data(pybind11::module_ &);
 void init_model(pybind11::module_ &);
 void init_road(pybind11::module_ &);
+void init_simulation(pybind11::module_ &);
 void init_environment(pybind11::module_ &);
+void init_api(pybind11::module_ &);
+void init_entity(pybind11::module_ &);
