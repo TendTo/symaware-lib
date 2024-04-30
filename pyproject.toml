@@ -44,7 +44,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
     "Typing :: Typed",
 ]
-dependencies = []
+dependencies = ["symaware-base"]
 
 # URLs of the project
 [project.urls]
@@ -67,3 +67,38 @@ cmake.verbose = true
 logging.level = "INFO"
 wheel.packages = ["python/symaware"]
 cmake.targets = ["_symaware_prescan"]
+
+# Pytest configuration (test runner)
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = [
+    "--cov=symaware.base",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=50",
+    "--verbose",
+]
+testpaths = ["tests"]
+
+# Coverage configuration (test coverage)
+[tool.coverage.run]
+omit = ["*/__main__.py", "*/_version.py"] # omit files from coverage
+
+# Black configuration (code formatter)
+[tool.black]
+target-version = ['py39', 'py310', 'py311', 'py312']
+line-length = 120
+include = '(src|tests)\/.*\.py'
+
+# Isort configuration (import sorter)
+[tool.isort]
+profile = "black"
+
+# mypy configuration (static type checker)
+[tool.mypy]
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
