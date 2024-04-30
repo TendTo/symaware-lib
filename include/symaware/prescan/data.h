@@ -84,25 +84,12 @@ struct AngularVelocity {
   double yaw;
 };
 
-struct CenterOfGravityOffset {
-  CenterOfGravityOffset() = default;
-  CenterOfGravityOffset(double x, double y, double z) : x{x}, y{y}, z{z} {}
-  explicit CenterOfGravityOffset(bool zero_init)
-      : x{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-        y{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-        z{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
-  double x;
-  double y;
-  double z;
-};
-
 std::string to_string(Gear gear);
 std::ostream& operator<<(std::ostream& os, const Position& position);
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
 std::ostream& operator<<(std::ostream& os, const Velocity& velocity);
 std::ostream& operator<<(std::ostream& os, const Acceleration& acceleration);
 std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_velocity);
-std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offset);
 
 }  // namespace symaware
 
@@ -116,5 +103,3 @@ template <>
 struct fmt::formatter<symaware::Acceleration> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::AngularVelocity> : fmt::ostream_formatter {};
-template <>
-struct fmt::formatter<symaware::CenterOfGravityOffset> : fmt::ostream_formatter {};

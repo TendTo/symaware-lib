@@ -25,7 +25,7 @@ class Entity {
   /** Setup configuration for a generic entity */
   struct Setup {
     Setup() = default;
-    Setup(Position position, Orientation orientation, CenterOfGravityOffset cog_offset, bool is_collision_detectable,
+    Setup(Position position, Orientation orientation, Position cog_offset, bool is_collision_detectable,
           bool is_movable, prescan::api::types::SensorDetectability sensor_detectability)
         : position{position},
           orientation{orientation},
@@ -41,11 +41,11 @@ class Entity {
           is_collision_detectable{is_collision_detectable},
           is_movable{is_movable},
           sensor_detectability{sensor_detectability} {}
-    Position position;                 ///< The initial position of the entity in the world
-    Orientation orientation;           ///< The initial orientation of the entity in the world
-    CenterOfGravityOffset cog_offset;  ///< The offset of the center of gravity of the entity
-    bool is_collision_detectable;      ///< Whether the entity is detectable by collision sensors
-    bool is_movable;                   ///< Whether the entity is movable
+    Position position;             ///< The initial position of the entity in the world
+    Orientation orientation;       ///< The initial orientation of the entity in the world
+    Position cog_offset;           ///< The offset of the center of gravity of the entity
+    bool is_collision_detectable;  ///< Whether the entity is detectable by collision sensors
+    bool is_movable;               ///< Whether the entity is movable
     prescan::api::types::SensorDetectability sensor_detectability;  ///< The detectability of the entity by sensors
   };
 

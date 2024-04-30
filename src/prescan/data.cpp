@@ -37,9 +37,5 @@ std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_veloci
   return os << "AngularVelocity: (roll: " << angular_velocity.roll << ", pitch: " << angular_velocity.pitch
             << ", yaw: " << angular_velocity.yaw << ")";
 }
-std::ostream& operator<<(std::ostream& os, const CenterOfGravityOffset& cog_offset) {
-  return os << "CenterOfGravityOffset: (x: " << cog_offset.x << ", y: " << cog_offset.y << ", z: " << cog_offset.z
-            << ")";
-}
 
 }  // namespace symaware

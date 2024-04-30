@@ -19,7 +19,7 @@ class Road {
  public:
   Road(Environment& environment);
   Road(prescan::api::experiment::Experiment& experiment);
-  Road(prescan::api::roads::types::Road environment);
+  Road(prescan::api::roads::types::Road road);
 
   Road& addCurveSection(double length, double curvature) {
     road_.addArcSection(length, curvature);
