@@ -1,6 +1,12 @@
-set(SOURCE_LIST "simaware_prescan.cpp")
+set(SOURCE_LIST
+    "symaware_prescan.cpp" "symaware_prescan_data.cpp"
+    # "symaware_prescan_environment.cpp"
+    "symaware_prescan_road.cpp")
+set(HEADER_LIST "symaware_prescan.h")
 
-pybind11_add_module(_symaware_prescan ${SOURCE_LIST})
+pybind11_add_module(_symaware_prescan ${SOURCE_LIST} ${HEADER_LIST})
+
+target_link_libraries(_symaware_prescan PUBLIC symaware_prescan)
 
 target_compile_definitions(_symaware_prescan
                            PRIVATE PYBIND11_DETAILED_ERROR_MESSAGES)

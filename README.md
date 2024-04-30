@@ -37,3 +37,10 @@ set prescan_dir=C:/Program Files/Simcenter Prescan/Prescan_2403
 set PYTHONPATH=%PYTHONPATH%;%prescan_dir%\python
 set PATH=%PATH%;%prescan_dir%\bin
 ```
+
+### Build python bindings
+
+```powershell
+python3.11.exe -m pip uninstall symaware-prescan -y ; python3.11.exe -m pip install . ; python3.11.exe .\script\stubs.py ; cp .\python\symaware\prescan\_symaware_prescan.pyi 'C:\msys64\mingw64\lib\python3.11\site-packages\symaware\prescan'
+```
+```
