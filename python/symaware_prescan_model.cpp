@@ -69,10 +69,27 @@ void init_model(py::module_& m) {
       .def(py::init<bool>(), py::arg("zero_init"))
       .def(py::init<double, double, double, symaware::Gear>(), py::arg("throttle"), py::arg("brake"),
            py::arg("steering_wheel_angle"), py::arg("gear"))
+      .def(py::init([](py::array_t<double> a) {
+             if (a.size() != 4) throw std::invalid_argument("Expected 4 elements");
+             auto view = a.unchecked<1>();
+             return symaware::AmesimDynamicalModel::Input{view(0), view(1), view(2),
+                                                          static_cast<symaware::Gear>(view(3))};
+           }),
+           py::arg("array"))
       .def_readwrite("throttle", &symaware::AmesimDynamicalModel::Input::throttle)
       .def_readwrite("brake", &symaware::AmesimDynamicalModel::Input::brake)
       .def_readwrite("steering_wheel_angle", &symaware::AmesimDynamicalModel::Input::steering_wheel_angle)
       .def_readwrite("gear", &symaware::AmesimDynamicalModel::Input::gear)
+      .def("__array__",
+           [](const symaware::AmesimDynamicalModel::Input& self) -> py::array_t<double> {
+             py::array_t a = py::array_t<double>({4}, {sizeof(double)});
+             auto view = a.mutable_unchecked<1>();
+             view(0) = self.throttle;
+             view(1) = self.brake;
+             view(2) = self.steering_wheel_angle;
+             view(3) = static_cast<double>(self.gear);
+             return a;
+           })
       .def("__repr__", REPR_LAMBDA(symaware::AmesimDynamicalModel::Input));
 
   PYBIND11_NUMPY_DTYPE(symaware::AmesimDynamicalModel::Input, throttle, brake, steering_wheel_angle, gear);
@@ -122,11 +139,41 @@ void init_model(py::module_& m) {
                     symaware::AngularVelocity>(),
            py::arg("position"), py::arg("orientation"), py::arg("acceleration"), py::arg("velocity"),
            py::arg("angular_velocity"))
+      .def(py::init([](py::array_t<double> a) {
+             if (a.size() != 15) throw std::invalid_argument("Expected 15 elements");
+             auto view = a.unchecked<1>();
+             return symaware::CustomDynamicalModel::Input{
+                 symaware::Position{view(0), view(1), view(2)}, symaware::Orientation{view(3), view(4), view(5)},
+                 symaware::Acceleration{view(6), view(7), view(8)}, symaware::Velocity{view(9), view(10), view(11)},
+                 symaware::AngularVelocity{view(12), view(13), view(14)}};
+           }),
+           py::arg("array"))
       .def_readwrite("position", &symaware::CustomDynamicalModel::Input::position)
       .def_readwrite("orientation", &symaware::CustomDynamicalModel::Input::orientation)
       .def_readwrite("acceleration", &symaware::CustomDynamicalModel::Input::acceleration)
       .def_readwrite("velocity", &symaware::CustomDynamicalModel::Input::velocity)
       .def_readwrite("angular_velocity", &symaware::CustomDynamicalModel::Input::angular_velocity)
+      .def("__array__",
+           [](const symaware::CustomDynamicalModel::Input& self) -> py::array_t<double> {
+             py::array_t a = py::array_t<double>({15}, {sizeof(double)});
+             auto view = a.mutable_unchecked<1>();
+             view(0) = self.position.x;
+             view(1) = self.position.y;
+             view(2) = self.position.z;
+             view(3) = self.orientation.roll;
+             view(4) = self.orientation.pitch;
+             view(5) = self.orientation.yaw;
+             view(6) = self.acceleration.x;
+             view(7) = self.acceleration.y;
+             view(8) = self.acceleration.z;
+             view(9) = self.velocity.x;
+             view(10) = self.velocity.y;
+             view(11) = self.velocity.z;
+             view(12) = self.angular_velocity.roll;
+             view(13) = self.angular_velocity.pitch;
+             view(14) = self.angular_velocity.yaw;
+             return a;
+           })
       .def("__repr__", REPR_LAMBDA(symaware::CustomDynamicalModel::Input));
 
   PYBIND11_NUMPY_DTYPE(symaware::CustomDynamicalModel::Input, position.x, position.y, position.z, orientation.roll,
