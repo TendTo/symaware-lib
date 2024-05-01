@@ -43,19 +43,12 @@ void init_entity(py::module_& m) {
                        orientation.yaw, velocity, yaw_rate);
 
   entity
-      .def(py::init<symaware::Environment::ObjectType, symaware::Entity::Setup>(), py::arg("object_type"),
-           py::arg("setup"))
-      .def(py::init<symaware::Environment::ObjectType, symaware::EntityModel&>(), py::arg("object_type"),
-           py::arg("entity_model"))
-      .def(py::init<symaware::Environment::ObjectType, symaware::Entity::Setup, symaware::EntityModel&>(),
-           py::arg("object_type"), py::arg("setup"), py::arg("entity_model"))
-      .def(py::init<const std::string&, symaware::Environment&>(), py::arg("name"), py::arg("environment"))
-      .def(py::init<const std::string&, symaware::Environment&, symaware::EntityModel&>(), py::arg("name"),
-           py::arg("environment"), py::arg("entity_model"))
-      .def(py::init<const std::string&, symaware::Environment&, symaware::Entity::Setup>(), py::arg("name"),
-           py::arg("environment"), py::arg("setup"))
-      .def(py::init<const std::string&, symaware::Environment&, symaware::Entity::Setup, symaware::EntityModel&>(),
-           py::arg("name"), py::arg("environment"), py::arg("setup"), py::arg("entity_model"))
+      .def(py::init<symaware::Environment::ObjectType, symaware::Entity::Setup, symaware::EntityModel*>(),
+           py::arg("object_type"), py::arg("setup") = symaware::Entity::Setup{},
+           py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
+      .def(py::init<const std::string&, symaware::Environment&, symaware::Entity::Setup, symaware::EntityModel*>(),
+           py::arg("name"), py::arg("environment"), py::arg("setup") = symaware::Entity::Setup{},
+           py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
 
       .def("initialise_object", &symaware::Entity::initialiseObject, py::arg("experiment"), py::arg("object"))
       .def("register_unit", &symaware::Entity::registerUnit, py::arg("experiment"), py::arg("simulation"))

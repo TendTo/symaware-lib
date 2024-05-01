@@ -336,6 +336,5 @@ void init_environment(py::module_ &m) {
       .def("create_free_viewer", &symaware::Environment::createFreeViewer, "Create a free viewer in the environment")
       .def("remove_all_viewers", &symaware::Environment::removeAllViewers, "Remove all viewers from the environment")
 
-      .def_property_readonly("entities", &symaware::Environment::entities, "Get the entities in the environment")
       .def_property_readonly("experiment", &symaware::Environment::experiment, "Get the experiment of the environment");
 }
