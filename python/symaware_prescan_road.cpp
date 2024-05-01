@@ -23,7 +23,7 @@ void init_road(py::module_ &m) {
            py::arg("parameter_range"))
       .def("add_parking_space", &symaware::Road::addParkingSpace, "Add a parking space to the road", py::arg("length"),
            py::arg("width"), py::arg("yaw") = 0,
-           py::arg_v("road_side", = prescan::api::roads::types::RoadSideType::RoadSideTypeLeft,
+           py::arg_v("road_side", prescan::api::roads::types::RoadSideType::RoadSideTypeLeft,
                      "RoadSideType.RoadSideTypeLeft"),
            py::arg("side_offset") = 0, py::arg("offset") = 0)
       .def("add_spiral_section", &symaware::Road::addSpiralSection, "Add a spiral section to the road",
