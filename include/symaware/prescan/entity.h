@@ -26,21 +26,9 @@ class Entity {
   struct Setup {
     Setup() = default;
     Setup(Position position, Orientation orientation, Position cog_offset, bool is_collision_detectable,
-          bool is_movable, prescan::api::types::SensorDetectability sensor_detectability)
-        : position{position},
-          orientation{orientation},
-          cog_offset{cog_offset},
-          is_collision_detectable{is_collision_detectable},
-          is_movable{is_movable},
-          sensor_detectability{sensor_detectability} {}
-    explicit Setup(bool zero_init, bool is_collision_detectable, bool is_movable,
-                   prescan::api::types::SensorDetectability sensor_detectability)
-        : position{zero_init},
-          orientation{zero_init},
-          cog_offset{zero_init},
-          is_collision_detectable{is_collision_detectable},
-          is_movable{is_movable},
-          sensor_detectability{sensor_detectability} {}
+          bool is_movable, prescan::api::types::SensorDetectability sensor_detectability);
+    Setup(bool zero_init, bool is_collision_detectable, bool is_movable,
+          prescan::api::types::SensorDetectability sensor_detectability);
     Position position;             ///< The initial position of the entity in the world
     Orientation orientation;       ///< The initial orientation of the entity in the world
     Position cog_offset;           ///< The offset of the center of gravity of the entity
@@ -52,13 +40,8 @@ class Entity {
   /** State of a generic entity at a given time */
   struct State {
     State() = default;
-    State(Position position, Orientation orientation, double velocity, double yaw_rate)
-        : position{position}, orientation{orientation}, velocity{velocity}, yaw_rate{yaw_rate} {}
-    explicit State(bool zero_init)
-        : position{zero_init},
-          orientation{zero_init},
-          velocity{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-          yaw_rate{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
+    explicit State(bool zero_init);
+    State(Position position, Orientation orientation, double velocity, double yaw_rate);
     Position position;        ///< The position of the entity in the world
     Orientation orientation;  ///< The orientation of the entity in the world
     double velocity;          ///< The velocity of the entity

@@ -12,6 +12,15 @@
 
 namespace symaware {
 
+AmesimDynamicalModel::Input::Input(bool zero_init)
+    : throttle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+      brake{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+      steering_wheel_angle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+      gear{zero_init ? Gear::Neutral : Gear::Undefined} {}
+
+AmesimDynamicalModel::Input::Input(double throttle, double brake, double steering_wheel_angle, Gear gear)
+    : throttle{throttle}, brake{brake}, steering_wheel_angle{steering_wheel_angle}, gear{gear} {}
+
 AmesimDynamicalModel::AmesimDynamicalModel(Input initial_input) : EntityModel{}, input_{std::move(initial_input)} {}
 
 void AmesimDynamicalModel::initialiseObject(prescan::api::experiment::Experiment& experiment,

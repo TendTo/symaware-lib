@@ -11,6 +11,20 @@
 
 namespace symaware {
 
+CustomDynamicalModel::Input::Input(Position position, Orientation orientation, Acceleration acceleration,
+                                   Velocity velocity, AngularVelocity angular_velocity)
+    : position{position},
+      orientation{orientation},
+      acceleration{acceleration},
+      velocity{velocity},
+      angular_velocity{angular_velocity} {}
+CustomDynamicalModel::Input::Input(bool zero_init)
+    : position{zero_init},
+      orientation{zero_init},
+      acceleration{zero_init},
+      velocity{zero_init},
+      angular_velocity{zero_init} {}
+
 CustomDynamicalModel::CustomDynamicalModel(Input initial_input) : EntityModel{}, input_{std::move(initial_input)} {}
 
 void CustomDynamicalModel::setInput(const std::vector<double>& input) {

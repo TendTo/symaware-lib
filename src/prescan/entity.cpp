@@ -7,6 +7,33 @@
 
 namespace symaware {
 
+Entity::Setup::Setup(Position position, Orientation orientation, Position cog_offset, bool is_collision_detectable,
+                     bool is_movable, prescan::api::types::SensorDetectability sensor_detectability)
+    : position{position},
+      orientation{orientation},
+      cog_offset{cog_offset},
+      is_collision_detectable{is_collision_detectable},
+      is_movable{is_movable},
+      sensor_detectability{sensor_detectability} {}
+
+Entity::Setup::Setup(bool zero_init, bool is_collision_detectable, bool is_movable,
+                     prescan::api::types::SensorDetectability sensor_detectability)
+    : position{zero_init},
+      orientation{zero_init},
+      cog_offset{zero_init},
+      is_collision_detectable{is_collision_detectable},
+      is_movable{is_movable},
+      sensor_detectability{sensor_detectability} {}
+
+Entity::State::State(Position position, Orientation orientation, double velocity, double yaw_rate)
+    : position{position}, orientation{orientation}, velocity{velocity}, yaw_rate{yaw_rate} {}
+
+Entity::State::State(bool zero_init)
+    : position{zero_init},
+      orientation{zero_init},
+      velocity{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
+      yaw_rate{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
+
 Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{type, Setup{}, &model} {}
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}

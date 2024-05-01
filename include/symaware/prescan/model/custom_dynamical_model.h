@@ -26,19 +26,9 @@ class CustomDynamicalModel : public EntityModel {
   /** @brief The input of the model */
   struct Input {
     Input() = default;
+    explicit Input(bool zero_init);
     Input(Position position, Orientation orientation, Acceleration acceleration, Velocity velocity,
-          AngularVelocity angular_velocity)
-        : position{position},
-          orientation{orientation},
-          acceleration{acceleration},
-          velocity{velocity},
-          angular_velocity{angular_velocity} {}
-    explicit Input(bool zero_init)
-        : position{zero_init},
-          orientation{zero_init},
-          acceleration{zero_init},
-          velocity{zero_init},
-          angular_velocity{zero_init} {}
+          AngularVelocity angular_velocity);
     Position position;
     Orientation orientation;
     Acceleration acceleration;

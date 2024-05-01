@@ -27,13 +27,8 @@ class AmesimDynamicalModel : public EntityModel {
   /** @brief The input of the model */
   struct Input {
     Input() = default;
-    explicit Input(bool zero_init)
-        : throttle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-          brake{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-          steering_wheel_angle{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
-          gear{zero_init ? Gear::Neutral : Gear::Undefined} {}
-    Input(double throttle, double brake, double steering_wheel_angle, Gear gear)
-        : throttle{throttle}, brake{brake}, steering_wheel_angle{steering_wheel_angle}, gear{gear} {}
+    explicit Input(bool zero_init);
+    Input(double throttle, double brake, double steering_wheel_angle, Gear gear);
     double throttle;              ///< Throttle value in the range [0, 1]
     double brake;                 ///< Brake value in the range [0, 1]
     double steering_wheel_angle;  ///< Steering wheel angle in radians
