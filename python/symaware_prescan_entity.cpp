@@ -62,5 +62,11 @@ void init_entity(py::module_& m) {
       .def("initialise", &symaware::Entity::initialise, py::arg("simulation"))
       .def("step", &symaware::Entity::step, py::arg("simulation"))
       .def("terminate", &symaware::Entity::terminate, py::arg("simulation"))
+
+      .def_property_readonly("state", &symaware::Entity::state, "Get the current state of the entity")
+      .def_property_readonly("type", &symaware::Entity::type, "Get the type of the entity")
+      .def_property_readonly("object", &symaware::Entity::object, "Get the worldobject wrapped by the entity")
+      .def_property_readonly("is_initialized", &symaware::Entity::is_initialized,
+                             "Get whether the entity is initialized")
       .def("__repr__", REPR_LAMBDA(symaware::Entity));
 }
