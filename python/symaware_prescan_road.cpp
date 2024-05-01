@@ -15,7 +15,7 @@ void init_road(py::module_ &m) {
            "Add a cubic polynomial section to the road", py::arg("length"), py::arg("a"), py::arg("b"), py::arg("c"),
            py::arg("d"))
       .def("add_lane", &symaware::Road::addLane, "Add a lane to the road", py::arg("road_side"), py::arg("width"),
-           py::arg("lane_type") = prescan::api::roads::types::LaneType::LaneTypeDriving, "LaneType.LaneTypeDriving",
+           py::arg_v(("lane_type"), prescan::api::roads::types::LaneType::LaneTypeDriving, "LaneType.LaneTypeDriving"),
            py::arg("start_offset") = 0.0, py::arg("end_offset") = std::numeric_limits<double>::infinity())
       .def("add_parametric_cubic_polynomial_section", &symaware::Road::addParametricCubicPolynomialSection,
            "Add a parametric cubic polynomial section to the road", py::arg("length"), py::arg("aU"), py::arg("bU"),
@@ -23,8 +23,9 @@ void init_road(py::module_ &m) {
            py::arg("parameter_range"))
       .def("add_parking_space", &symaware::Road::addParkingSpace, "Add a parking space to the road", py::arg("length"),
            py::arg("width"), py::arg("yaw") = 0,
-           py::arg("road_side") = prescan::api::roads::types::RoadSideType::RoadSideTypeLeft,
-           "RoadSideType.RoadSideTypeLeft", py::arg("side_offset") = 0, py::arg("offset") = 0)
+           py::arg_v("road_side", = prescan::api::roads::types::RoadSideType::RoadSideTypeLeft,
+                     "RoadSideType.RoadSideTypeLeft"),
+           py::arg("side_offset") = 0, py::arg("offset") = 0)
       .def("add_spiral_section", &symaware::Road::addSpiralSection, "Add a spiral section to the road",
            py::arg("length"), py::arg("start_curvature"), py::arg("end_curvature"))
       .def("add_straight_section", &symaware::Road::addStraightSection, "Add a straight section to the road",
