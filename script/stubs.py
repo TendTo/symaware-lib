@@ -15,6 +15,6 @@ if __name__ == '__main__':
 
     file_path = os.path.dirname(os.path.realpath(__file__))
     print(file_path)
-    sys.argv = ["pybind11-stubgen", "symaware.prescan._symaware_prescan", "-o", f"{file_path}/../python"]
+    sys.argv = ["pybind11-stubgen", "symaware.simulators.prescan._symaware_prescan", "-o", f"{file_path}/../python"]
 
     pybind11_stubgen.main()
