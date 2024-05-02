@@ -38,7 +38,12 @@ class Entity(BaseEntity):
     """
 
     model: DynamicalModel = field(default_factory=NullDynamicalModel)
-    setup: _Entity.Setup = field(default_factory=_Entity.Setup)
+    position = field(default_factory=Position)
+    orientation = field(default_factory=Orientation)
+    cog_offset = field(default_factory=Position)
+    is_collision_detectable = True
+    is_movable = True
+    sensor_detectability: SensorDetectability = SensorDetectability.SensorDetectabilityDetectable
     _internal_entity: _Entity = None
 
     def __post_init__(self):
@@ -47,17 +52,65 @@ class Entity(BaseEntity):
             raise ValueError("Do not initialise the _internal_entity object directly")
         self._internal_entity = _Entity(
             object_type=self.object_type,
-            setup=self.setup,
+            setup=_Entity.Setup(
+                position=self.position,
+                orientation=self.orientation,
+                cog_offset=self.cog_offset,
+                is_collision_detectable=self.is_collision_detectable,
+                is_movable=self.is_movable,
+                sensor_detectability=self.sensor_detectability,
+            ),
             entity_model=(None if isinstance(self.model, NullDynamicalModel) else self.model.internal_model),
         )
 
+    def apply_setup(self):
+        """
+        Update the internal entity object with the current setup of the entity.
+        """
+        self._internal_entity.apply_setup(
+            _Entity.Setup(
+                position=self.position,
+                orientation=self.orientation,
+                cog_offset=self.cog_offset,
+                is_collision_detectable=self.is_collision_detectable,
+                is_movable=self.is_movable,
+                sensor_detectability=self.sensor_detectability,
+            )
+        )
+
+    @property
+    def name(self) -> str:
+        """
+        Unique name of the entity inside the Prescan experiment.
+
+        Returns
+        -------
+            Name of the entity
+        """
+        return self._internal_entity.object.name
+
     @property
     def state(self) -> _Entity.State:
+        """
+        State of the entity inside the Prescan simulation.
+
+        Returns
+        -------
+            State of the entity
+        """
         return self._internal_entity.state
 
     @property
     @abstractmethod
     def object_type(self) -> _Environment.ObjectType:
+        """
+        Type of the entity in the Prescan environment.
+        All the available types are defined in the _Environment.ObjectType enum.
+
+        Returns
+        -------
+            Type of the entity
+        """
         pass
 
     def initialise(self, experiment: _Experiment, object: _WorldObject):
