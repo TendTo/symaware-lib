@@ -25,8 +25,6 @@ using namespace std::chrono_literals;
 
 #define M_PI 3.14159265358979323846
 
-#if 1
-
 int main() {
   symaware::Environment env;
   auto viewer = env.createFreeViewer();
@@ -80,9 +78,8 @@ int main() {
 
   symaware::Simulation simulation(env);
   simulation.setLogLevel(prescan::sim::ISimulationLogger::LogLevel::LogLevelInfo);
-#if 0
-  simulation.run(1000);
-#else
+  simulation.initialise();
+
   const int max_steps = 150;
   for (int i = 0; i < max_steps; i++) {
     std::vector<double> input;
@@ -104,29 +101,6 @@ int main() {
   }
 
   simulation.terminate();
-#endif
 
   return 0;
 }
-
-#else
-
-int main() {
-  symaware::Environment env{
-      "C:/Users/Public/Documents/Experiments/DemoExperiments/Demo_3D_Dynamics/Demo_3D_Dynamics.pb"};
-
-  symaware::Simulation simulation(env);
-#if 0
-  simulation.run(1000);
-#else
-  for (int i = 0; i < 100; i++) {
-    simulation.step();
-    std::this_thread::sleep_for(100ms);
-  }
-
-  simulation.terminate();
-#endif
-  return 0;
-}
-
-#endif

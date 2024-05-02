@@ -32,9 +32,16 @@ class Simulation {
    */
   void run(double seconds);
   /**
+   * @brief Initialise the simulation.
+   *
+   * This method must be called before running the simulation via @ref step.
+   */
+  void initialise();
+  /**
    * @brief Advance the simulation manually.
    *
    * The simulation will progress by one step each time this method is called.
+   * This method must be called after the simulation has been initialised via @ref initialise
    * @note Is mutually exclusive with @ref run
    */
   void step();
@@ -52,9 +59,6 @@ class Simulation {
   void setLogLevel(prescan::sim::ISimulationLogger::LogLevel log_level);
 
  private:
-  /** @brief Initialise the simulation in the case of a manual step */
-  void initialise();
-
   bool is_initialised_;
   const Environment& environment_;
   SimulationModel model_;

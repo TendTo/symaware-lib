@@ -19,18 +19,20 @@ void Simulation::run(double seconds) {
   is_initialised_ = false;
 }
 
-void Simulation::step() {
-  if (!is_initialised_) initialise();
-  simulation_.step();
-}
-
 void Simulation::initialise() {
+  if (is_initialised_) SYMAWARE_RUNTIME_ERROR("Simulation is already initialised.");
   ExperimentGuard guard{const_cast<prescan::api::experiment::Experiment&>(environment_.experiment())};
   simulation_.initialize(environment_.experiment());
   is_initialised_ = true;
 }
 
+void Simulation::step() {
+  SYMAWARE_ASSERT(is_initialised_, "Simulation must be initialised before stepping");
+  simulation_.step();
+}
+
 void Simulation::terminate() {
+  if (!is_initialised_) SYMAWARE_RUNTIME_ERROR("Simulation was never initialised.");
   simulation_.terminate();
   is_initialised_ = false;
 }
