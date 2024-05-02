@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 
 from symaware.base.models import (
     NullDynamicalModel,
-    SpatialEntity,
+    Entity as BaseEntity,
 )
 
 from ._symaware_prescan import (
@@ -15,11 +15,11 @@ from ._symaware_prescan import (
     Orientation,
     SensorDetectability,
 )
-from .dynamical_model import PrescanDynamicalModel
+from .dynamical_model import DynamicalModel
 
 
 @dataclass
-class PrescanSpatialEntity(SpatialEntity):
+class Entity(BaseEntity):
     """
     Abstract class for the entities using the Pescan simulator.
     Interacting with the Prescan simulator is delegated to the _internal_entity object, which is an instance of _Entity.
@@ -37,8 +37,8 @@ class PrescanSpatialEntity(SpatialEntity):
         Internal entity object used by the Prescan simulator's python bindings. Do not initialise this object directly.
     """
 
-    model: "PrescanDynamicalModel" = field(default_factory=NullDynamicalModel)
-    _internal_entity: "_Entity" = None
+    model: DynamicalModel = field(default_factory=NullDynamicalModel)
+    _internal_entity: _Entity = None
 
     def __post_init__(self):
         super().__post_init__()
@@ -74,35 +74,35 @@ class PrescanSpatialEntity(SpatialEntity):
 
 
 @dataclass
-class AudiA3Entity(PrescanSpatialEntity):
+class AudiA3Entity(Entity):
     @property
     def object_type(self) -> _Environment.ObjectType:
         return _Environment.ObjectType.Audi_A3
 
 
 @dataclass
-class LexusGS450hFSportSedanEntity(PrescanSpatialEntity):
+class LexusGS450hFSportSedanEntity(Entity):
     @property
     def object_type(self) -> _Environment.ObjectType:
         return _Environment.ObjectType.Lexus_GS_450h_F_Sport_Sedan
 
 
 @dataclass
-class BalloonCarEntity(PrescanSpatialEntity):
+class BalloonCarEntity(Entity):
     @property
     def object_type(self) -> _Environment.ObjectType:
         return _Environment.ObjectType.BalloonCar
 
 
 @dataclass
-class BoxEntity(PrescanSpatialEntity):
+class BoxEntity(Entity):
     @property
     def object_type(self) -> _Environment.ObjectType:
         return _Environment.ObjectType.Box
 
 
 @dataclass
-class SphereEntity(PrescanSpatialEntity):
+class SphereEntity(Entity):
     @property
     def object_type(self) -> _Environment.ObjectType:
         return _Environment.ObjectType.Sphere

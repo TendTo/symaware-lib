@@ -3,7 +3,7 @@ from typing import TypedDict
 import numpy as np
 
 from symaware.base.data import Identifier
-from symaware.base.models import DynamicalModel
+from symaware.base.models import DynamicalModel as BaseDynamicalModel
 
 from ._symaware_prescan import (
     _AmesimDynamicalModel,
@@ -35,7 +35,7 @@ class TrackModelInput(TypedDict):
     pass
 
 
-class PrescanDynamicalModel(DynamicalModel):
+class DynamicalModel(BaseDynamicalModel):
     """
     Abstract class for the dynamical models using the Prescan simulator.
 
@@ -76,7 +76,7 @@ class PrescanDynamicalModel(DynamicalModel):
         self._internal_model.step(simulation)
 
 
-class AmesimDynamicalModel(PrescanDynamicalModel):
+class AmesimDynamicalModel(DynamicalModel):
     """
     Prescan dynamical model based on an AMESim model.
 
@@ -102,7 +102,7 @@ class AmesimDynamicalModel(PrescanDynamicalModel):
         }
 
 
-class CustomDynamicalModel(PrescanDynamicalModel):
+class CustomDynamicalModel(DynamicalModel):
     """
     Prescan dynamical model with a completely custom implementation.
     This model gives complete control over the state of the entity to the agent.
@@ -131,7 +131,7 @@ class CustomDynamicalModel(PrescanDynamicalModel):
         }
 
 
-class TrackModel(PrescanDynamicalModel):
+class TrackModel(DynamicalModel):
     """
     Prescan dynamical model based on a track model.
     The entity will follow the track indicated by the model.

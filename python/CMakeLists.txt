@@ -18,4 +18,4 @@ target_compile_definitions(_symaware_prescan
 target_compile_definitions(_symaware_prescan
                            PRIVATE VERSION_INFO=${SKBUILD_PROJECT_VERSION})
 
-install(TARGETS _symaware_prescan LIBRARY DESTINATION symaware/prescan)
+install(TARGETS _symaware_prescan LIBRARY DESTINATION symaware/simulatos/prescan)
