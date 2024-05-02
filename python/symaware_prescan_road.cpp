@@ -16,7 +16,8 @@ void init_road(py::module_ &m) {
            py::arg("d"))
       .def("add_lane", &symaware::Road::addLane, "Add a lane to the road", py::arg("road_side"), py::arg("width"),
            py::arg_v(("lane_type"), prescan::api::roads::types::LaneType::LaneTypeDriving, "LaneType.LaneTypeDriving"),
-           py::arg("start_offset") = 0.0, py::arg("end_offset") = std::numeric_limits<double>::infinity())
+           py::arg("start_offset") = 0.0,
+           py::arg_v("end_offset", std::numeric_limits<double>::infinity(), "float('inf')"))
       .def("add_parametric_cubic_polynomial_section", &symaware::Road::addParametricCubicPolynomialSection,
            "Add a parametric cubic polynomial section to the road", py::arg("length"), py::arg("aU"), py::arg("bU"),
            py::arg("cU"), py::arg("dU"), py::arg("aV"), py::arg("bV"), py::arg("cV"), py::arg("dV"),
@@ -32,7 +33,7 @@ void init_road(py::module_ &m) {
            py::arg("length"))
       .def("set_speed_limit_profile", &symaware::Road::setSpeedLimitProfile, "Set the speed limit profile",
            py::arg("value"), py::arg("start_offset") = 0.0,
-           py::arg("end_offset") = std::numeric_limits<double>::infinity())
+           py::arg_v("end_offset", std::numeric_limits<double>::infinity(), "float('inf')"))
       .def("set_traffic_side", &symaware::Road::setTrafficSide, "Set the traffic side of the road",
            py::arg("traffic_side"))
       .def("set_asphalt_color", &symaware::Road::setAsphaltColor, "Set the asphalt color", py::arg("r"), py::arg("g"),

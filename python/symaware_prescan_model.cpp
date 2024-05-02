@@ -43,17 +43,17 @@ class PyEntityModel : public symaware::EntityModel {
 void init_model(py::module_& m) {
   py::class_<symaware::EntityModel, PyEntityModel>(m, "_EntityModel")
       .def(py::init<>())
-      .def("set_object", &symaware::EntityModel::setObject, py::arg("object"))
-      .def("initialise_object", &symaware::EntityModel::initialiseObject, py::arg("experiment"), py::arg("object"))
-      .def("set_input", &symaware::EntityModel::setInput, py::arg("input"))
-      .def("update_input", &symaware::EntityModel::updateInput, py::arg("input"))
-      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("experiment"), py::arg("simulation"))
-      .def("initialise", &symaware::EntityModel::initialise, py::arg("simulation"))
-      .def("step", &symaware::EntityModel::step, py::arg("simulation"))
-      .def("terminate", &symaware::EntityModel::terminate, py::arg("simulation"))
+      .def("set_object", &symaware::EntityModel::setObject, py::arg("object"), "Set the object of the model")
+      .def("initialise_object", &symaware::EntityModel::initialiseObject, py::arg("experiment"), py::arg("object"), "Initialise the object of the model")
+      .def("set_input", &symaware::EntityModel::setInput, py::arg("input"), "Set the input of the model")
+      .def("update_input", &symaware::EntityModel::updateInput, py::arg("input"), "Update the input of the model")
+      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("experiment"), py::arg("simulation"), "Register the unit of the model")
+      .def("initialise", &symaware::EntityModel::initialise, py::arg("simulation"), "Called when the simulation is initialised")
+      .def("step", &symaware::EntityModel::step, py::arg("simulation"), "Called at each simulation step")
+      .def("terminate", &symaware::EntityModel::terminate, py::arg("simulation"), "Called when the simulation is terminated")
 
-      .def_property_readonly("object", &symaware::EntityModel::object)
-      .def_property_readonly("state", &symaware::EntityModel::state);
+      .def_property_readonly("object", &symaware::EntityModel::object, "Internal WorldObject of the model")
+      .def_property_readonly("state", &symaware::EntityModel::state, "State of the model");
 
   py::class_<symaware::TrackModel, symaware::EntityModel>(m, "_TrackModel")
       .def(py::init<>())

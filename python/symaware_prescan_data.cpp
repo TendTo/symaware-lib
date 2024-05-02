@@ -8,15 +8,15 @@ namespace py = pybind11;
 
 void init_data(py::module_ &m) {
   py::enum_<symaware::Gear>(m, "Gear")
-      .value("Forward", symaware::Gear::Forward)
-      .value("Neutral", symaware::Gear::Neutral)
-      .value("Reverse", symaware::Gear::Reverse)
-      .value("Undefined", symaware::Gear::Undefined)
+      .value("Forward", symaware::Gear::Forward, "Forward gear")
+      .value("Neutral", symaware::Gear::Neutral, "Neutral gear")
+      .value("Reverse", symaware::Gear::Reverse, "Reverse gear")
+      .value("Undefined", symaware::Gear::Undefined, "Undefined gear. Won't change the gear.")
       .export_values();
   py::class_<symaware::Position>(m, "Position")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
-      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
       .def(py::init([](py::array_t<double> a) {
              if (a.size() != 3) SYMAWARE_OUT_OF_RANGE_FMT("Expected 3 elements, got {}", a.size());
 
@@ -40,7 +40,7 @@ void init_data(py::module_ &m) {
   py::class_<symaware::Orientation>(m, "Orientation")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("roll"), py::arg("pitch"), py::arg("yaw"))
-      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
       .def(py::init([](py::array_t<double> a) {
              if (a.size() != 3) SYMAWARE_OUT_OF_RANGE_FMT("Expected 3 elements, got {}", a.size());
 
@@ -64,7 +64,7 @@ void init_data(py::module_ &m) {
   py::class_<symaware::Velocity>(m, "Velocity")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
-      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
       .def(py::init([](py::array_t<double> a) {
              if (a.size() != 3) SYMAWARE_OUT_OF_RANGE_FMT("Expected 3 elements, got {}", a.size());
 
@@ -88,7 +88,7 @@ void init_data(py::module_ &m) {
   py::class_<symaware::Acceleration>(m, "Acceleration")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))
-      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
       .def(py::init([](py::array_t<double> a) {
              if (a.size() != 3) SYMAWARE_OUT_OF_RANGE_FMT("Expected 3 elements, got {}", a.size());
 
@@ -112,7 +112,7 @@ void init_data(py::module_ &m) {
   py::class_<symaware::AngularVelocity>(m, "AngularVelocity")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("roll"), py::arg("pitch"), py::arg("yaw"))
-      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
       .def(py::init([](py::array_t<double> a) {
              if (a.size() != 3) SYMAWARE_OUT_OF_RANGE_FMT("Expected 3 elements, got {}", a.size());
 
