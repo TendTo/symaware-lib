@@ -120,7 +120,7 @@ std::ostream& operator<<(std::ostream& os, const Entity& entity) {
   os << std::boolalpha;
   os << "Entity: (type: " << entity.type() << ", setup: " << entity.setup();
   if (entity.model() != nullptr) os << ", model: " << entity.model();
-  os << ", object: " << entity.object() << ", state: " << entity.state() << ")";
+  os << ", state: " << entity.state() << ")";
   os << std::noboolalpha;
   return os;
 }

@@ -1,20 +1,18 @@
 from abc import abstractmethod
 from dataclasses import dataclass, field
-import numpy as np
 
-from symaware.base.models import (
-    NullDynamicalModel,
-    Entity as BaseEntity,
-)
+import numpy as np
+from symaware.base.models import Entity as BaseEntity
+from symaware.base.models import NullDynamicalModel
 
 from ._symaware_prescan import (
-    _Experiment,
-    _WorldObject,
+    Orientation,
+    Position,
+    SensorDetectability,
     _Entity,
     _Environment,
-    Position,
-    Orientation,
-    SensorDetectability,
+    _Experiment,
+    _WorldObject,
 )
 from .dynamical_model import DynamicalModel
 
@@ -24,7 +22,8 @@ class Entity(BaseEntity):
     """
     Abstract class for the entities using the Pescan simulator.
     Interacting with the Prescan simulator is delegated to the _internal_entity object, which is an instance of _Entity.
-    A :class:`.PybulletDynamicalModel` can be associated with the entity in order to control its behaviour during the simulation.
+    A :class:`.PybulletDynamicalModel` can be associated with the entity
+    in order to control its behaviour during the simulation.
 
     Note
     ----
@@ -119,10 +118,10 @@ class Entity(BaseEntity):
         """
         pass
 
-    def initialise(self, experiment: _Experiment, object: _WorldObject):
-        self._internal_entity.initialise_object(experiment, object)
+    def initialise(self, experiment: _Experiment, obj: _WorldObject):
+        self._internal_entity.initialise_object(experiment, obj)
         if not isinstance(self.model, NullDynamicalModel):
-            self.model.initialise(experiment, object)
+            self.model.initialise(experiment, obj)
 
 
 @dataclass

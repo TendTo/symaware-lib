@@ -1,17 +1,18 @@
 from typing import TYPE_CHECKING
 
 import numpy as np
-
-from symaware.base.models import Environment as BaseEnvironment, NullDynamicalModel
+from symaware.base.models import Environment as BaseEnvironment
+from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from .entity import Entity
-from .dynamical_model import DynamicalModel
 from ._symaware_prescan import _Environment, _Simulation
+from .entity import Entity
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
     from symaware.base.utils import AsyncLoopLock
+
+    from .dynamical_model import DynamicalModel
 
 
 class Environment(BaseEnvironment):
@@ -38,7 +39,9 @@ class Environment(BaseEnvironment):
     >>>
     >>> agent_coordinator = AgentCoordinator[MyKnowledgeDatabase](env)
     >>> for i in range(NUM_AGENTS):
-    ...     agent_entity = LexusGS450hFSportSedanEntity(i, model=AmesimDynamicalModel(i), position=np.array([0, i, 0.1]))
+    ...     agent_entity = LexusGS450hFSportSedanEntity(
+    ...         i, model=AmesimDynamicalModel(i), position=np.array([0, i, 0.1])
+    ...     )
     ...     agent = Agent[MyKnowledgeDatabase](i, agent_entity)
     ...     env.add_agents(agent)
     ...     controller = MyController(agent.id, TimeIntervalAsyncLoopLock(TIME_INT))

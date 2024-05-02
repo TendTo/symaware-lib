@@ -1,18 +1,17 @@
 from typing import TypedDict
 
 import numpy as np
-
 from symaware.base.data import Identifier
 from symaware.base.models import DynamicalModel as BaseDynamicalModel
 
 from ._symaware_prescan import (
     _AmesimDynamicalModel,
+    _CustomDynamicalModel,
+    _EntityModel,
     _Experiment,
     _ISimulation,
-    _WorldObject,
-    _EntityModel,
     _TrackModel,
-    _CustomDynamicalModel,
+    _WorldObject,
 )
 
 
@@ -69,8 +68,8 @@ class DynamicalModel(BaseDynamicalModel):
     def internal_model(self) -> _EntityModel:
         return self._internal_model
 
-    def initialise(self, experiment: _Experiment, object: _WorldObject):
-        self._internal_model.initialise_object(experiment, object)
+    def initialise(self, experiment: _Experiment, obj: _WorldObject):
+        self._internal_model.initialise_object(experiment, obj)
 
     def step(self, simulation: _ISimulation):
         self._internal_model.step(simulation)

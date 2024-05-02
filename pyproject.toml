@@ -82,17 +82,23 @@ testpaths = ["tests"]
 
 # Coverage configuration (test coverage)
 [tool.coverage.run]
-omit = ["*/__main__.py", "*/_version.py"] # omit files from coverage
+omit = [
+    "*/__main__.py",
+    "*/_version.py",
+    "*/_symaware_prescan.py",
+    "*/_symaware_prescan.pyi",
+] # omit files from coverage
 
 # Black configuration (code formatter)
 [tool.black]
 target-version = ['py39', 'py310', 'py311', 'py312']
 line-length = 120
-include = '(src|tests)\/.*\.py'
+include = '(python|tests)\/.*\.py'
 
 # Isort configuration (import sorter)
 [tool.isort]
 profile = "black"
+src_paths = ["python", "test"]
 
 # mypy configuration (static type checker)
 [tool.mypy]
@@ -101,4 +107,4 @@ ignore_missing_imports = true
 warn_unused_ignores = true
 namespace_packages = true
 explicit_package_bases = true
-mypy_path = "src"
+mypy_path = "python"

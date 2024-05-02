@@ -1,0 +1,12 @@
+deploy:
+  stage: deploy
+  variables:
+    TWINE_USERNAME: gitlab-ci-token
+    TWINE_PASSWORD: $CI_JOB_TOKEN
+  script:
+    - tox -e clean
+    - tox -e build
+    - tox -e publish -- --repository-url ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/pypi
+  environment: production
+  rules:
+    - if: $CI_COMMIT_TAG =~ /^v?[0-9]+\.[0-9]+\.[0-9]+/
