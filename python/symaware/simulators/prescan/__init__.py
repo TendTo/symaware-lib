@@ -1,5 +1,5 @@
 from .dynamical_model import (
-    PrescanDynamicalModel,
+    DynamicalModel,
     AmesimDynamicalModel,
     CustomDynamicalModel,
     TrackModel,
@@ -8,14 +8,14 @@ from .dynamical_model import (
     TrackModelInput,
 )
 from .entity import (
-    PrescanSpatialEntity,
+    Entity,
     AudiA3Entity,
     LexusGS450hFSportSedanEntity,
     BalloonCarEntity,
     BoxEntity,
     SphereEntity,
 )
-from .environment import PrescanEnvironment
+from .environment import Environment
 from .prescan import (
     LogLevel,
     SimulationSpeed,

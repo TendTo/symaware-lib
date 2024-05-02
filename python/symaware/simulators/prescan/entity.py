@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from dataclasses import dataclass, field
+import numpy as np
 
 from symaware.base.models import (
     NullDynamicalModel,
@@ -38,16 +39,21 @@ class Entity(BaseEntity):
     """
 
     model: DynamicalModel = field(default_factory=NullDynamicalModel)
-    position = field(default_factory=Position)
-    orientation = field(default_factory=Orientation)
-    cog_offset = field(default_factory=Position)
-    is_collision_detectable = True
-    is_movable = True
+    position: Position = field(default_factory=Position)
+    orientation: Orientation = field(default_factory=Orientation)
+    cog_offset: Position = field(default_factory=Position)
+    is_collision_detectable: bool = True
+    is_movable: bool = True
     sensor_detectability: SensorDetectability = SensorDetectability.SensorDetectabilityDetectable
     _internal_entity: _Entity = None
 
     def __post_init__(self):
-        super().__post_init__()
+        if isinstance(self.position, np.ndarray):
+            self.position = Position(self.position)
+        if isinstance(self.orientation, np.ndarray):
+            self.orientation = Orientation(self.orientation)
+        if isinstance(self.cog_offset, np.ndarray):
+            self.cog_offset = Position(self.cog_offset)
         if self._internal_entity is not None:
             raise ValueError("Do not initialise the _internal_entity object directly")
         self._internal_entity = _Entity(
