@@ -38,15 +38,14 @@ Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* const model)
-    : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {
+    : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {
   if (type_ == Environment::ObjectType::Existing) SYMAWARE_RUNTIME_ERROR("Existing type cannot be used directly");
 }
 
 Entity::Entity(const std::string& name, Environment& environment, EntityModel& model)
     : Entity{name, environment, &model} {}
 Entity::Entity(const std::string& name, Environment& environment, EntityModel* const model)
-    : is_initialized_{true},
-      type_{Environment::ObjectType::Existing},
+    : type_{Environment::ObjectType::Existing},
       setup_{},
       model_{model},
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
@@ -55,25 +54,13 @@ Entity::Entity(const std::string& name, Environment& environment, EntityModel* c
   environment.addEntity(*this);
 }
 
-Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model)
-    : Entity{name, environment, std::move(setup), &model} {}
-Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* const model)
-    : is_initialized_{true},
-      type_{Environment::ObjectType::Existing},
-      setup_{std::move(setup)},
-      model_{model},
-      object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
-      state_{nullptr} {
+void Entity::applySetup(Setup setup) {
+  setup_ = std::move(setup);
   updateObject();
-  if (model_ != nullptr) model_->setObject(object_);
-  environment.addEntity(*this);
 }
 
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
-  if (is_initialized_) SYMAWARE_RUNTIME_ERROR("Entity has already been initialized");
-  is_initialized_ = true;
-
   object_ = object;
   updateObject();
   if (model_ != nullptr) model_->initialiseObject(experiment, object_);
@@ -133,8 +120,7 @@ std::ostream& operator<<(std::ostream& os, const Entity& entity) {
   os << std::boolalpha;
   os << "Entity: (type: " << entity.type() << ", setup: " << entity.setup();
   if (entity.model() != nullptr) os << ", model: " << entity.model();
-  if (entity.is_initialized()) os << ", object: " << entity.object();
-  os << ", state: " << entity.state() << ")";
+  os << ", object: " << entity.object() << ", state: " << entity.state() << ")";
   os << std::noboolalpha;
   return os;
 }

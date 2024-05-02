@@ -330,7 +330,12 @@ void init_environment(py::module_ &m) {
            py::arg("integration_frequency"))
       .def("set_scheduler_speed", &symaware::Environment::setSchedulerSpeed,
            "Set the scheduler speed of the environment", py::arg("simulation_speed"), py::arg("ignore_frame_overrun"))
-      .def("add_entity", &symaware::Environment::addEntity, "Add an entity to the environment", py::arg("entity"))
+      .def("add_entity", py::overload_cast<symaware::Entity &>(&symaware::Environment::addEntity),
+           "Add an entity to the environment", py::arg("entity"))
+      .def("add_entity",
+           py::overload_cast<const std::string &, symaware::EntityModel *>(&symaware::Environment::addEntity),
+           "Get and register an entity to the environment", py::arg("name"),
+           py::arg("entity_model") = static_cast<symaware::EntityModel *>(nullptr))
       .def("add_road", &symaware::Environment::addRoad, "Add a road to the environment",
            py::arg_v("position", symaware::Position{true}, "Position(true)"))
       .def("create_free_viewer", &symaware::Environment::createFreeViewer, "Create a free viewer in the environment")

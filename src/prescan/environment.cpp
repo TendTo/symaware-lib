@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include "symaware/prescan/entity.h"
+#include "symaware/prescan/model/entity_model.h"
 #include "symaware/prescan/road.h"
 #include "symaware/util/exception.h"
 
@@ -76,8 +77,15 @@ Environment& Environment::addEntity(Entity& entity) {
     prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
     entity.initialiseObject(experiment_, object);
   }
-  entities_.push_back(&entity);
+  entities_[entity.object().name()] = &entity;
   return *this;
+}
+
+Entity Environment::addEntity(const std::string& name, EntityModel& model) { return addEntity(name, &model); }
+Entity Environment::addEntity(const std::string& name, EntityModel* const model) {
+  const auto it = entities_.find(name);
+  if (it != entities_.end()) return *it->second;
+  return Entity{name, *this, model};
 }
 
 Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }

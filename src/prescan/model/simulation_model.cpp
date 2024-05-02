@@ -11,19 +11,19 @@ SimulationModel::SimulationModel(const Environment& environment) : environment_{
 
 void SimulationModel::registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                               prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : environment_.entities()) entity->registerUnit(experiment, simulation);
+  for (const auto& [name, entity] : environment_.entities()) entity->registerUnit(experiment, simulation);
 };
 
 void SimulationModel::initialize(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : environment_.entities()) entity->initialise(simulation);
+  for (const auto& [name, entity] : environment_.entities()) entity->initialise(simulation);
 };
 
 void SimulationModel::step(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : environment_.entities()) entity->step(simulation);
+  for (const auto& [name, entity] : environment_.entities()) entity->step(simulation);
 };
 
 void SimulationModel::terminate(prescan::sim::ISimulation* simulation) {
-  for (Entity* const entity : environment_.entities()) entity->terminate(simulation);
+  for (const auto& [name, entity] : environment_.entities()) entity->terminate(simulation);
 };
 
 }  // namespace symaware

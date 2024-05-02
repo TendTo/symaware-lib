@@ -100,9 +100,6 @@ void init_entity(py::module_& m) {
       .def(py::init<symaware::Environment::ObjectType, symaware::Entity::Setup, symaware::EntityModel*>(),
            py::arg("object_type"), py::arg("setup") = symaware::Entity::Setup{},
            py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
-      .def(py::init<const std::string&, symaware::Environment&, symaware::Entity::Setup, symaware::EntityModel*>(),
-           py::arg("name"), py::arg("environment"), py::arg("setup") = symaware::Entity::Setup{},
-           py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
 
       .def("initialise_object", &symaware::Entity::initialiseObject, py::arg("experiment"), py::arg("object"))
       .def("register_unit", &symaware::Entity::registerUnit, py::arg("experiment"), py::arg("simulation"))
@@ -113,7 +110,5 @@ void init_entity(py::module_& m) {
       .def_property_readonly("state", &symaware::Entity::state, "Get the current state of the entity")
       .def_property_readonly("type", &symaware::Entity::type, "Get the type of the entity")
       .def_property_readonly("object", &symaware::Entity::object, "Get the worldobject wrapped by the entity")
-      .def_property_readonly("is_initialized", &symaware::Entity::is_initialized,
-                             "Get whether the entity is initialized")
       .def("__repr__", REPR_LAMBDA(symaware::Entity));
 }

@@ -11,6 +11,7 @@
 #include <prescan/api/Viewer.hpp>
 #include <prescan/api/experiment.hpp>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "symaware/prescan/data.h"
@@ -20,6 +21,7 @@ namespace symaware {
 // Forward declaration
 class Entity;
 class Road;
+class EntityModel;
 
 class Environment {
  public:
@@ -374,15 +376,26 @@ class Environment {
    *
    * The entity will be placed in the world at the specified position and orientation.
    * If the operation is successful, the @p entity will be initialised with the object created in the simulation.
-   * Futhermore, if the @p entity is controllable, meaning it is associated with a dynamical model,
-   * it will be registered in the simulation as a controllable agent.
-   * @note The entity will not be initialised if its type is @ref ObjectType::Existing ,
+   * @note The entity's model will not be initialised if its type is @ref ObjectType::Existing ,
    * since this type is used to represent already existing objects in the simulation.
    * @param[in,out] entity entity representing the new object to be added
    * The entity will be initialised with the object created in the simulation
-   * @param position position of the object in the world
    */
   Environment& addEntity(Entity& entity);
+
+  /**
+   * @brief Get and possibly register an existing entity to the enviromnent identifying it by its name.
+   *
+   * The entity with the specified name must exist in the experiment.
+   * If the entity wasn't already in the @ref entities_ map, it will be added.
+   * @note Both the entity and its model will not be initialised.
+   * @param name name of the entity in the environment
+   * @param model model that controls the entity. If not provided, the entity will not be controllable
+   * @return the entity
+   */
+  Entity addEntity(const std::string& name, EntityModel* model = nullptr);
+  /** @overload */
+  Entity addEntity(const std::string& name, EntityModel& model);
 
   /**
    * @brief Add a road to the environment.
@@ -406,7 +419,7 @@ class Environment {
    * @brief Get the names of the entities in the environment
    * @return names of the entities
    */
-  const std::vector<Entity*>& entities() const { return entities_; }
+  const std::unordered_map<std::string, Entity*>& entities() const { return entities_; }
 
   /**
    * @brief Get an object from the environment by name
@@ -422,7 +435,7 @@ class Environment {
 
  private:
   prescan::api::experiment::Experiment experiment_;
-  std::vector<Entity*> entities_;
+  std::unordered_map<std::string, Entity*> entities_;
 };
 
 std::string to_string(Environment::WeatherType weather_type);

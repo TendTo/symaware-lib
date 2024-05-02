@@ -78,18 +78,12 @@ class Entity {
   Entity(const std::string& name, Environment& environment, EntityModel* model = nullptr);
 
   /**
-   * @brief Construct a new Entity object based on an existing object in the @p environment with the given @p name.
+   * @brief Apply the provided @p setup to the entity, overriding the current one.
    *
-   * The object is initialised with the given @p setup.
-   * If a @p model is provided, the entity will be controlled by it during the simulation.
-   * @note Only the object is initialised when using this constructor, but the model is not.
-   * @param name name of the object in the environment
-   * @param environment environment where the object is located
-   * @param model model that controls the entity
+   * Since this operation only affects the world object, the model in the simulation is not updated.
+   * @param setup new setup to apply
    */
-  Entity(const std::string& name, Environment& environment, Setup setup, EntityModel& model);
-  /** @overload */
-  Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* model = nullptr);
+  void applySetup(Setup setup);
 
   /**
    * @brief Initialise the object once the entity has been added to the environment.
@@ -133,12 +127,10 @@ class Entity {
   const Setup& setup() const { return setup_; }
   const EntityModel* model() const { return model_; }
   const prescan::api::types::WorldObject& object() const { return object_; }
-  bool is_initialized() const { return is_initialized_; }
 
  private:
   void updateObject();
 
-  bool is_initialized_{false};    ///< Whether the entity has been initialized
   Environment::ObjectType type_;  ///< The type of the entity
   Setup setup_;                   ///< The initial state of the entity
   EntityModel* model_;            ///< The dynamical model of the entity. Only present if the entity is controllable
