@@ -38,13 +38,15 @@ Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* const model)
-    : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
+    : is_initialized_{false}, type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {
+  if (type_ == Environment::ObjectType::Existing) SYMAWARE_RUNTIME_ERROR("Existing type cannot be used directly");
+}
 
 Entity::Entity(const std::string& name, Environment& environment, EntityModel& model)
     : Entity{name, environment, &model} {}
 Entity::Entity(const std::string& name, Environment& environment, EntityModel* const model)
     : is_initialized_{true},
-      type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
+      type_{Environment::ObjectType::Existing},
       setup_{},
       model_{model},
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
@@ -57,7 +59,7 @@ Entity::Entity(const std::string& name, Environment& environment, Setup setup, E
     : Entity{name, environment, std::move(setup), &model} {}
 Entity::Entity(const std::string& name, Environment& environment, Setup setup, EntityModel* const model)
     : is_initialized_{true},
-      type_{Environment::ObjectType::Object},  // TODO: can this be inferred from the experiment?
+      type_{Environment::ObjectType::Existing},
       setup_{std::move(setup)},
       model_{model},
       object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},

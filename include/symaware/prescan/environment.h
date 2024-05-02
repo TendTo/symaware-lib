@@ -91,6 +91,7 @@ class Environment {
     Dumpster_2300L,
     DutchChurch,
     Empty_Light_Node,
+    Existing,
     FAW_Jiefang_J6M,
     FShape150cm,
     FShape250cm,
@@ -194,7 +195,6 @@ class Environment {
     NL_Ambulance_Volvo_XC60,
     Nissan_Ariya,
     Nissan_Cabstar_Boxtruck,
-    Object,
     OfficeBrownFlat,
     OfficeBrownTall1,
     OfficeBrownTall2,
@@ -376,7 +376,7 @@ class Environment {
    * If the operation is successful, the @p entity will be initialised with the object created in the simulation.
    * Futhermore, if the @p entity is controllable, meaning it is associated with a dynamical model,
    * it will be registered in the simulation as a controllable agent.
-   * @note The entity will not be initialised if its type is @ref ObjectType::Object ,
+   * @note The entity will not be initialised if its type is @ref ObjectType::Existing ,
    * since this type is used to represent already existing objects in the simulation.
    * @param[in,out] entity entity representing the new object to be added
    * The entity will be initialised with the object created in the simulation

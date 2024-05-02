@@ -72,7 +72,7 @@ Environment& Environment::setSchedulerSpeed(const prescan::api::types::Simulatio
 }
 
 Environment& Environment::addEntity(Entity& entity) {
-  if (entity.type() != Environment::ObjectType::Object) {
+  if (entity.type() != Environment::ObjectType::Existing) {
     prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
     entity.initialiseObject(experiment_, object);
   }
@@ -257,6 +257,8 @@ std::string to_string(const Environment::ObjectType object_type) {
       return "DutchChurch";
     case Environment::ObjectType::Empty_Light_Node:
       return "Empty_Light_Node";
+    case Environment::ObjectType::Existing:
+      return "Existing";
     case Environment::ObjectType::FAW_Jiefang_J6M:
       return "FAW_Jiefang_J6M";
     case Environment::ObjectType::FShape150cm:
@@ -463,8 +465,6 @@ std::string to_string(const Environment::ObjectType object_type) {
       return "Nissan_Ariya";
     case Environment::ObjectType::Nissan_Cabstar_Boxtruck:
       return "Nissan_Cabstar_Boxtruck";
-    case Environment::ObjectType::Object:
-      return "Object";
     case Environment::ObjectType::OfficeBrownFlat:
       return "OfficeBrownFlat";
     case Environment::ObjectType::OfficeBrownTall1:
