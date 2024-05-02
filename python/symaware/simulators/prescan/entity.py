@@ -38,23 +38,16 @@ class Entity(BaseEntity):
     """
 
     model: DynamicalModel = field(default_factory=NullDynamicalModel)
+    setup: _Entity.Setup = field(default_factory=_Entity.Setup)
     _internal_entity: _Entity = None
 
     def __post_init__(self):
         super().__post_init__()
         if self._internal_entity is not None:
             raise ValueError("Do not initialise the _internal_entity object directly")
-        setup = _Entity.Setup(
-            position=Position(self.position),
-            orientation=Orientation(self.orientation[:3]),
-            cog_offset=Position(),
-            is_collision_detectable=True,
-            is_movable=True,
-            sensor_detectability=SensorDetectability.SensorDetectabilityDetectable,
-        )
         self._internal_entity = _Entity(
             object_type=self.object_type,
-            setup=setup,
+            setup=self.setup,
             entity_model=(None if isinstance(self.model, NullDynamicalModel) else self.model.internal_model),
         )
 
