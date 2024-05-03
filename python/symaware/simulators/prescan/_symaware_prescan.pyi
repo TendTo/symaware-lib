@@ -937,12 +937,6 @@ class _EntityModel:
         Internal WorldObject of the model
         """
 
-    @property
-    def state(self) -> State:
-        """
-        State of the model
-        """
-
 class _Environment:
     class ObjectType:
         """
