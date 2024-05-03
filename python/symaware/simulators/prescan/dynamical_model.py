@@ -62,7 +62,7 @@ class DynamicalModel(BaseDynamicalModel):
         if not value.shape == self.control_input_shape:
             raise ValueError(f"Expected numpy array of shape {self.control_input_shape}, got {value.shape}")
         self._control_input = value
-        self._internal_model.set_input(self._control_input)
+        self._internal_model.set_input(self._control_input)  # type: ignore
 
     @property
     def internal_model(self) -> _EntityModel:

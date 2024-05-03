@@ -72,7 +72,7 @@ cmake.targets = ["_symaware_prescan"]
 [tool.pytest.ini_options]
 minversion = "6.0"
 addopts = [
-    "--cov=symaware.base",
+    "--cov=symaware.simulators.prescan",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-fail-under=50",
@@ -98,7 +98,7 @@ include = '(python|tests)\/.*\.py'
 # Isort configuration (import sorter)
 [tool.isort]
 profile = "black"
-src_paths = ["python", "test"]
+src_paths = ["python", "tests"]
 
 # mypy configuration (static type checker)
 [tool.mypy]
@@ -108,3 +108,4 @@ warn_unused_ignores = true
 namespace_packages = true
 explicit_package_bases = true
 mypy_path = "python"
+exclude = '_symaware_prescan.pyi|_symaware_prescan.pyd|_version.py'

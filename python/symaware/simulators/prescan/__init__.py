@@ -4,6 +4,7 @@ from ._symaware_prescan import (
     Gear,
     Orientation,
     Position,
+    Road,
     SkyLightPollution,
 )
 from .dynamical_model import (

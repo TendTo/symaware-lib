@@ -5,7 +5,7 @@ from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import _Environment, _Simulation, Road
+from ._symaware_prescan import Road, _Environment, _Simulation
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
@@ -133,11 +133,10 @@ class Environment(BaseEnvironment):
         if entity is not None:
             return entity
 
-        internal_entity = self._internal_environment.add_entity(
-            entity_name, model._internal_model if model is not None else None  # pylint: disable=protected-access
-        )
+        internal_model = model._internal_model if model is not None else None  # pylint: disable=protected-access
+        internal_entity = self._internal_environment.add_entity(entity_name, internal_model)  # type: ignore
         entity = ExistingEntity(model=model if model is not None else NullDynamicalModel())
-        entity._internal_entity = internal_entity  # pylint: disable=protected-access
+        object.__setattr__(entity, "_internal_entity", internal_entity)
         return entity
 
     @log(__LOGGER)

@@ -48,6 +48,7 @@ __all__ = [
     "ParameterRange",
     "Position",
     "Reverse",
+    "Road",
     "RoadSideType",
     "RoadSideTypeLeft",
     "RoadSideTypeRight",
@@ -404,6 +405,112 @@ class Position:
     @typing.overload
     def __init__(self, array: numpy.ndarray[numpy.float64]) -> None: ...
     def __repr__(self) -> str: ...
+
+class Road:
+    def add_cubic_polynomial_section(self, length: float, a: float, b: float, c: float, d: float) -> Road:
+        """
+        Add a cubic polynomial section to the road
+        """
+
+    def add_curve_section(self, length: float, curvature: float) -> Road:
+        """
+        Add a curve section to the road
+        """
+
+    def add_lane(
+        self,
+        road_side: RoadSideType,
+        width: float,
+        lane_type: LaneType = ...,
+        start_offset: float = 0.0,
+        end_offset: float = float("inf"),
+    ) -> Road:
+        """
+        Add a lane to the road
+        """
+
+    def add_parametric_cubic_polynomial_section(
+        self,
+        length: float,
+        aU: float,
+        bU: float,
+        cU: float,
+        dU: float,
+        aV: float,
+        bV: float,
+        cV: float,
+        dV: float,
+        parameter_range: ParameterRange,
+    ) -> Road:
+        """
+        Add a parametric cubic polynomial section to the road
+        """
+
+    def add_parking_space(
+        self,
+        length: float,
+        width: float,
+        yaw: float = 0,
+        road_side: RoadSideType = ...,
+        side_offset: float = 0,
+        offset: float = 0,
+    ) -> Road:
+        """
+        Add a parking space to the road
+        """
+
+    def add_spiral_section(self, length: float, start_curvature: float, end_curvature: float) -> Road:
+        """
+        Add a spiral section to the road
+        """
+
+    def add_straight_section(self, length: float) -> Road:
+        """
+        Add a straight section to the road
+        """
+
+    def set_asphalt_color(self, r: float, g: float, b: float) -> Road:
+        """
+        Set the asphalt color
+        """
+
+    def set_asphalt_texture_scale(self, texture_scale: float) -> Road:
+        """
+        Set the asphalt texture scale
+        """
+
+    def set_asphalt_tone(self, tone: AsphaltTone) -> Road:
+        """
+        Set the asphalt tone
+        """
+
+    def set_asphalt_type(self, asphalt_type: AsphaltType) -> Road:
+        """
+        Set the asphalt type
+        """
+
+    def set_position(self, position: Position) -> Road:
+        """
+        Set the position of the road
+        """
+
+    def set_speed_limit_profile(
+        self, value: float, start_offset: float = 0.0, end_offset: float = float("inf")
+    ) -> Road:
+        """
+        Set the speed limit profile
+        """
+
+    def set_traffic_side(self, traffic_side: TrafficSide) -> Road:
+        """
+        Set the traffic side of the road
+        """
+
+    @property
+    def length(self) -> float:
+        """
+        Get the length of the road
+        """
 
 class RoadSideType:
     """
@@ -831,7 +938,7 @@ class _EntityModel:
         """
 
     @property
-    def state(self) -> ...:
+    def state(self) -> State:
         """
         State of the model
         """
@@ -1896,12 +2003,12 @@ class _Environment:
         """
 
     @typing.overload
-    def add_entity(self, name: str, entity_model: _EntityModel = None) -> ...:
+    def add_entity(self, name: str, entity_model: _EntityModel = None) -> _Entity:
         """
         Get and register an entity to the environment
         """
 
-    def add_road(self, position: Position = ...) -> ...:
+    def add_road(self, position: Position = None) -> Road:
         """
         Add a road to the environment
         """
@@ -1953,122 +2060,6 @@ class _ISimulation:
     def get_sample_time(self) -> float: ...
     def get_simulation_path(self) -> str: ...
     def stop(self) -> None: ...
-
-class _Road:
-    @typing.overload
-    def __init__(self, environment: _Environment) -> None: ...
-    @typing.overload
-    def __init__(self, experiment: _Experiment) -> None: ...
-    def add_cubic_polynomial_section(self, length: float, a: float, b: float, c: float, d: float) -> _Road:
-        """
-        Add a cubic polynomial section to the road
-        """
-
-    def add_curve_section(self, length: float, curvature: float) -> _Road:
-        """
-        Add a curve section to the road
-        """
-
-    def add_lane(
-        self,
-        road_side: RoadSideType,
-        width: float,
-        lane_type: LaneType = ...,
-        start_offset: float = 0.0,
-        end_offset: float = float("inf"),
-    ) -> _Road:
-        """
-        Add a lane to the road
-        """
-
-    def add_parametric_cubic_polynomial_section(
-        self,
-        length: float,
-        aU: float,
-        bU: float,
-        cU: float,
-        dU: float,
-        aV: float,
-        bV: float,
-        cV: float,
-        dV: float,
-        parameter_range: ParameterRange,
-    ) -> _Road:
-        """
-        Add a parametric cubic polynomial section to the road
-        """
-
-    def add_parking_space(
-        self,
-        length: float,
-        width: float,
-        yaw: float = 0,
-        road_side: RoadSideType = ...,
-        side_offset: float = 0,
-        offset: float = 0,
-    ) -> _Road:
-        """
-        Add a parking space to the road
-        """
-
-    def add_spiral_section(self, length: float, start_curvature: float, end_curvature: float) -> _Road:
-        """
-        Add a spiral section to the road
-        """
-
-    def add_straight_section(self, length: float) -> _Road:
-        """
-        Add a straight section to the road
-        """
-
-    def set_asphalt_color(self, r: float, g: float, b: float) -> _Road:
-        """
-        Set the asphalt color
-        """
-
-    def set_asphalt_texture_scale(self, texture_scale: float) -> _Road:
-        """
-        Set the asphalt texture scale
-        """
-
-    def set_asphalt_tone(self, tone: AsphaltTone) -> _Road:
-        """
-        Set the asphalt tone
-        """
-
-    def set_asphalt_type(self, asphalt_type: AsphaltType) -> _Road:
-        """
-        Set the asphalt type
-        """
-
-    def set_position(self, position: Position) -> _Road:
-        """
-        Set the position of the road
-        """
-
-    def set_speed_limit_profile(
-        self, value: float, start_offset: float = 0.0, end_offset: float = float("inf")
-    ) -> _Road:
-        """
-        Set the speed limit profile
-        """
-
-    def set_traffic_side(self, traffic_side: TrafficSide) -> _Road:
-        """
-        Set the traffic side of the road
-        """
-
-    @property
-    def length(self) -> float:
-        """
-        Get the length of the road
-        """
-
-    @property
-    def road(self) -> ...:
-        """
-        Get the road
-        """
 
 class _Simulation:
     def __init__(self, environment: _Environment) -> None: ...

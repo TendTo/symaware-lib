@@ -29,7 +29,20 @@ if __name__ == "__main__":
     with open(file_path, "r") as file:
         filedata = file.read()
 
-    filedata = filedata.replace("float = ...", "float = float('inf')").replace("entity: ...", "entity: '_Entity'")
+    filedata = (
+        filedata.replace("float = ...", "float = float('inf')")
+        .replace("entity: ...", "entity: '_Entity'")
+        .replace(
+            "def add_entity(self, name: str, entity_model: _EntityModel = None) -> ...:",
+            "def add_entity(self, name: str, entity_model: _EntityModel = None) -> _Entity:",
+        )
+        .replace(
+            "def add_road(self, position: Position = ...) -> ...:",
+            "def add_road(self, position: Position = None) -> Road:",
+        )
+        .replace("def road(self) -> ...:", "def road(self) -> Road:")
+        .replace("def state(self) -> ...:", "def state(self) -> State:")
+    )
 
     with open(file_path, "w") as file:
         file.write(filedata)
