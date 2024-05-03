@@ -5,13 +5,14 @@ from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import _Environment, _Simulation
-from .entity import Entity
+from ._symaware_prescan import _Environment, _Simulation, Road
+from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
     from symaware.base.utils import AsyncLoopLock
 
+    from ._symaware_prescan import Position
     from .dynamical_model import DynamicalModel
 
 
@@ -89,9 +90,16 @@ class Environment(BaseEnvironment):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
         return np.array(entity.state)
 
-    def get_entity(self, entity_name: str, model: "DynamicalModel | None" = None):
+    def add_road(self, position: "Position | None" = None) -> Road:
+        return (
+            self._internal_environment.add_road(position)
+            if position is not None
+            else self._internal_environment.add_road()
+        )
+
+    def add_entity(self, entity_name: str, model: "DynamicalModel | None" = None) -> Entity:
         """
-        Get an existing entity from the environment based on their name.
+        Add an existing entity to the environment based on their name.
         The entity must exist within the internal experiment.
         If the entity was previously added to the environment, the entity object will be returned.
         Otherwise, the entity matching the name will be collected from the internal experiment and a new entity object
@@ -125,16 +133,18 @@ class Environment(BaseEnvironment):
         if entity is not None:
             return entity
 
-        internal_entity = self._internal_environment.add_entity(entity_name, model)
-        entity = Entity(model=model if model is not None else NullDynamicalModel())
-        entity._internal_entity = internal_entity
+        internal_entity = self._internal_environment.add_entity(
+            entity_name, model._internal_model if model is not None else None  # pylint: disable=protected-access
+        )
+        entity = ExistingEntity(model=model if model is not None else NullDynamicalModel())
+        entity._internal_entity = internal_entity  # pylint: disable=protected-access
         return entity
 
     @log(__LOGGER)
     def _add_entity(self, entity: Entity):
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
-        self._internal_environment.add_entity(entity._internal_entity)
+        self._internal_environment.add_entity(entity._internal_entity)  # pylint: disable=protected-access
 
     def initialise(self):
         if self._is_prescan_initialized:

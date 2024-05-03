@@ -6,9 +6,7 @@
 namespace py = pybind11;
 
 void init_road(py::module_ &m) {
-  py::class_<symaware::Road>(m, "_Road")
-      .def(py::init<symaware::Environment &>(), py::arg("environment"))
-      .def(py::init<prescan::api::experiment::Experiment &>(), py::arg("experiment"))
+  py::class_<symaware::Road>(m, "Road")
       .def("add_curve_section", &symaware::Road::addCurveSection, "Add a curve section to the road", py::arg("length"),
            py::arg("curvature"))
       .def("add_cubic_polynomial_section", &symaware::Road::addCubicPolynomialSection,
@@ -44,6 +42,5 @@ void init_road(py::module_ &m) {
       .def("set_asphalt_tone", &symaware::Road::setAsphaltTone, "Set the asphalt tone", py::arg("tone"))
       .def("set_position", &symaware::Road::setPosition, "Set the position of the road", py::arg("position"))
 
-      .def_property_readonly("length", &symaware::Road::length, "Get the length of the road")
-      .def_property_readonly("road", &symaware::Road::road, "Get the road");
+      .def_property_readonly("length", &symaware::Road::length, "Get the length of the road");
 }
