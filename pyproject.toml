@@ -85,7 +85,7 @@ testpaths = ["tests"]
 omit = [
     "*/__main__.py",
     "*/_version.py",
-    "*/_symaware_prescan.py",
+    "*/_symaware_prescan.pyd",
     "*/_symaware_prescan.pyi",
 ] # omit files from coverage
 

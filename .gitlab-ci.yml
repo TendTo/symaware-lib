@@ -19,13 +19,14 @@ default:
   after_script:
     - rm -rf tmp/
 
-include:
-  - local: /.gitlab/test.yml
-    rules:
-      - if: $CI_COMMIT_BRANCH == "prescan"
-  - local: /.gitlab/deploy.yml
-    rules:
-      - if: $CI_COMMIT_TAG =~ /^v?[0-9]+\.[0-9]+\.[0-9]+/
+# Can't apply CI/CD to this package because of Prescan's license
+# include:
+#   - local: /.gitlab/test.yml
+#     rules:
+#       - if: $CI_COMMIT_BRANCH == "prescan"
+#   - local: /.gitlab/deploy.yml
+#     rules:
+#       - if: $CI_COMMIT_TAG =~ /^v?[0-9]+\.[0-9]+\.[0-9]+/
 
 no_job:
   rules:
