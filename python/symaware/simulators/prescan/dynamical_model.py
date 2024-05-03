@@ -49,7 +49,7 @@ class DynamicalModel(BaseDynamicalModel):
     def __init__(self, ID: Identifier, control_input: np.ndarray):
         super().__init__(ID, control_input=control_input)
         self._entity_id = -1
-        self._internal_model: _EntityModel = None
+        self._internal_model: _EntityModel
 
     @property
     def control_input(self) -> np.ndarray:
@@ -120,7 +120,7 @@ class CustomDynamicalModel(DynamicalModel):
         self._internal_model = _CustomDynamicalModel()
 
     @property
-    def subinputs_dict(self) -> AmesimDynamicalModelInput:
+    def subinputs_dict(self) -> CustomDynamicalModelInput:
         return {
             "position": self.control_input[:3],
             "orientation": self.control_input[3:7],
