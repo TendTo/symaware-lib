@@ -756,9 +756,17 @@ class _AmesimDynamicalModel(_EntityModel):
     @typing.overload
     def __init__(self) -> None: ...
     @typing.overload
-    def __init__(self) -> None: ...
-    @typing.overload
     def __init__(self, initial_input: _AmesimDynamicalModel.Input) -> None: ...
+    @typing.overload
+    def __init__(self, is_flat_ground: bool, initial_velocity: float) -> None: ...
+    @typing.overload
+    def __init__(self, is_flat_ground: bool, initial_input: _AmesimDynamicalModel.Input) -> None: ...
+    @typing.overload
+    def __init__(self, initial_velocity: float, initial_input: _AmesimDynamicalModel.Input) -> None: ...
+    @typing.overload
+    def __init__(
+        self, is_flat_ground: bool, initial_velocity: float, initial_input: _AmesimDynamicalModel.Input
+    ) -> None: ...
     def __repr__(self) -> str: ...
     def initialise_object(self, experiment: _Experiment, object: _WorldObject) -> None: ...
     def register_unit(self, experiment: _Experiment, simulation: _ISimulation) -> None: ...
@@ -770,6 +778,17 @@ class _AmesimDynamicalModel(_EntityModel):
     def update_input(self, input: numpy.ndarray[numpy.float64]) -> None: ...
     @typing.overload
     def update_input(self, input: _AmesimDynamicalModel.Input) -> None: ...
+    @property
+    def initial_velocity(self) -> float:
+        """
+        Initial velocity of the model
+        """
+
+    @property
+    def is_flat_ground(self) -> bool:
+        """
+        Whether the model is just assum everything is a flat ground
+        """
 
 class _CustomDynamicalModel(_EntityModel):
     class Input:
@@ -871,6 +890,12 @@ class _Entity:
     def register_unit(self, experiment: _Experiment, simulation: _ISimulation) -> None: ...
     def step(self, simulation: _ISimulation) -> None: ...
     def terminate(self, simulation: _ISimulation) -> None: ...
+    @property
+    def is_initialised(self) -> bool:
+        """
+        Wether the world object has been initialised
+        """
+
     @property
     def object(self) -> _WorldObject:
         """
@@ -1997,9 +2022,14 @@ class _Environment:
         """
 
     @typing.overload
-    def add_entity(self, name: str, entity_model: _EntityModel = None) -> _Entity:
+    def add_entity(self, name: str, entity: "_Entity") -> _Environment:
         """
-        Get and register an entity to the environment
+        Collect an existing entity from the experiment
+        """
+
+    def add_free_viewer(self) -> _Viewer:
+        """
+        Add a free viewer in the environment
         """
 
     def add_road(self, position: Position = None) -> Road:
@@ -2007,14 +2037,19 @@ class _Environment:
         Add a road to the environment
         """
 
-    def create_free_viewer(self) -> _Viewer:
+    def import_OpenDrive_network(self, filename: str) -> _Environment:
         """
-        Create a free viewer in the environment
+        Import an OpenDrive network from a file
         """
 
     def remove_all_viewers(self) -> None:
         """
         Remove all viewers from the environment
+        """
+
+    def save_experiment(self, filename: str) -> None:
+        """
+        Save the experiment to file
         """
 
     def set_scheduler_frequencies(self, simulation_frequency: int, integration_frequency: int) -> _Environment:
