@@ -40,6 +40,12 @@ class AmesimDynamicalModel : public EntityModel {
    * @param state initial model state
    */
   explicit AmesimDynamicalModel(Input initial_input = Input{false});
+  /**
+   * @brief Construct a new Dynamical Model object with an initial model state.
+   * @param is_flat_ground whether to use a more efficient flat ground simulation
+   * @param state initial model state
+   */
+  explicit AmesimDynamicalModel(bool is_flat_ground, Input initial_input = Input{false});
 
   void initialiseObject(prescan::api::experiment::Experiment& experiment,
                         prescan::api::types::WorldObject object) override;
@@ -63,10 +69,12 @@ class AmesimDynamicalModel : public EntityModel {
                     prescan::sim::ISimulation* simulation) override;
 
   const Input& input() const { return input_; }
+  bool is_flat_ground() const { return is_flat_ground_; }
 
  private:
   void updateState() override;
 
+  bool is_flat_ground_;                                ///< Whether the a flat (more efficient) simulation will be used
   prescan::sim::AmesimVehicleDynamicsUnit* dynamics_;  ///< The dynamics of the entity in the simulation
   Input input_;                                        ///< The model state of the entity that will be applied each step
 };

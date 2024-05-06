@@ -100,6 +100,7 @@ void init_model(py::module_& m) {
   amesimDynamicalModel.def(py::init<>())
       .def(py::init<>())
       .def(py::init<symaware::AmesimDynamicalModel::Input>(), py::arg("initial_input"))
+      .def(py::init<bool, symaware::AmesimDynamicalModel::Input>(), py::arg("is_flat_ground"), py::arg("initial_input"))
       .def("initialise_object", &symaware::AmesimDynamicalModel::initialiseObject, py::arg("experiment"),
            py::arg("object"))
       .def("register_unit", &symaware::AmesimDynamicalModel::registerUnit, py::arg("experiment"), py::arg("simulation"))
@@ -130,6 +131,8 @@ void init_model(py::module_& m) {
           "update_input",
           py::overload_cast<const symaware::AmesimDynamicalModel::Input&>(&symaware::AmesimDynamicalModel::updateInput),
           py::arg("input"))
+      .def_property_readonly("is_flat_ground", &symaware::AmesimDynamicalModel::is_flat_ground,
+                             "Whether the model is just assum everything is a flat ground")
       .def("__repr__", REPR_LAMBDA(symaware::AmesimDynamicalModel));
 
   py::class_<symaware::CustomDynamicalModel, symaware::EntityModel> customDynamicalModel =
