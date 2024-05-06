@@ -336,8 +336,10 @@ void init_environment(py::module_ &m) {
            "Collect an existing entity from the experiment", py::arg("name"), py::arg("entity"))
       .def("add_road", &symaware::Environment::addRoad, "Add a road to the environment",
            py::arg_v("position", symaware::Position{true}, "Position(true)"))
-      .def("create_free_viewer", &symaware::Environment::createFreeViewer, "Create a free viewer in the environment")
+      .def("add_free_viewer", &symaware::Environment::addFreeViewer, "Add a free viewer in the environment")
       .def("remove_all_viewers", &symaware::Environment::removeAllViewers, "Remove all viewers from the environment")
+      .def("save_experiment", &symaware::Environment::saveExperiment, "Save the experiment to file",
+           py::arg("filename"))
 
       .def_property_readonly("experiment", &symaware::Environment::experiment, "Get the experiment of the environment");
 }

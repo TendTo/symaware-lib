@@ -92,7 +92,7 @@ Environment& Environment::addEntity(const std::string& name, Entity& entity) {
 
 Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }
 
-prescan::api::viewer::Viewer Environment::createFreeViewer() {
+prescan::api::viewer::Viewer Environment::addFreeViewer() {
   prescan::api::viewer::Viewer viewer{prescan::api::viewer::createViewer(experiment_)};
   viewer.assignFreeCamera();
   return viewer;

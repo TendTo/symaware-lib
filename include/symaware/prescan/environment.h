@@ -364,7 +364,7 @@ class Environment {
    * The viewer will allow for the visualisation of the environment using the Prescan viewer using a free camera.
    * @return the new viewer
    */
-  prescan::api::viewer::Viewer createFreeViewer();
+  prescan::api::viewer::Viewer addFreeViewer();
   /**
    * @brief Remove all viewers from the environment.
    * @warning All previously created viewers will be invalidated
@@ -387,13 +387,13 @@ class Environment {
    * @brief Collect an existing @p entity from the experiment by it by its @p name.
    *
    * The entity with the specified name must exist in the experiment.
-   * @note If the type of the entity is @ref ObjectType::Existing, the setup will be ignored 
+   * @note If the type of the entity is @ref ObjectType::Existing, the setup will be ignored
    * and the model will not be initialised.
    * If the former step is needed, use the @ref applySetup method.
    * @param name name of the entity in the environment
    * @param[out] entity collected entity
    */
-   Environment& addEntity(const std::string& name, Entity& entity);
+  Environment& addEntity(const std::string& name, Entity& entity);
 
   /**
    * @brief Add a road to the environment.
@@ -418,6 +418,12 @@ class Environment {
    * @return names of the entities
    */
   const std::unordered_map<std::string, Entity*>& entities() const { return entities_; }
+
+  /**
+   * @brief Save the internal file to a file
+   * @param filename name of the file
+   */
+  void saveExperiment(const std::string& filename) { experiment_.saveToFile(filename); }
 
   /**
    * @brief Get an object from the environment by name
