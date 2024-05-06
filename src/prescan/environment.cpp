@@ -1,6 +1,7 @@
 #include "symaware/prescan/environment.h"
 
 #include <iostream>
+#include <prescan/api/Opendrive.hpp>
 
 #include "symaware/prescan/entity.h"
 #include "symaware/prescan/model/entity_model.h"
@@ -91,6 +92,11 @@ Environment& Environment::addEntity(const std::string& name, Entity& entity) {
 }
 
 Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }
+
+Environment& Environment::importOpenDriveNetwork(const std::string& filename) {
+  prescan::api::opendrive::importOpenDriveFile(experiment_, filename);
+  return *this;
+}
 
 prescan::api::viewer::Viewer Environment::addFreeViewer() {
   prescan::api::viewer::Viewer viewer{prescan::api::viewer::createViewer(experiment_)};

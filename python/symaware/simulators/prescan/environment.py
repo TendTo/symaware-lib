@@ -67,25 +67,16 @@ class Environment(BaseEnvironment):
     filename:
         Name of the file that contains the experiment to load. Usually ends with .pb
         If not provided, a new empty environment will be created
-    add_free_viewer:
-        If True, a free camera will be added to the environment to allow for visualisation
     async_loop_lock:
         Async loop lock to use for the environment
     """
 
     __LOGGER = get_logger(__name__, "prescan.Environment")
 
-    def __init__(
-        self,
-        filename: str = "",
-        add_free_viewer: bool = False,
-        async_loop_lock: "AsyncLoopLock | None" = None,
-    ):
+    def __init__(self, filename: str = "", async_loop_lock: "AsyncLoopLock | None" = None):
         super().__init__(async_loop_lock)
         self._is_prescan_initialized = False
         self._internal_environment = _Environment() if filename == "" else _Environment(filename)
-        if add_free_viewer:
-            self._internal_environment.create_free_viewer()
         self._internal_simulation = _Simulation(self._internal_environment)
 
     @log(__LOGGER)
@@ -102,39 +93,43 @@ class Environment(BaseEnvironment):
             else self._internal_environment.add_road()
         )
 
+    def import_OpenDrive_network(self, filename: str):
+        """
+        Load the OpenDrive network from a file
+
+        Args
+        ----
+        filename:
+            path to the file containing the OpenDrive network
+        """
+        self._internal_environment.import_OpenDrive_network(filename)
+
+    def add_free_viewer(self):
+        """
+        Add a free camera to the environment, to ease visualization
+        """
+        self._internal_environment.add_free_viewer()
+
     @log(__LOGGER)
-    def add_entity(self, entity_name: str, model: "DynamicalModel | None" = None) -> Entity:
+    def add_entity(self, entity_name: str, entity: "Entity"):
         """
         Add an existing entity to the environment based on their name.
-        The entity must exist within the internal experiment.
-        If the entity was previously added to the environment, the entity object will be returned.
-        Otherwise, the entity matching the name will be collected from the internal experiment and a new entity object
-        will be created and returned.
-        If a model is provided, the newly collected entity will be associated with the model.
+        The entity must already exist within the internal experiment.
 
         Args
         ----
         entity_name:
-            Awareness database of the agent
-        model:
-            Knowledge database of the agent
-
-        Returns
-        -------
-            Collected entity
+            Name of the entity in the experimenet
+        entity:
+            Pre-existing entity to add
         """
-        entity = next((entity for entity in self._entities if entity.name == entity_name), None)
-        if entity is not None:
-            return entity
-
-        internal_model = None if model is None else model._internal_model  # pylint: disable=protected-access
-        internal_entity = self._internal_environment.add_entity(entity_name, internal_model)  # type: ignore
-        entity = ExistingEntity(
-            id=-1 if model is None else model.id,
-            _internal_entity=internal_entity,
-            model=NullDynamicalModel() if model is None else model,
-        )
-        return entity
+        if not isinstance(entity, Entity):
+            raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
+        if entity.object_type != _Environment.ObjectType.Existing:
+            self.__LOGGER.warning(
+                "Expected 'Existing' entity type, got %s. Entity will be initialised", entity.object_type
+            )
+        self._internal_environment.add_entity(entity_name, entity._internal_entity)  # pylint: disable=protected-access
 
     @log(__LOGGER)
     def _add_entity(self, entity: Entity):

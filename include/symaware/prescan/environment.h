@@ -380,6 +380,7 @@ class Environment {
    * since this type is used to represent pre-existing objects in the simulation.
    * Use @ref addEntity(const std::string&, Entity&) instead
    * @param[in,out] entity entity representing the new object to be added
+   * @return instance reference
    */
   Environment& addEntity(Entity& entity);
 
@@ -392,6 +393,7 @@ class Environment {
    * If the former step is needed, use the @ref applySetup method.
    * @param name name of the entity in the environment
    * @param[out] entity collected entity
+   * @return instance reference
    */
   Environment& addEntity(const std::string& name, Entity& entity);
 
@@ -406,6 +408,19 @@ class Environment {
    * @return the new road
    */
   Road addRoad(const Position& position = Position{true});
+
+  /**
+   * @brief Imports an OpenDRIVE network in the experiment.
+   *
+   * There are the following requirements for importing an OpenDRIVE file:
+   * - the file should exist exist
+   * - the file should adhere to the OpenDRIVE V1.4 specification, Revision H
+   * - the experiment should not contain any roads yet
+   * @param filename path to the OpenDRIVE file
+   * @throw std::runtime_error if any of the conditions are not met
+   * @return instance reference
+   */
+  Environment& importOpenDriveNetwork(const std::string& filename);
 
   /**
    * @brief Get the experiment object of the environment
