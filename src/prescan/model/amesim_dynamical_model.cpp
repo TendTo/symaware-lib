@@ -22,14 +22,25 @@ AmesimDynamicalModel::Input::Input(double throttle, double brake, double steerin
     : throttle{throttle}, brake{brake}, steering_wheel_angle{steering_wheel_angle}, gear{gear} {}
 
 AmesimDynamicalModel::AmesimDynamicalModel(Input initial_input)
-    : AmesimDynamicalModel{true, std::move(initial_input)} {}
+    : AmesimDynamicalModel{true, 0, std::move(initial_input)} {}
 AmesimDynamicalModel::AmesimDynamicalModel(const bool is_flat_ground, Input initial_input)
-    : EntityModel{}, is_flat_ground_{is_flat_ground}, input_{std::move(initial_input)} {}
+    : AmesimDynamicalModel{true, 0, std::move(initial_input)} {}
+AmesimDynamicalModel::AmesimDynamicalModel(const double initial_velocity, Input initial_input)
+    : AmesimDynamicalModel{true, initial_velocity, std::move(initial_input)} {}
+AmesimDynamicalModel::AmesimDynamicalModel(const bool is_flat_ground, const double initial_velocity,
+                                           Input initial_input)
+    : EntityModel{},
+      is_flat_ground_{is_flat_ground},
+      initial_velocity_{initial_velocity},
+      input_{std::move(initial_input)} {}
 
 void AmesimDynamicalModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
                                             prescan::api::types::WorldObject object) {
   EntityModel::initialiseObject(experiment, object);
-  prescan::api::vehicledynamics::createAmesimPreconfiguredDynamics(object_).setFlatGround(is_flat_ground_);
+  prescan::api::vehicledynamics::AmesimPreconfiguredDynamics dynamics{
+      prescan::api::vehicledynamics::createAmesimPreconfiguredDynamics(object_)};
+  dynamics.setFlatGround(is_flat_ground_);
+  dynamics.setInitialVelocity(initial_velocity_);
 }
 
 void AmesimDynamicalModel::setInput(const std::vector<double>& input) {

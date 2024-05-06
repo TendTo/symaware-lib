@@ -85,9 +85,9 @@ class AmesimDynamicalModel(DynamicalModel):
         Identifier of the agent this model belongs to
     """
 
-    def __init__(self, ID: Identifier):
+    def __init__(self, ID: Identifier, is_flat_ground: bool = True, initial_velocity: float = 0):
         super().__init__(ID, control_input=np.zeros(4))
-        self._internal_model = _AmesimDynamicalModel()
+        self._internal_model = _AmesimDynamicalModel(is_flat_ground, initial_velocity)
 
     @property
     def subinputs_dict(self) -> AmesimDynamicalModelInput:
