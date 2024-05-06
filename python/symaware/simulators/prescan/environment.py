@@ -64,6 +64,9 @@ class Environment(BaseEnvironment):
 
     Args
     ----
+    filename:
+        Name of the file that contains the experiment to load. Usually ends with .pb
+        If not provided, a new empty environment will be created
     add_free_viewer:
         If True, a free camera will be added to the environment to allow for visualisation
     async_loop_lock:
@@ -74,12 +77,13 @@ class Environment(BaseEnvironment):
 
     def __init__(
         self,
+        filename: str = "",
         add_free_viewer: bool = False,
         async_loop_lock: "AsyncLoopLock | None" = None,
     ):
         super().__init__(async_loop_lock)
         self._is_prescan_initialized = False
-        self._internal_environment = _Environment()
+        self._internal_environment = _Environment() if filename == "" else _Environment(filename)
         if add_free_viewer:
             self._internal_environment.create_free_viewer()
         self._internal_simulation = _Simulation(self._internal_environment)
@@ -90,6 +94,7 @@ class Environment(BaseEnvironment):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
         return np.array(entity.state)
 
+    @log(__LOGGER)
     def add_road(self, position: "Position | None" = None) -> Road:
         return (
             self._internal_environment.add_road(position)
@@ -97,6 +102,7 @@ class Environment(BaseEnvironment):
             else self._internal_environment.add_road()
         )
 
+    @log(__LOGGER)
     def add_entity(self, entity_name: str, model: "DynamicalModel | None" = None) -> Entity:
         """
         Add an existing entity to the environment based on their name.
@@ -106,37 +112,28 @@ class Environment(BaseEnvironment):
         will be created and returned.
         If a model is provided, the newly collected entity will be associated with the model.
 
-        Note
-        ----
-        Invoking this method will notify the subscribers
-        of the events `computing_control_input` and ``computed_control_input`` added with
-        :meth:`add_on_computing_control_input` and :meth:``add_on_computed_control_input``
-        respectively.
-
         Args
         ----
-        awareness_database:
+        entity_name:
             Awareness database of the agent
-        knowledge_database:
+        model:
             Knowledge database of the agent
 
         Returns
         -------
-            - New state of the agent the controller wants to reach,
-            - Time series of intents of the controller, Can be empty
-
-        Raises
-        ------
-        RuntimeError: If the controller has not been initialised yet
+            Collected entity
         """
         entity = next((entity for entity in self._entities if entity.name == entity_name), None)
         if entity is not None:
             return entity
 
-        internal_model = model._internal_model if model is not None else None  # pylint: disable=protected-access
+        internal_model = None if model is None else model._internal_model  # pylint: disable=protected-access
         internal_entity = self._internal_environment.add_entity(entity_name, internal_model)  # type: ignore
-        entity = ExistingEntity(model=model if model is not None else NullDynamicalModel())
-        object.__setattr__(entity, "_internal_entity", internal_entity)
+        entity = ExistingEntity(
+            id=-1 if model is None else model.id,
+            _internal_entity=internal_entity,
+            model=NullDynamicalModel() if model is None else model,
+        )
         return entity
 
     @log(__LOGGER)
@@ -145,6 +142,7 @@ class Environment(BaseEnvironment):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
         self._internal_environment.add_entity(entity._internal_entity)  # pylint: disable=protected-access
 
+    @log(__LOGGER)
     def initialise(self):
         if self._is_prescan_initialized:
             return
@@ -154,6 +152,7 @@ class Environment(BaseEnvironment):
     def step(self):
         self._internal_simulation.step()
 
+    @log(__LOGGER)
     def stop(self):
         if not self._is_prescan_initialized:
             return

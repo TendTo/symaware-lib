@@ -54,22 +54,23 @@ class Entity(BaseEntity):
         if isinstance(self.cog_offset, np.ndarray):
             object.__setattr__(self, "cog_offset", Position(self.cog_offset))
         entity_model = None if isinstance(self.model, NullDynamicalModel) else self.model.internal_model
-        object.__setattr__(
-            self,
-            "_internal_entity",
-            _Entity(
-                object_type=self.object_type,
-                setup=_Entity.Setup(
-                    position=self.position,
-                    orientation=self.orientation,
-                    cog_offset=self.cog_offset,
-                    is_collision_detectable=self.is_collision_detectable,
-                    is_movable=self.is_movable,
-                    sensor_detectability=self.sensor_detectability,
+        if self._internal_entity is None:
+            object.__setattr__(
+                self,
+                "_internal_entity",
+                _Entity(
+                    object_type=self.object_type,
+                    setup=_Entity.Setup(
+                        position=self.position,
+                        orientation=self.orientation,
+                        cog_offset=self.cog_offset,
+                        is_collision_detectable=self.is_collision_detectable,
+                        is_movable=self.is_movable,
+                        sensor_detectability=self.sensor_detectability,
+                    ),
+                    entity_model=entity_model,  # type: ignore
                 ),
-                entity_model=entity_model,  # type: ignore
-            ),
-        )
+            )
 
     def apply_setup(self):
         """
