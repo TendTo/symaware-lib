@@ -98,8 +98,8 @@ void init_model(py::module_& m) {
   PYBIND11_NUMPY_DTYPE(symaware::AmesimDynamicalModel::Input, throttle, brake, steering_wheel_angle, gear);
 
   amesimDynamicalModel.def(py::init<>())
-      .def(py::init<>())
       .def(py::init<symaware::AmesimDynamicalModel::Input>(), py::arg("initial_input"))
+      .def(py::init<bool, double>(), py::arg("is_flat_ground"), py::arg("initial_velocity"))
       .def(py::init<bool, symaware::AmesimDynamicalModel::Input>(), py::arg("is_flat_ground"), py::arg("initial_input"))
       .def(py::init<double, symaware::AmesimDynamicalModel::Input>(), py::arg("initial_velocity"),
            py::arg("initial_input"))

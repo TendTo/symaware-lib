@@ -24,7 +24,7 @@ AmesimDynamicalModel::Input::Input(double throttle, double brake, double steerin
 AmesimDynamicalModel::AmesimDynamicalModel(Input initial_input)
     : AmesimDynamicalModel{true, 0, std::move(initial_input)} {}
 AmesimDynamicalModel::AmesimDynamicalModel(const bool is_flat_ground, Input initial_input)
-    : AmesimDynamicalModel{true, 0, std::move(initial_input)} {}
+    : AmesimDynamicalModel{is_flat_ground, 0, std::move(initial_input)} {}
 AmesimDynamicalModel::AmesimDynamicalModel(const double initial_velocity, Input initial_input)
     : AmesimDynamicalModel{true, initial_velocity, std::move(initial_input)} {}
 AmesimDynamicalModel::AmesimDynamicalModel(const bool is_flat_ground, const double initial_velocity,
