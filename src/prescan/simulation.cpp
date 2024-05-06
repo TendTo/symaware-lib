@@ -15,6 +15,7 @@ void Simulation::run(double seconds) {
   if (is_initialised_) SYMAWARE_RUNTIME_ERROR("Simulation is already initialised. Cannot run again.");
   ExperimentGuard guard{const_cast<prescan::api::experiment::Experiment&>(environment_.experiment())};
   is_initialised_ = true;
+  simulation_.setSimulationPath(guard.dirpath());
   simulation_.run(environment_.experiment(), seconds);
   is_initialised_ = false;
 }
@@ -22,6 +23,7 @@ void Simulation::run(double seconds) {
 void Simulation::initialise() {
   if (is_initialised_) SYMAWARE_RUNTIME_ERROR("Simulation is already initialised.");
   ExperimentGuard guard{const_cast<prescan::api::experiment::Experiment&>(environment_.experiment())};
+  simulation_.setSimulationPath(guard.dirpath());
   simulation_.initialize(environment_.experiment());
   is_initialised_ = true;
 }

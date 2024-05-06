@@ -31,6 +31,8 @@ class ExperimentGuard {
    */
   const prescan::api::experiment::Experiment& experiment() const { return experiment_; }
 
+  std::string dirpath() const;
+
  private:
   const prescan::api::experiment::Experiment& experiment_;  ///< experiment object
 };

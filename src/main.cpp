@@ -27,7 +27,7 @@ using namespace std::chrono_literals;
 
 int main() {
   symaware::Environment env;
-  auto viewer = env.createFreeViewer();
+  auto viewer = env.addFreeViewer();
   env.setSky(symaware::Environment::SkyType::DAY);
   env.setWeather(symaware::Environment::WeatherType::SUNNY);
   env.addRoad().addStraightSection(100).addLane(prescan::api::roads::types::RoadSideType::RoadSideTypeLeft, 3.5);

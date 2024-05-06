@@ -50,7 +50,7 @@ void AmesimDynamicalModel::updateInput(const std::vector<double>& input) {
     input_.gear = static_cast<Gear>(static_cast<int>(input[3]));
 }
 
-void AmesimDynamicalModel::setInput(const Input input) { input_ = std::move(input); }
+void AmesimDynamicalModel::setInput(Input input) { input_ = std::move(input); }
 
 void AmesimDynamicalModel::updateInput(const Input& input) {
   if (!std::isnan(input.throttle)) input_.throttle = input.throttle;
