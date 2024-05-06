@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <ostream>
+#include <stdexcept>
 
 #include "symaware/util/exception.h"
 
@@ -38,21 +39,7 @@ Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
     : Entity{type, std::move(setup), &model} {}
 Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* const model)
-    : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {
-  if (type_ == Environment::ObjectType::Existing) SYMAWARE_RUNTIME_ERROR("Existing type cannot be used directly");
-}
-
-Entity::Entity(const std::string& name, Environment& environment, EntityModel& model)
-    : Entity{name, environment, &model} {}
-Entity::Entity(const std::string& name, Environment& environment, EntityModel* const model)
-    : type_{Environment::ObjectType::Existing},
-      setup_{},
-      model_{model},
-      object_{environment.experiment().getObjectByName<prescan::api::types::WorldObject>(name)},
-      state_{nullptr} {
-  if (model_ != nullptr) model_->setObject(object_);
-  environment.addEntity(*this);
-}
+    : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
 
 void Entity::applySetup(Setup setup) {
   setup_ = std::move(setup);
@@ -62,8 +49,13 @@ void Entity::applySetup(Setup setup) {
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
   object_ = object;
-  updateObject();
-  if (model_ != nullptr) model_->initialiseObject(experiment, object_);
+  if (type_ != Environment::ObjectType::Existing) updateObject();
+  if (model_ != nullptr) {
+    if (type_ == Environment::ObjectType::Existing)
+      model_->setObject(object_);
+    else
+      model_->initialiseObject(experiment, object_);
+  }
 }
 
 Entity::State Entity::state() const {
@@ -73,6 +65,14 @@ Entity::State Entity::state() const {
                Orientation{state_->selfSensorOutput().OrientationRoll, state_->selfSensorOutput().OrientationPitch,
                            state_->selfSensorOutput().OrientationYaw},
                state_->selfSensorOutput().Velocity, state_->selfSensorOutput().Yaw_rate};
+}
+
+bool Entity::is_initialised() const {
+  try {
+    return object_.handle() != nullptr;
+  } catch (const std::runtime_error& e) {
+    return false;
+  }
 }
 
 void Entity::updateObject() {

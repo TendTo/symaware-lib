@@ -83,8 +83,6 @@ class AmesimDynamicalModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
-    control_input:
-        Initial control input of the agent. It also used to validate the size of future control inputs
     """
 
     def __init__(self, ID: Identifier):
@@ -111,8 +109,6 @@ class CustomDynamicalModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
-    control_input:
-        Initial control input of the agent. It also used to validate the size of future control inputs
     """
 
     def __init__(self, ID: Identifier):
@@ -140,8 +136,6 @@ class TrackModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
-    control_input:
-        Initial control input of the agent. It also used to validate the size of future control inputs
     """
 
     def __init__(self, ID: Identifier):

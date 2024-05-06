@@ -27,12 +27,14 @@ namespace symaware {
 class TrackModel : public EntityModel {
  public:
   /**
-   * @brief Construct a new TrackModel object with the given @p trajectory.
+   * @brief Construct a new TrackModel object with a default trajectory.
    * @param trajectory trajectory of the entity in the simulation
    */
   explicit TrackModel();
   /**
-   * @brief Construct a new TrackModel object with the given @p trajectory.
+   * @brief Construct a new TrackModel object with the given @p path, @p speed and @p tolerance.
+   *
+   * These values will be used to create a trajectory.
    * @param path sequence of positions in the trajectory
    * @param speed speed the entity will move at to follow the path
    * @param tolerance tolerance of the path

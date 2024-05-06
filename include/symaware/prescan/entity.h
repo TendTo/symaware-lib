@@ -58,24 +58,13 @@ class Entity {
    * @param setup initial state of the entity
    * @param model model that controls the entity
    */
-  Entity(Environment::ObjectType type, Setup setup = {}, EntityModel* model = nullptr);
+  Entity(Environment::ObjectType type,
+         Setup setup = {false, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
+         EntityModel* model = nullptr);
   /** @overload */
   Entity(Environment::ObjectType type, EntityModel& model);
   /** @overload */
   Entity(Environment::ObjectType type, Setup setup, EntityModel& model);
-
-  /**
-   * @brief Construct a new Entity object based on an existing object in the @p environment with the given @p name.
-   *
-   * If a @p model is provided, the entity will be controlled by it during the simulation.
-   * No initialisation is performed.
-   * @param name name of the object in the environment
-   * @param environment environment where the object is located
-   * @param model model that controls the entity
-   */
-  Entity(const std::string& name, Environment& environment, EntityModel& model);
-  /** @overload */
-  Entity(const std::string& name, Environment& environment, EntityModel* model = nullptr);
 
   /**
    * @brief Apply the provided @p setup to the entity, overriding the current one.
@@ -123,6 +112,8 @@ class Entity {
   void terminate(prescan::sim::ISimulation* simulation);
 
   State state() const;
+  bool is_initialised() const;
+  std::string name() const { return object_.name(); }
   Environment::ObjectType type() const { return type_; }
   const Setup& setup() const { return setup_; }
   const EntityModel* model() const { return model_; }

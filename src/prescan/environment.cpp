@@ -73,19 +73,21 @@ Environment& Environment::setSchedulerSpeed(const prescan::api::types::Simulatio
 }
 
 Environment& Environment::addEntity(Entity& entity) {
-  if (entity.type() != Environment::ObjectType::Existing) {
-    prescan::api::types::WorldObject object{experiment_.createObject(to_string(entity.type()))};
-    entity.initialiseObject(experiment_, object);
-  }
-  entities_[entity.object().name()] = &entity;
+  if (entity.is_initialised()) return *this;
+
+  if (entity.type() == ObjectType::Existing)
+    SYMAWARE_RUNTIME_ERROR("Existing entities cannot be created. Use the addEntity(std::string, Entity) method");
+  entity.initialiseObject(experiment_, experiment_.createObject(to_string(entity.type())));
+  entities_[entity.name()] = &entity;
   return *this;
 }
 
-Entity Environment::addEntity(const std::string& name, EntityModel& model) { return addEntity(name, &model); }
-Entity Environment::addEntity(const std::string& name, EntityModel* const model) {
-  const auto it = entities_.find(name);
-  if (it != entities_.end()) return *it->second;
-  return Entity{name, *this, model};
+Environment& Environment::addEntity(const std::string& name, Entity& entity) {
+  if (entity.is_initialised()) return *this;
+
+  entity.initialiseObject(experiment_, experiment_.getObjectByName<prescan::api::types::WorldObject>(name));
+  entities_[entity.name()] = &entity;
+  return *this;
 }
 
 Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }

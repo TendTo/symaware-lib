@@ -376,26 +376,24 @@ class Environment {
    *
    * The entity will be placed in the world at the specified position and orientation.
    * If the operation is successful, the @p entity will be initialised with the object created in the simulation.
-   * @note The entity's model will not be initialised if its type is @ref ObjectType::Existing ,
-   * since this type is used to represent already existing objects in the simulation.
+   * @note Cannot register entities of type @ref ObjectType::Existing ,
+   * since this type is used to represent pre-existing objects in the simulation.
+   * Use @ref addEntity(const std::string&, Entity&) instead
    * @param[in,out] entity entity representing the new object to be added
-   * The entity will be initialised with the object created in the simulation
    */
   Environment& addEntity(Entity& entity);
 
   /**
-   * @brief Get and possibly register an existing entity to the enviromnent identifying it by its name.
+   * @brief Collect an existing @p entity from the experiment by it by its @p name.
    *
    * The entity with the specified name must exist in the experiment.
-   * If the entity wasn't already in the @ref entities_ map, it will be added.
-   * @note Both the entity and its model will not be initialised.
+   * @note If the type of the entity is @ref ObjectType::Existing, the setup will be ignored 
+   * and the model will not be initialised.
+   * If the former step is needed, use the @ref applySetup method.
    * @param name name of the entity in the environment
-   * @param model model that controls the entity. If not provided, the entity will not be controllable
-   * @return the entity
+   * @param[out] entity collected entity
    */
-  Entity addEntity(const std::string& name, EntityModel* model = nullptr);
-  /** @overload */
-  Entity addEntity(const std::string& name, EntityModel& model);
+   Environment& addEntity(const std::string& name, Entity& entity);
 
   /**
    * @brief Add a road to the environment.
