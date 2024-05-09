@@ -5,7 +5,7 @@ from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import Road, _Environment, _Simulation
+from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
@@ -27,9 +27,9 @@ class Environment(BaseEnvironment):
 
     >>> form symaware.base import Agent, AgentCoordinator, TimeIntervalAsyncLoopLock
     >>> from symaware.simulators.prescan import (
-    ...     BoxEntity,
-    ...     Environment,
-    ...     AmesimDynamicalModel,
+    ...         BoxEntity,
+    ...         Environment,
+    ...         AmesimDynamicalModel,
     ...     )
     >>>
     >>> NUM_AGENTS = 2
@@ -92,6 +92,17 @@ class Environment(BaseEnvironment):
             if position is not None
             else self._internal_environment.add_road()
         )
+
+    def set_log_level(self, log_level: LogLevel):
+        """
+        Set the log level of the Prescan simulator
+
+        Args
+        ----
+        log_level:
+            log level the Prescan simulator will use
+        """
+        self._internal_simulation.set_log_level(log_level)
 
     def import_OpenDrive_network(self, filename: str):
         """

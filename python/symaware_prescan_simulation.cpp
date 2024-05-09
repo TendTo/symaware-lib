@@ -12,6 +12,6 @@ void init_simulation(py::module_ &m) {
       .def("initialise", &symaware::Simulation::initialise, "Initialise the simulation.")
       .def("step", &symaware::Simulation::step, "Advance the simulation manually.")
       .def("terminate", &symaware::Simulation::terminate, "Terminate the simulation and clean up.")
-      .def("setLogLevel", &symaware::Simulation::setLogLevel, py::arg("log_level"),
+      .def("set_log_level", &symaware::Simulation::setLogLevel, py::arg("log_level"),
            "Set the log level of the simulation logger.");
 }
