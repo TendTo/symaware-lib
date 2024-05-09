@@ -5,7 +5,7 @@ from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation, ObjectType
+from ._symaware_prescan import LogLevel, ObjectType, Road, _Environment, _Simulation
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:

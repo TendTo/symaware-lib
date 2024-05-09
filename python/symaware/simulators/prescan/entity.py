@@ -6,13 +6,13 @@ from symaware.base import Entity as BaseEntity
 from symaware.base import NullDynamicalModel
 
 from ._symaware_prescan import (
+    ObjectType,
     Orientation,
     Position,
     SensorDetectability,
     _Entity,
     _Experiment,
     _WorldObject,
-    ObjectType,
 )
 from .dynamical_model import DynamicalModel
 

@@ -2,14 +2,14 @@ from ._symaware_prescan import (
     Acceleration,
     AngularVelocity,
     Gear,
+    ObjectType,
     Orientation,
     Position,
     Road,
-    SkyLightPollution,
-    ObjectType,
-    WeatherType,
-    SkyType,
     SensorType,
+    SkyLightPollution,
+    SkyType,
+    WeatherType,
 )
 from .dynamical_model import (
     AmesimDynamicalModel,
