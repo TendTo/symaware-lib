@@ -16,13 +16,6 @@ static_assert(std::numeric_limits<double>::has_quiet_NaN, "IEEE 754 required");
 
 namespace symaware {
 
-enum Gear {
-  Forward = 1,
-  Neutral = 0,
-  Reverse = -1,
-  Undefined = 2,
-};
-
 struct Position {
   Position() = default;
   Position(double x, double y, double z) : x{x}, y{y}, z{z} {}
@@ -83,7 +76,6 @@ struct AngularVelocity {
   double yaw;
 };
 
-std::string to_string(Gear gear);
 std::ostream& operator<<(std::ostream& os, const Position& position);
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
 std::ostream& operator<<(std::ostream& os, const Velocity& velocity);

@@ -17,8 +17,8 @@
 #include <prescan/sim/Simulation.hpp>
 #include <prescan/sim/StateActuatorUnit.hpp>
 
-#include "symaware/prescan/data.h"
 #include "symaware/prescan/model/entity_model.h"
+#include "symaware/prescan/type.h"
 
 namespace symaware {
 

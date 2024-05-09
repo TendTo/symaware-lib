@@ -5,6 +5,7 @@ set(SOURCE_LIST
     "symaware_prescan_simulation.cpp"
     "symaware_prescan_model.cpp"
     "symaware_prescan_api.cpp"
+    "symaware_prescan_type.cpp"
     "symaware_prescan_entity.cpp"
     "symaware_prescan_road.cpp")
 set(HEADER_LIST "symaware_prescan.h")
@@ -18,4 +19,5 @@ target_compile_definitions(_symaware_prescan
 target_compile_definitions(_symaware_prescan
                            PRIVATE VERSION_INFO=${SKBUILD_PROJECT_VERSION})
 
-install(TARGETS _symaware_prescan LIBRARY DESTINATION symaware/simulators/prescan)
+install(TARGETS _symaware_prescan
+        LIBRARY DESTINATION symaware/simulators/prescan)

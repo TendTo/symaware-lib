@@ -7,12 +7,6 @@
 namespace py = pybind11;
 
 void init_data(py::module_ &m) {
-  py::enum_<symaware::Gear>(m, "Gear")
-      .value("Forward", symaware::Gear::Forward, "Forward gear")
-      .value("Neutral", symaware::Gear::Neutral, "Neutral gear")
-      .value("Reverse", symaware::Gear::Reverse, "Reverse gear")
-      .value("Undefined", symaware::Gear::Undefined, "Undefined gear. Won't change the gear.")
-      .export_values();
   py::class_<symaware::Position>(m, "Position")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))

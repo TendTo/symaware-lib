@@ -3,6 +3,7 @@
 namespace py = pybind11;
 
 PYBIND11_MODULE(_symaware_prescan, m) {
+  init_type(m);
   init_data(m);
   init_api(m);
   init_model(m);

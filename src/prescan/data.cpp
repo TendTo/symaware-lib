@@ -3,23 +3,9 @@
 #include <iomanip>
 #include <iostream>
 
+#include "symaware/util/exception.h"
+
 namespace symaware {
-
-std::string to_string(const Gear gear) {
-  switch (gear) {
-    case Gear::Forward:
-      return "Forward";
-    case Gear::Neutral:
-      return "Neutral";
-    case Gear::Reverse:
-      return "Reverse";
-    case Gear::Undefined:
-      return "Undefined";
-    default:
-      return "Unknown";
-  }
-}
-
 std::ostream& operator<<(std::ostream& os, const Position& position) {
   return os << "Position: (x: " << position.x << ", y: " << position.y << ", z: " << position.z << ")";
 }
