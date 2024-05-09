@@ -97,8 +97,8 @@ void init_entity(py::module_& m) {
       .def("__repr__", REPR_LAMBDA(symaware::Entity::State));
 
   entity
-      .def(py::init<symaware::Environment::ObjectType, symaware::Entity::Setup, symaware::EntityModel*>(),
-           py::arg("object_type"), py::arg("setup") = symaware::Entity::Setup{},
+      .def(py::init<symaware::ObjectType, symaware::Entity::Setup, symaware::EntityModel*>(), py::arg("object_type"),
+           py::arg("setup") = symaware::Entity::Setup{},
            py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
 
       .def("apply_setup", &symaware::Entity::applySetup, py::arg("setup"))

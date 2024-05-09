@@ -58,13 +58,13 @@ class Entity {
    * @param setup initial state of the entity
    * @param model model that controls the entity
    */
-  Entity(Environment::ObjectType type,
+  Entity(ObjectType type,
          Setup setup = {false, true, true, prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
          EntityModel* model = nullptr);
   /** @overload */
-  Entity(Environment::ObjectType type, EntityModel& model);
+  Entity(ObjectType type, EntityModel& model);
   /** @overload */
-  Entity(Environment::ObjectType type, Setup setup, EntityModel& model);
+  Entity(ObjectType type, Setup setup, EntityModel& model);
 
   /**
    * @brief Apply the provided @p setup to the entity, overriding the current one.
@@ -114,7 +114,7 @@ class Entity {
   State state() const;
   bool is_initialised() const;
   std::string name() const { return object_.name(); }
-  Environment::ObjectType type() const { return type_; }
+  ObjectType type() const { return type_; }
   const Setup& setup() const { return setup_; }
   const EntityModel* model() const { return model_; }
   const prescan::api::types::WorldObject& object() const { return object_; }
@@ -122,9 +122,9 @@ class Entity {
  private:
   void updateObject();
 
-  Environment::ObjectType type_;  ///< The type of the entity
-  Setup setup_;                   ///< The initial state of the entity
-  EntityModel* model_;            ///< The dynamical model of the entity. Only present if the entity is controllable
+  ObjectType type_;     ///< The type of the entity
+  Setup setup_;         ///< The initial state of the entity
+  EntityModel* model_;  ///< The dynamical model of the entity. Only present if the entity is controllable
   prescan::api::types::WorldObject object_;    ///< The object that represents the entity in the simulation
   const prescan::sim::SelfSensorUnit* state_;  ///< The state of the entity in the simulation
 };

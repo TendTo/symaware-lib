@@ -11,6 +11,7 @@
 #include <prescan/api/Experiment.hpp>
 #include <prescan/api/Roads.hpp>
 
+#include "symaware/prescan/data.h"
 #include "symaware/prescan/environment.h"
 
 namespace symaware {

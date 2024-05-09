@@ -5,7 +5,7 @@ from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation
+from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation, ObjectType
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
@@ -136,7 +136,7 @@ class Environment(BaseEnvironment):
         """
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
-        if entity.object_type != _Environment.ObjectType.Existing:
+        if entity.object_type != ObjectType.Existing:
             self.__LOGGER.warning(
                 "Expected 'Existing' entity type, got %s. Entity will be initialised", entity.object_type
             )

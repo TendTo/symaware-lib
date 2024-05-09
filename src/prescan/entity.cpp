@@ -35,10 +35,9 @@ Entity::State::State(bool zero_init)
       velocity{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()},
       yaw_rate{zero_init ? 0 : std::numeric_limits<double>::quiet_NaN()} {}
 
-Entity::Entity(const Environment::ObjectType type, EntityModel& model) : Entity{type, Setup{}, &model} {}
-Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel& model)
-    : Entity{type, std::move(setup), &model} {}
-Entity::Entity(const Environment::ObjectType type, Setup setup, EntityModel* const model)
+Entity::Entity(const ObjectType type, EntityModel& model) : Entity{type, Setup{}, &model} {}
+Entity::Entity(const ObjectType type, Setup setup, EntityModel& model) : Entity{type, std::move(setup), &model} {}
+Entity::Entity(const ObjectType type, Setup setup, EntityModel* const model)
     : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
 
 void Entity::applySetup(Setup setup) {
@@ -49,9 +48,9 @@ void Entity::applySetup(Setup setup) {
 void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
   object_ = object;
-  if (type_ != Environment::ObjectType::Existing) updateObject();
+  if (type_ != ObjectType::Existing) updateObject();
   if (model_ != nullptr) {
-    if (type_ == Environment::ObjectType::Existing)
+    if (type_ == ObjectType::Existing)
       model_->setObject(object_);
     else
       model_->initialiseObject(experiment, object_);

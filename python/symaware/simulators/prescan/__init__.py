@@ -6,6 +6,10 @@ from ._symaware_prescan import (
     Position,
     Road,
     SkyLightPollution,
+    ObjectType,
+    WeatherType,
+    SkyType,
+    SensorType,
 )
 from .dynamical_model import (
     AmesimDynamicalModel,
