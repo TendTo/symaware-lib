@@ -338,7 +338,7 @@ void init_environment(py::module_ &m) {
            py::arg_v("position", symaware::Position{true}, "Position(true)"))
       .def("add_free_viewer", &symaware::Environment::addFreeViewer, "Add a free viewer in the environment")
       .def("remove_all_viewers", &symaware::Environment::removeAllViewers, "Remove all viewers from the environment")
-      .def("import_OpenDrive_network", &symaware::Environment::importOpenDriveNetwork,
+      .def("import_open_drive_network", &symaware::Environment::importOpenDriveNetwork,
            "Import an OpenDrive network from a file", py::arg("filename"))
       .def("save_experiment", &symaware::Environment::saveExperiment, "Save the experiment to file",
            py::arg("filename"))

@@ -2037,7 +2037,7 @@ class _Environment:
         Add a road to the environment
         """
 
-    def import_OpenDrive_network(self, filename: str) -> _Environment:
+    def import_open_drive_network(self, filename: str) -> _Environment:
         """
         Import an OpenDrive network from a file
         """

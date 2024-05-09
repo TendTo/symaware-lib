@@ -104,7 +104,7 @@ class Environment(BaseEnvironment):
         """
         self._internal_simulation.set_log_level(log_level)
 
-    def import_OpenDrive_network(self, filename: str):
+    def import_open_drive_network(self, filename: str):
         """
         Load the OpenDrive network from a file
 
@@ -113,7 +113,7 @@ class Environment(BaseEnvironment):
         filename:
             path to the file containing the OpenDrive network
         """
-        self._internal_environment.import_OpenDrive_network(filename)
+        self._internal_environment.import_open_drive_network(filename)
 
     def add_free_viewer(self):
         """
