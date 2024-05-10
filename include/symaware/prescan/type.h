@@ -11,6 +11,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <type_traits>
 
 namespace symaware {
 
@@ -22,26 +23,26 @@ enum Gear {
 };
 
 enum class SensorType {
-  AIR,
-  ALMS,
-  BRS,
-  CAMERA,
-  IR_BEACON,
-  IR_OBU,
-  RF_BEACON,
-  RF_OBU,
-  DEPTH_CAMERA,
-  ISS,
-  LIDA,
-  LMS,
-  OCS,
-  PCS,
-  PHYSICS_BASED_CAMERA_UNREAL,
-  RADAR,
-  TIS,
-  TRAFFIC_SIGNAL,
-  ULTRASONIC,
-  WORLD_VIEWER,
+  AIR = 0,
+  ALMS = 1,
+  BRS = 2,
+  CAMERA = 3,
+  IR_BEACON = 4,
+  IR_OBU = 5,
+  RF_BEACON = 6,
+  RF_OBU = 7,
+  DEPTH_CAMERA = 8,
+  ISS = 9,
+  LIDA = 10,
+  LMS = 11,
+  OCS = 12,
+  PCS = 13,
+  PHYSICS_BASED_CAMERA_UNREAL = 14,
+  RADAR = 15,
+  TIS = 16,
+  TRAFFIC_SIGNAL = 17,
+  ULTRASONIC = 18,
+  WORLD_VIEWER = 19,
 };
 enum class WeatherType { SUNNY, RAINY, SNOWY };
 enum class SkyType { DAWN, DAY, DUSK, NIGHT };
@@ -336,11 +337,17 @@ enum class ObjectType {
   TrafficSignPole
 };
 
+template <typename E>
+constexpr typename std::underlying_type<E>::type to_underlying(E e) noexcept {
+  return static_cast<typename std::underlying_type<E>::type>(e);
+}
+
 std::string to_string(Gear gear);
 std::string to_string(SensorType sensor_type);
 std::string to_string(WeatherType weather_type);
 std::string to_string(SkyType sky_type);
 std::string to_string(ObjectType object_type);
+
 std::ostream& operator<<(std::ostream& os, Gear gear);
 std::ostream& operator<<(std::ostream& os, SensorType sensor_type);
 std::ostream& operator<<(std::ostream& os, WeatherType weather_type);
