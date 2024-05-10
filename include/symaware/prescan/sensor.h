@@ -24,17 +24,11 @@ class Sensor {
   Sensor(SensorType sensor_type, bool existing);
   Sensor(SensorType sensor_type, std::vector<double> setup = {}, bool existing = false);
   /**
-   * @brief Initialise the sensor attaching it to the object upon its initialisation.
-   * @param experiment underlying experiment
+   * @brief Initialise the sensor attaching it to the @p object upon its initialisation.
    * @param object object the sensor will be attached to
+   * @param id id of the sensor among the ones of the same kind attached to the @p object
    */
-  void initialiseSensor(const prescan::api::types::WorldObject& object);
-  /**
-   * @brief Initialise the sensor attaching it to the object upon its initialisation.
-   * @param experiment underlying experiment
-   * @param object object the sensor will be attached to
-   */
-  void initialiseSensor(const prescan::api::types::WorldObject& object, int id);
+  void createSensor(const prescan::api::types::WorldObject& object, int id);
   /**
    * @brief Register the sensor.
    *

@@ -46,7 +46,7 @@ void Entity::addSensor(Sensor& sensor) {
   sensors_.push_back(&sensor);
   if (is_initialised()) {
     std::size_t id = sensor_count_[to_underlying(sensor.sensor_type())]++;
-    sensor.initialiseSensor(object_, id);
+    sensor.createSensor(object_, id);
   }
 }
 
@@ -62,7 +62,7 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
   if (model_ != nullptr) model_->createModel(object_, experiment);
   for (Sensor* const sensor : sensors_) {
     std::size_t id = sensor_count_[to_underlying(sensor->sensor_type())]++;
-    sensor->initialiseSensor(object_, id);
+    sensor->createSensor(object_, id);
   }
 }
 

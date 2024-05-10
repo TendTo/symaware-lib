@@ -217,7 +217,7 @@ inline void Sensor::applySetup(prescan::api::types::SensorBase* const sensor) {
   }
 }
 
-void Sensor::initialiseSensor(const prescan::api::types::WorldObject& object, const int id) {
+void Sensor::createSensor(const prescan::api::types::WorldObject& object, const int id) {
   if (id_ != -1) SYMAWARE_RUNTIME_ERROR("Sensor already initialised");
   id_ = id;
   std::unique_ptr<prescan::api::types::SensorBase> sensor;

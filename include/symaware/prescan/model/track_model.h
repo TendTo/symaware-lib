@@ -39,7 +39,7 @@ class TrackModel : public EntityModel {
    * @brief Construct a new TrackModel object with a default trajectory.
    * @param trajectory trajectory of the entity in the simulation
    */
-  explicit TrackModel(const Setup& setup);
+  explicit TrackModel(const Setup& setup = {});
 
   void createModel(const prescan::api::types::WorldObject& object,
                    prescan::api::experiment::Experiment& experiment) override;
