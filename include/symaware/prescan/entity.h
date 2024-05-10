@@ -136,7 +136,7 @@ class Entity {
   EntityModel* model_;  ///< The dynamical model of the entity. Only present if the entity is controllable
   prescan::api::types::WorldObject object_;    ///< The object that represents the entity in the simulation
   const prescan::sim::SelfSensorUnit* state_;  ///< The state of the entity in the simulation
-  std::size_t sensor_count_[20];               ///< Number of sensors attached to the entity by type
+  int sensor_count_[20];                       ///< Number of sensors attached to the entity by type
   std::vector<Sensor*> sensors_;               ///< The sensors attached to the entity
 };
 

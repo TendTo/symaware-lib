@@ -191,6 +191,7 @@ void Sensor::updateState<prescan::sim::Unit>() {
 }
 template <>
 inline void Sensor::applySetup(prescan::api::types::SensorBase* const sensor) {
+  if (setup_.size() == 0) return;
   if (setup_.size() < 6)
     SYMAWARE_RUNTIME_ERROR_FMT("Invalid setup size for sensor {}: {} < 6", sensor_type_, setup_.size());
   if (!std::isnan(setup_[0])) sensor->pose().position().setX(setup_[0]);

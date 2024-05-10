@@ -22,6 +22,7 @@ void EntityModel::registerUnit(const prescan::api::types::WorldObject& object,
 
 void EntityModel::initialise(prescan::sim::ISimulation* simulation) {
   if (state_ == nullptr) SYMAWARE_RUNTIME_ERROR("EntityModel has not been registered to a state");
+  state_->stateActuatorInput();
   updateState();
 }
 
