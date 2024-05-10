@@ -38,7 +38,17 @@ Entity::State::State(bool zero_init)
 Entity::Entity(const ObjectType type, EntityModel& model) : Entity{type, Setup{}, &model} {}
 Entity::Entity(const ObjectType type, Setup setup, EntityModel& model) : Entity{type, std::move(setup), &model} {}
 Entity::Entity(const ObjectType type, Setup setup, EntityModel* const model)
-    : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr} {}
+    : type_{type}, setup_{std::move(setup)}, model_{model}, object_{}, state_{nullptr}, sensor_count_{}, sensors_{} {
+  for (int i = 0; i < sizeof(sensor_count_) / sizeof(std::size_t); ++i) sensor_count_[i] = 0;
+}
+
+void Entity::addSensor(Sensor& sensor) {
+  sensors_.push_back(&sensor);
+  if (is_initialised()) {
+    std::size_t id = sensor_count_[to_underlying(sensor.sensor_type())]++;
+    sensor.initialiseSensor(object_, id);
+  }
+}
 
 void Entity::applySetup(Setup setup) {
   setup_ = std::move(setup);
@@ -54,6 +64,11 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
       model_->setObject(object_);
     else
       model_->initialiseObject(experiment, object_);
+  }
+
+  for (Sensor* const sensor : sensors_) {
+    std::size_t id = sensor_count_[to_underlying(sensor->sensor_type())]++;
+    sensor->initialiseSensor(object_, id);
   }
 }
 

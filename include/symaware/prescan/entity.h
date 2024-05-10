@@ -18,6 +18,7 @@
 #include "symaware/prescan/data.h"
 #include "symaware/prescan/environment.h"
 #include "symaware/prescan/model/entity_model.h"
+#include "symaware/prescan/sensor.h"
 
 namespace symaware {
 class Entity {
@@ -65,6 +66,14 @@ class Entity {
   Entity(ObjectType type, EntityModel& model);
   /** @overload */
   Entity(ObjectType type, Setup setup, EntityModel& model);
+
+  /**
+   * @brief Add a sensor to the entity.
+   *
+   * Its poise will be relative to the WorldObject this entity represents.
+   * @param sensor sensor to add
+   */
+  void addSensor(Sensor& sensor);
 
   /**
    * @brief Apply the provided @p setup to the entity, overriding the current one.
@@ -127,6 +136,8 @@ class Entity {
   EntityModel* model_;  ///< The dynamical model of the entity. Only present if the entity is controllable
   prescan::api::types::WorldObject object_;    ///< The object that represents the entity in the simulation
   const prescan::sim::SelfSensorUnit* state_;  ///< The state of the entity in the simulation
+  std::size_t sensor_count_[20];               ///< Number of sensors attached to the entity by type
+  std::vector<Sensor*> sensors_;               ///< The sensors attached to the entity
 };
 
 std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup);

@@ -20,13 +20,20 @@ namespace symaware {
 
 class Sensor {
  public:
-  Sensor(SensorType sensor_type, std::vector<double> setup = {});
+  Sensor(SensorType sensor_type, bool existing);
+  Sensor(SensorType sensor_type, std::vector<double> setup = {}, bool existing = false);
   /**
    * @brief Initialise the sensor attaching it to the object upon its initialisation.
    * @param experiment underlying experiment
    * @param object object the sensor will be attached to
    */
-  void initialiseSensor(prescan::api::experiment::Experiment& experiment, prescan::api::types::WorldObject object);
+  void initialiseSensor(const prescan::api::types::WorldObject& object);
+  /**
+   * @brief Initialise the sensor attaching it to the object upon its initialisation.
+   * @param experiment underlying experiment
+   * @param object object the sensor will be attached to
+   */
+  void initialiseSensor(const prescan::api::types::WorldObject& object, int id);
   /**
    * @brief Register the sensor.
    *
@@ -34,7 +41,8 @@ class Sensor {
    * @param experiment experiment about to be run
    * @param simulation simulation that will run the experiment
    */
-  void registerUnit(const prescan::api::experiment::Experiment& experiment, prescan::sim::ISimulation* simulation);
+  void registerUnit(const prescan::api::types::WorldObject& object,
+                    const prescan::api::experiment::Experiment& experiment, prescan::sim::ISimulation* simulation);
   /**
    * @brief Initialise the sensor.
    *
@@ -60,17 +68,20 @@ class Sensor {
   SensorType sensor_type() const { return sensor_type_; }
   const std::vector<double>& setup() const { return setup_; }
   const std::vector<double>& state() const { return state_; }
+  const prescan::sim::CameraSensorUnit::Image& image() const { return image_; }
 
  private:
-  void applySetup();
-  void updateState();
   template <class T>
-  void outputToState();
+  void applySetup(T* sensor_ptr);
+  template <class T>
+  void updateState();
 
+  bool existing_;
+  int id_;
   SensorType sensor_type_;
   std::vector<double> setup_;
   std::vector<double> state_;
-  std::unique_ptr<prescan::api::types::SensorBase> sensor_;
+  prescan::sim::CameraSensorUnit::Image image_;
   std::unique_ptr<prescan::sim::Unit> sensor_unit_;
 };
 
