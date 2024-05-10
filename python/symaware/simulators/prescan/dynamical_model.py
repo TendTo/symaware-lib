@@ -12,6 +12,7 @@ from ._symaware_prescan import (
     _ISimulation,
     _TrackModel,
     _WorldObject,
+    Position,
 )
 
 
@@ -69,7 +70,7 @@ class DynamicalModel(BaseDynamicalModel):
         return self._internal_model
 
     def initialise(self, experiment: _Experiment, obj: _WorldObject):
-        self._internal_model.initialise_object(experiment, obj)
+        self._internal_model.create_model(obj, experiment)
 
     def step(self, simulation: _ISimulation):
         self._internal_model.step(simulation)
@@ -83,11 +84,23 @@ class AmesimDynamicalModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
+    is_flat_ground:
+        Whether to consider the ground as flat (more efficient) or not
+    initial_velocity:
+        Initial velocity of the entity
+    existing:
+        Whether the model is already present in the experiment or shall be created
     """
 
-    def __init__(self, ID: Identifier, is_flat_ground: bool = True, initial_velocity: float = 0):
+    def __init__(
+        self, ID: Identifier, is_flat_ground: bool = True, initial_velocity: float = 0, existing: bool = False
+    ):
         super().__init__(ID, control_input=np.zeros(4))
-        self._internal_model = _AmesimDynamicalModel(is_flat_ground, initial_velocity)
+        self._internal_model = _AmesimDynamicalModel(
+            _AmesimDynamicalModel.Setup(
+                existing=existing, is_flat_ground=is_flat_ground, initial_velocity=initial_velocity
+            )
+        )
 
     @property
     def subinputs_dict(self) -> AmesimDynamicalModelInput:
@@ -111,9 +124,9 @@ class CustomDynamicalModel(DynamicalModel):
         Identifier of the agent this model belongs to
     """
 
-    def __init__(self, ID: Identifier):
+    def __init__(self, ID: Identifier, existing: bool = False):
         super().__init__(ID, control_input=np.zeros(15))
-        self._internal_model = _CustomDynamicalModel()
+        self._internal_model = _CustomDynamicalModel(_CustomDynamicalModel.Setup(existing=existing))
 
     @property
     def subinputs_dict(self) -> CustomDynamicalModelInput:
@@ -138,9 +151,13 @@ class TrackModel(DynamicalModel):
         Identifier of the agent this model belongs to
     """
 
-    def __init__(self, ID: Identifier):
+    def __init__(
+        self, ID: Identifier, path: list[Position] = [], speed: float = 0, tolerance: float = 0, existing: bool = False
+    ):
         super().__init__(ID, control_input=np.zeros(0))
-        self._internal_model = _TrackModel()
+        self._internal_model = _TrackModel(
+            _TrackModel.Setup(existing=existing, path=path, speed=speed, tolerance=tolerance)
+        )
 
     @property
     def subinputs_dict(self) -> TrackModelInput:

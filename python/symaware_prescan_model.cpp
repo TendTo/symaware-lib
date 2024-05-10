@@ -12,9 +12,9 @@ class PyEntityModel : public symaware::EntityModel {
  public:
   using symaware::EntityModel::EntityModel;
 
-  void initialiseObject(prescan::api::experiment::Experiment& experiment,
-                        prescan::api::types::WorldObject object) override {
-    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "initialise_object", initialiseObject, experiment, object);
+  void createModel(const prescan::api::types::WorldObject& object,
+                   prescan::api::experiment::Experiment& experiment) override {
+    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "create_model", createModel, object, experiment);
   }
   void setInput(const std::vector<double>& input) override {
     PYBIND11_OVERRIDE_PURE_NAME(void, symaware::EntityModel, "set_input", setInput, input);
@@ -22,9 +22,10 @@ class PyEntityModel : public symaware::EntityModel {
   void updateInput(const std::vector<double>& input) override {
     PYBIND11_OVERRIDE_PURE_NAME(void, symaware::EntityModel, "update_input", updateInput, input);
   }
-  void registerUnit(const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::types::WorldObject& object,
+                    const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override {
-    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "register_unit", registerUnit, experiment, simulation);
+    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "register_unit", registerUnit, object, experiment, simulation);
   }
   void initialise(prescan::sim::ISimulation* simulation) override {
     PYBIND11_OVERRIDE(void, symaware::EntityModel, initialise, simulation);
@@ -42,34 +43,50 @@ class PyEntityModel : public symaware::EntityModel {
 
 void init_model(py::module_& m) {
   py::class_<symaware::EntityModel, PyEntityModel>(m, "_EntityModel")
-      .def(py::init<>())
-      .def("set_object", &symaware::EntityModel::setObject, py::arg("object"), "Set the object of the model")
-      .def("initialise_object", &symaware::EntityModel::initialiseObject, py::arg("experiment"), py::arg("object"),
+      .def(py::init<bool>())
+      .def("create_model", &symaware::EntityModel::createModel, py::arg("object"), py::arg("experiment"),
            "Initialise the object of the model")
       .def("set_input", &symaware::EntityModel::setInput, py::arg("input"), "Set the input of the model")
       .def("update_input", &symaware::EntityModel::updateInput, py::arg("input"), "Update the input of the model")
-      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("experiment"), py::arg("simulation"),
-           "Register the unit of the model")
+      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("object"), py::arg("experiment"),
+           py::arg("simulation"), "Register the unit of the model")
       .def("initialise", &symaware::EntityModel::initialise, py::arg("simulation"),
            "Called when the simulation is initialised")
       .def("step", &symaware::EntityModel::step, py::arg("simulation"), "Called at each simulation step")
       .def("terminate", &symaware::EntityModel::terminate, py::arg("simulation"),
            "Called when the simulation is terminated")
 
-      .def_property_readonly("object", &symaware::EntityModel::object, "Internal WorldObject of the model");
+      .def_property_readonly("existing", &symaware::EntityModel::existing,
+                             "Whether the model was already present in the experiment");
 
-  py::class_<symaware::TrackModel, symaware::EntityModel>(m, "_TrackModel")
+  py::class_<symaware::TrackModel, symaware::EntityModel> track_model =
+      py::class_<symaware::TrackModel, symaware::EntityModel>(m, "_TrackModel");
+
+  py::class_<symaware::TrackModel::Setup>(track_model, "Setup")
       .def(py::init<>())
-      .def(py::init<std::vector<symaware::Position>, double, double>(), py::arg("path"), py::arg("speed"),
-           py::arg("tolerance"))
+      .def(py::init<bool, std::vector<symaware::Position>, double, double>(), py::arg("existing"), py::arg("path"),
+           py::arg("speed"), py::arg("tolerance"))
+      .def_readwrite("existing", &symaware::TrackModel::Setup::existing)
+      .def_readwrite("path", &symaware::TrackModel::Setup::path)
+      .def_readwrite("speed", &symaware::TrackModel::Setup::speed)
+      .def_readwrite("tolerance", &symaware::TrackModel::Setup::tolerance);
+
+  track_model.def(py::init<>())
+      .def(py::init<const symaware::TrackModel::Setup&>(), py::arg("setup"))
       .def("__repr__", REPR_LAMBDA(symaware::TrackModel));
 
   py::class_<symaware::AmesimDynamicalModel, symaware::EntityModel> amesimDynamicalModel =
       py::class_<symaware::AmesimDynamicalModel, symaware::EntityModel>(m, "_AmesimDynamicalModel");
 
+  py::class_<symaware::AmesimDynamicalModel::Setup>(amesimDynamicalModel, "Setup")
+      .def(py::init<>())
+      .def(py::init<bool, bool, double>(), py::arg("existing"), py::arg("is_flat_ground"), py::arg("initial_velocity"))
+      .def_readwrite("existing", &symaware::AmesimDynamicalModel::Setup::existing)
+      .def_readwrite("is_flat_ground", &symaware::AmesimDynamicalModel::Setup::is_flat_ground)
+      .def_readwrite("initial_velocity", &symaware::AmesimDynamicalModel::Setup::initial_velocity);
+
   py::class_<symaware::AmesimDynamicalModel::Input>(amesimDynamicalModel, "Input")
       .def(py::init<>())
-      .def(py::init<bool>(), py::arg("zero_init"))
       .def(py::init<double, double, double, symaware::Gear>(), py::arg("throttle"), py::arg("brake"),
            py::arg("steering_wheel_angle"), py::arg("gear"))
       .def(py::init([](py::array_t<double> a) {
@@ -99,15 +116,11 @@ void init_model(py::module_& m) {
 
   amesimDynamicalModel.def(py::init<>())
       .def(py::init<symaware::AmesimDynamicalModel::Input>(), py::arg("initial_input"))
-      .def(py::init<bool, double>(), py::arg("is_flat_ground"), py::arg("initial_velocity"))
-      .def(py::init<bool, symaware::AmesimDynamicalModel::Input>(), py::arg("is_flat_ground"), py::arg("initial_input"))
-      .def(py::init<double, symaware::AmesimDynamicalModel::Input>(), py::arg("initial_velocity"),
-           py::arg("initial_input"))
-      .def(py::init<bool, double, symaware::AmesimDynamicalModel::Input>(), py::arg("is_flat_ground"),
-           py::arg("initial_velocity"), py::arg("initial_input"))
-      .def("initialise_object", &symaware::AmesimDynamicalModel::initialiseObject, py::arg("experiment"),
-           py::arg("object"))
-      .def("register_unit", &symaware::AmesimDynamicalModel::registerUnit, py::arg("experiment"), py::arg("simulation"))
+      .def(py::init<const symaware::AmesimDynamicalModel::Setup&, symaware::AmesimDynamicalModel::Input>(),
+           py::arg("setup"), py::arg("initial_input") = symaware::AmesimDynamicalModel::Input{false})
+      .def("create_model", &symaware::AmesimDynamicalModel::createModel, py::arg("object"), py::arg("experiment"))
+      .def("register_unit", &symaware::AmesimDynamicalModel::registerUnit, py::arg("object"), py::arg("experiment"),
+           py::arg("simulation"))
       .def(
           "set_input",
           [](symaware::AmesimDynamicalModel& model, const py::array_t<double>& input) {
@@ -143,6 +156,11 @@ void init_model(py::module_& m) {
 
   py::class_<symaware::CustomDynamicalModel, symaware::EntityModel> customDynamicalModel =
       py::class_<symaware::CustomDynamicalModel, symaware::EntityModel>(m, "_CustomDynamicalModel");
+
+  py::class_<symaware::CustomDynamicalModel::Setup>(customDynamicalModel, "Setup")
+      .def(py::init<>())
+      .def(py::init<bool>(), py::arg("existing"))
+      .def_readwrite("existing", &symaware::CustomDynamicalModel::Setup::existing);
 
   py::class_<symaware::CustomDynamicalModel::Input>(customDynamicalModel, "Input")
       .def(py::init<>())
@@ -194,6 +212,8 @@ void init_model(py::module_& m) {
 
   customDynamicalModel.def(py::init<>())
       .def(py::init<symaware::CustomDynamicalModel::Input>(), py::arg("initial_input"))
+      .def(py::init<const symaware::CustomDynamicalModel::Setup&, symaware::CustomDynamicalModel::Input>(),
+           py::arg("setup"), py::arg("initial_input") = symaware::CustomDynamicalModel::Input{false})
       .def(
           "set_input",
           [](symaware::CustomDynamicalModel& model, const py::array_t<double>& input) {

@@ -585,6 +585,15 @@ class EmptyLightNodeEntity(Entity):
 
 @dataclass(frozen=True)
 class ExistingEntity(Entity):
+    object_name: str = ""
+
+    def __post_init__(self):
+        super().__post_init__()
+        if self.object_name == "":
+            raise AttributeError(
+                "object_name cannot be empty and must contain the unique name of the WorldObject in the Prescan experiment"
+            )
+
     @property
     def object_type(self) -> ObjectType:
         return ObjectType.Existing

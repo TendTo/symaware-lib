@@ -136,16 +136,15 @@ class Environment(BaseEnvironment):
         """
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
-        if entity.object_type != ObjectType.Existing:
-            self.__LOGGER.warning(
-                "Expected 'Existing' entity type, got %s. Entity will be initialised", entity.object_type
-            )
         self._internal_environment.add_entity(entity_name, entity._internal_entity)  # pylint: disable=protected-access
 
     @log(__LOGGER)
     def _add_entity(self, entity: Entity):
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
+        if isinstance(entity, ExistingEntity):
+            self.add_entity(entity.object_name, entity)
+            return
         self._internal_environment.add_entity(entity._internal_entity)  # pylint: disable=protected-access
 
     @log(__LOGGER)
