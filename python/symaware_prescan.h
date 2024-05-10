@@ -8,6 +8,7 @@
 
 void init_type(pybind11::module_ &);
 void init_data(pybind11::module_ &);
+void init_sensor(pybind11::module_ &);
 void init_model(pybind11::module_ &);
 void init_road(pybind11::module_ &);
 void init_simulation(pybind11::module_ &);

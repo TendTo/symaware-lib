@@ -5,6 +5,7 @@ from symaware.base.data import Identifier
 from symaware.base.models import DynamicalModel as BaseDynamicalModel
 
 from ._symaware_prescan import (
+    Position,
     _AmesimDynamicalModel,
     _CustomDynamicalModel,
     _EntityModel,
@@ -12,7 +13,6 @@ from ._symaware_prescan import (
     _ISimulation,
     _TrackModel,
     _WorldObject,
-    Position,
 )
 
 

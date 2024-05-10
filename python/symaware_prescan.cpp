@@ -6,6 +6,7 @@ PYBIND11_MODULE(_symaware_prescan, m) {
   init_type(m);
   init_data(m);
   init_api(m);
+  init_sensor(m);
   init_model(m);
   init_environment(m);
   init_road(m);

@@ -3,6 +3,7 @@ set(SOURCE_LIST
     "symaware_prescan_data.cpp"
     "symaware_prescan_environment.cpp"
     "symaware_prescan_simulation.cpp"
+    "symaware_prescan_sensor.cpp"
     "symaware_prescan_model.cpp"
     "symaware_prescan_api.cpp"
     "symaware_prescan_type.cpp"
