@@ -24,6 +24,15 @@ namespace symaware {
 
 class AmesimDynamicalModel : public EntityModel {
  public:
+  /** @brief Setup of the model */
+  struct Setup {
+    Setup() : existing{false}, is_flat_ground{true}, initial_velocity{0} {}
+    Setup(bool existing, bool is_flat_ground, double initial_velocity)
+        : existing{existing}, is_flat_ground{is_flat_ground}, initial_velocity{initial_velocity} {}
+    bool existing;
+    bool is_flat_ground;
+    double initial_velocity;
+  };
   /** @brief The input of the model */
   struct Input {
     Input() = default;
@@ -42,26 +51,13 @@ class AmesimDynamicalModel : public EntityModel {
   explicit AmesimDynamicalModel(Input initial_input = Input{false});
   /**
    * @brief Construct a new Dynamical Model object with an initial model state.
-   * @param is_flat_ground whether to use a more efficient flat ground simulation
+   * @param setup initial setup of the model
    * @param state initial model state
    */
-  explicit AmesimDynamicalModel(bool is_flat_ground, Input initial_input = Input{false});
-  /**
-   * @brief Construct a new Dynamical Model object with an initial model state.
-   * @param initial_velocity initial velocity of the model
-   * @param state initial model state
-   */
-  explicit AmesimDynamicalModel(double initial_velocity, Input initial_input = Input{false});
-  /**
-   * @brief Construct a new Dynamical Model object with an initial model state.
-   * @param initial_velocity initial velocity of the model
-   * @param is_flat_ground whether to use a more efficient flat ground simulation
-   * @param state initial model state
-   */
-  explicit AmesimDynamicalModel(bool is_flat_ground, double initial_velocity, Input initial_input = Input{false});
+  explicit AmesimDynamicalModel(const Setup& setup, Input initial_input = Input{false});
 
-  void initialiseObject(prescan::api::experiment::Experiment& experiment,
-                        prescan::api::types::WorldObject object) override;
+  void createModel(const prescan::api::types::WorldObject& object,
+                   prescan::api::experiment::Experiment& experiment) override;
   /**
    * @brief Set the new control input of the model.
    * @param input model input to set
@@ -78,7 +74,8 @@ class AmesimDynamicalModel : public EntityModel {
   void setInput(const std::vector<double>& input) override;
   void updateInput(const std::vector<double>& input) override;
 
-  void registerUnit(const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::types::WorldObject& object,
+                    const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override;
 
   const Input& input() const { return input_; }

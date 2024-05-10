@@ -6,25 +6,18 @@
 
 namespace symaware {
 
-TrackModel::TrackModel()
-    : EntityModel{},
-      trajectory_path_{},
-      trajectory_speed_{0},
-      trajectory_tolerance_{0},
+TrackModel::TrackModel(const Setup& setup)
+    : EntityModel{setup.existing},
+      trajectory_path_{setup.path},
+      trajectory_speed_{setup.speed},
+      trajectory_tolerance_{setup.tolerance},
       speed_profile_{nullptr},
       path_{nullptr} {}
 
-TrackModel::TrackModel(std::vector<Position> path, const double speed, const double tolerance)
-    : EntityModel{},
-      trajectory_path_{std::move(path)},
-      trajectory_speed_{speed},
-      trajectory_tolerance_{tolerance},
-      speed_profile_{nullptr},
-      path_{nullptr} {}
-
-void TrackModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
-                                  prescan::api::types::WorldObject object) {
-  EntityModel::initialiseObject(experiment, object);
+void TrackModel::createModel(const prescan::api::types::WorldObject& object,
+                             prescan::api::experiment::Experiment& experiment) {
+  if (existing_) return;
+  EntityModel::createModel(object, experiment);
   std::vector<double> x, y, z;
   x.reserve(trajectory_path_.size());
   y.reserve(trajectory_path_.size());
@@ -39,20 +32,21 @@ void TrackModel::initialiseObject(prescan::api::experiment::Experiment& experime
       prescan::api::trajectory::createFittedPath(experiment, x, y, z, trajectory_tolerance_)};
   const prescan::api::trajectory::SpeedProfile speed_profile{
       prescan::api::trajectory::createSpeedProfileOfConstantSpeed(experiment, trajectory_speed_)};
-  prescan::api::trajectory::createTrajectory(object_, path, speed_profile);
+  prescan::api::trajectory::createTrajectory(object, path, speed_profile);
 }
 
 void TrackModel::setInput(const std::vector<double>& input) {}
 
 void TrackModel::updateInput(const std::vector<double>& input) {}
 
-void TrackModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
+void TrackModel::registerUnit(const prescan::api::types::WorldObject& object,
+                              const prescan::api::experiment::Experiment& experiment,
                               prescan::sim::ISimulation* simulation) {
-  EntityModel::registerUnit(experiment, simulation);
+  EntityModel::registerUnit(object, experiment, simulation);
 
-  const prescan::api::trajectory::Trajectory trajectory = prescan::api::trajectory::getActiveTrajectory(object_);
+  const prescan::api::trajectory::Trajectory trajectory = prescan::api::trajectory::getActiveTrajectory(object);
   speed_profile_ = prescan::sim::registerUnit<prescan::sim::SpeedProfileUnit>(simulation, trajectory.speedProfile());
-  path_ = prescan::sim::registerUnit<prescan::sim::PathUnit>(simulation, trajectory.path(), object_);
+  path_ = prescan::sim::registerUnit<prescan::sim::PathUnit>(simulation, trajectory.path(), object);
 }
 
 void TrackModel::updateState() {

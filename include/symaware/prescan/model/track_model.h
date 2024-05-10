@@ -26,28 +26,29 @@ namespace symaware {
 
 class TrackModel : public EntityModel {
  public:
+  struct Setup {
+    Setup() : existing{false}, path{}, speed{0}, tolerance{0} {}
+    Setup(bool existing, std::vector<Position> path, double speed, double tolerance)
+        : existing{existing}, path{std::move(path)}, speed{speed}, tolerance{tolerance} {}
+    bool existing;
+    std::vector<Position> path;
+    double speed;
+    double tolerance;
+  };
   /**
    * @brief Construct a new TrackModel object with a default trajectory.
    * @param trajectory trajectory of the entity in the simulation
    */
-  explicit TrackModel();
-  /**
-   * @brief Construct a new TrackModel object with the given @p path, @p speed and @p tolerance.
-   *
-   * These values will be used to create a trajectory.
-   * @param path sequence of positions in the trajectory
-   * @param speed speed the entity will move at to follow the path
-   * @param tolerance tolerance of the path
-   */
-  explicit TrackModel(std::vector<Position> path, double speed, double tolerance);
+  explicit TrackModel(const Setup& setup);
 
-  void initialiseObject(prescan::api::experiment::Experiment& experiment,
-                        prescan::api::types::WorldObject object) override;
+  void createModel(const prescan::api::types::WorldObject& object,
+                   prescan::api::experiment::Experiment& experiment) override;
 
   void setInput(const std::vector<double>& input) override;
   void updateInput(const std::vector<double>& input) override;
 
-  void registerUnit(const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::types::WorldObject& object,
+                    const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override;
 
   const std::vector<Position>& trajectoryPath() const { return trajectory_path_; }

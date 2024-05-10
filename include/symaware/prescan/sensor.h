@@ -11,6 +11,7 @@
 #include <prescan/api/Experiment.hpp>
 #include <prescan/api/types/SensorBase.hpp>
 #include <prescan/api/types/WorldObject.hpp>
+#include <prescan/sim/CameraSensorUnit.hpp>
 #include <prescan/sim/Simulation.hpp>
 #include <vector>
 

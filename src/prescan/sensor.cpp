@@ -64,100 +64,6 @@ Sensor::Sensor(const SensorType sensor_type, std::vector<double> setup, const bo
   }
 }
 
-void Sensor::initialiseSensor(const prescan::api::types::WorldObject& object, const int id) {
-  if (id_ != -1) SYMAWARE_RUNTIME_ERROR("Sensor already initialised");
-  id_ = id;
-  std::unique_ptr<prescan::api::types::SensorBase> sensor;
-  switch (sensor_type_) {
-    case SensorType::AIR:
-      sensor = INITIALISE_SENSOR(existing_, air, Air, object, id);
-      break;
-    case SensorType::BRS:
-      sensor = INITIALISE_SENSOR(existing_, brs, Brs, object, id);
-      break;
-    case SensorType::CAMERA:
-      sensor = INITIALISE_SENSOR(existing_, camera, Camera, object, id);
-      break;
-    case SensorType::LMS:
-      sensor = INITIALISE_SENSOR(existing_, lms, Lms, object, id);
-      break;
-    default:
-      SYMAWARE_RUNTIME_ERROR_FMT("Sensor {} not yet implemented", sensor_type_);
-  }
-  applySetup(sensor.get());
-}
-
-void Sensor::registerUnit(const prescan::api::types::WorldObject& object,
-                          const prescan::api::experiment::Experiment& experiment,
-                          prescan::sim::ISimulation* simulation) {
-  switch (sensor_type_) {
-    case SensorType::AIR:
-      REGISTER_SENSOR_UNIT(air, Air, object, id_);
-      break;
-    case SensorType::BRS:
-      REGISTER_SENSOR_UNIT(brs, Brs, object, id_);
-      break;
-    case SensorType::CAMERA:
-      REGISTER_SENSOR_UNIT(camera, Camera, object, id_);
-      break;
-    case SensorType::LMS:
-      REGISTER_SENSOR_UNIT_ARGS(lms, Lms, object, id_, simulation->getSimulationPath());
-      break;
-    default:
-      break;
-  }
-}
-void Sensor::initialise(prescan::sim::ISimulation* simulation) {}
-void Sensor::step(prescan::sim::ISimulation* simulation) { updateState<prescan::sim::Unit>(); }
-void Sensor::terminate(prescan::sim::ISimulation* simulation) {}
-
-template <>
-void Sensor::updateState<prescan::sim::Unit>() {
-  switch (sensor_type_) {
-    case SensorType::AIR:
-      updateState<prescan::sim::AirSensorUnit>();
-      break;
-    case SensorType::BRS:
-      updateState<prescan::sim::BrsSensorUnit>();
-      break;
-    case SensorType::CAMERA:
-      updateState<prescan::sim::CameraSensorUnit>();
-      break;
-    case SensorType::LMS:
-      updateState<prescan::sim::LmsSensorUnit>();
-      break;
-    default:
-      SYMAWARE_UNREACHABLE();
-  }
-}
-
-template <>
-inline void Sensor::applySetup(prescan::api::types::SensorBase* const sensor) {
-  if (setup_.size() < 6)
-    SYMAWARE_RUNTIME_ERROR_FMT("Invalid setup size for sensor {}: {} < 6", sensor_type_, setup_.size());
-  if (!std::isnan(setup_[0])) sensor->pose().position().setX(setup_[0]);
-  if (!std::isnan(setup_[1])) sensor->pose().position().setY(setup_[1]);
-  if (!std::isnan(setup_[2])) sensor->pose().position().setZ(setup_[2]);
-  if (!std::isnan(setup_[3])) sensor->pose().orientation().setRoll(setup_[3]);
-  if (!std::isnan(setup_[4])) sensor->pose().orientation().setPitch(setup_[4]);
-  if (!std::isnan(setup_[5])) sensor->pose().orientation().setYaw(setup_[5]);
-  switch (sensor_type_) {
-    case SensorType::AIR:
-      applySetup<prescan::api::air::AirSensor>(static_cast<prescan::api::air::AirSensor*>(sensor));
-      break;
-    case SensorType::BRS:
-      applySetup<prescan::api::brs::BrsSensor>(static_cast<prescan::api::brs::BrsSensor*>(sensor));
-      break;
-    case SensorType::CAMERA:
-      applySetup<prescan::api::camera::CameraSensor>(static_cast<prescan::api::camera::CameraSensor*>(sensor));
-      break;
-    case SensorType::LMS:
-      applySetup<prescan::api::lms::LmsSensor>(static_cast<prescan::api::lms::LmsSensor*>(sensor));
-      break;
-    default:
-      SYMAWARE_RUNTIME_ERROR_FMT("Sensor {} not yet implemented", sensor_type_);
-  }
-}
 template <>
 inline void Sensor::applySetup(prescan::api::air::AirSensor* const sensor) {
   if (setup_.size() != 10)
@@ -263,5 +169,99 @@ inline void Sensor::updateState<prescan::sim::LmsSensorUnit>() {
     }
   }
 }
+
+template <>
+void Sensor::updateState<prescan::sim::Unit>() {
+  switch (sensor_type_) {
+    case SensorType::AIR:
+      updateState<prescan::sim::AirSensorUnit>();
+      break;
+    case SensorType::BRS:
+      updateState<prescan::sim::BrsSensorUnit>();
+      break;
+    case SensorType::CAMERA:
+      updateState<prescan::sim::CameraSensorUnit>();
+      break;
+    case SensorType::LMS:
+      updateState<prescan::sim::LmsSensorUnit>();
+      break;
+    default:
+      SYMAWARE_UNREACHABLE();
+  }
+}
+template <>
+inline void Sensor::applySetup(prescan::api::types::SensorBase* const sensor) {
+  if (setup_.size() < 6)
+    SYMAWARE_RUNTIME_ERROR_FMT("Invalid setup size for sensor {}: {} < 6", sensor_type_, setup_.size());
+  if (!std::isnan(setup_[0])) sensor->pose().position().setX(setup_[0]);
+  if (!std::isnan(setup_[1])) sensor->pose().position().setY(setup_[1]);
+  if (!std::isnan(setup_[2])) sensor->pose().position().setZ(setup_[2]);
+  if (!std::isnan(setup_[3])) sensor->pose().orientation().setRoll(setup_[3]);
+  if (!std::isnan(setup_[4])) sensor->pose().orientation().setPitch(setup_[4]);
+  if (!std::isnan(setup_[5])) sensor->pose().orientation().setYaw(setup_[5]);
+  switch (sensor_type_) {
+    case SensorType::AIR:
+      applySetup<prescan::api::air::AirSensor>(static_cast<prescan::api::air::AirSensor*>(sensor));
+      break;
+    case SensorType::BRS:
+      applySetup<prescan::api::brs::BrsSensor>(static_cast<prescan::api::brs::BrsSensor*>(sensor));
+      break;
+    case SensorType::CAMERA:
+      applySetup<prescan::api::camera::CameraSensor>(static_cast<prescan::api::camera::CameraSensor*>(sensor));
+      break;
+    case SensorType::LMS:
+      applySetup<prescan::api::lms::LmsSensor>(static_cast<prescan::api::lms::LmsSensor*>(sensor));
+      break;
+    default:
+      SYMAWARE_RUNTIME_ERROR_FMT("Sensor {} not yet implemented", sensor_type_);
+  }
+}
+
+void Sensor::initialiseSensor(const prescan::api::types::WorldObject& object, const int id) {
+  if (id_ != -1) SYMAWARE_RUNTIME_ERROR("Sensor already initialised");
+  id_ = id;
+  std::unique_ptr<prescan::api::types::SensorBase> sensor;
+  switch (sensor_type_) {
+    case SensorType::AIR:
+      sensor = INITIALISE_SENSOR(existing_, air, Air, object, id);
+      break;
+    case SensorType::BRS:
+      sensor = INITIALISE_SENSOR(existing_, brs, Brs, object, id);
+      break;
+    case SensorType::CAMERA:
+      sensor = INITIALISE_SENSOR(existing_, camera, Camera, object, id);
+      break;
+    case SensorType::LMS:
+      sensor = INITIALISE_SENSOR(existing_, lms, Lms, object, id);
+      break;
+    default:
+      SYMAWARE_RUNTIME_ERROR_FMT("Sensor {} not yet implemented", sensor_type_);
+  }
+  applySetup(sensor.get());
+}
+
+void Sensor::registerUnit(const prescan::api::types::WorldObject& object,
+                          const prescan::api::experiment::Experiment& experiment,
+                          prescan::sim::ISimulation* simulation) {
+  switch (sensor_type_) {
+    case SensorType::AIR:
+      REGISTER_SENSOR_UNIT(air, Air, object, id_);
+      break;
+    case SensorType::BRS:
+      REGISTER_SENSOR_UNIT(brs, Brs, object, id_);
+      break;
+    case SensorType::CAMERA:
+      REGISTER_SENSOR_UNIT(camera, Camera, object, id_);
+      break;
+    case SensorType::LMS:
+      REGISTER_SENSOR_UNIT_ARGS(lms, Lms, object, id_, simulation->getSimulationPath());
+      break;
+    default:
+      break;
+  }
+}
+void Sensor::initialise(prescan::sim::ISimulation* simulation) {}
+void Sensor::step(prescan::sim::ISimulation* simulation) { updateState<prescan::sim::Unit>(); }
+void Sensor::terminate(prescan::sim::ISimulation* simulation) {}
 
 }  // namespace symaware

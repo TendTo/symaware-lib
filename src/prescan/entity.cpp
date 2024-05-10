@@ -59,13 +59,7 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
   object_ = object;
   if (type_ != ObjectType::Existing) updateObject();
-  if (model_ != nullptr) {
-    if (type_ == ObjectType::Existing)
-      model_->setObject(object_);
-    else
-      model_->initialiseObject(experiment, object_);
-  }
-
+  if (model_ != nullptr) model_->createModel(object_, experiment);
   for (Sensor* const sensor : sensors_) {
     std::size_t id = sensor_count_[to_underlying(sensor->sensor_type())]++;
     sensor->initialiseSensor(object_, id);
@@ -108,16 +102,20 @@ void Entity::registerUnit(const prescan::api::experiment::Experiment& experiment
                           prescan::sim::ISimulation* const simulation) {
   // TODO: a flag may be needed if registering the SelfSensorUnit is expensive over objects that will not be used
   state_ = prescan::sim::registerUnit<prescan::sim::SelfSensorUnit>(simulation, object_);
-  if (model_ != nullptr) model_->registerUnit(experiment, simulation);
+  if (model_ != nullptr) model_->registerUnit(object_, experiment, simulation);
+  for (Sensor* const sensor : sensors_) sensor->registerUnit(object_, experiment, simulation);
 }
 void Entity::initialise(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->initialise(simulation);
+  for (Sensor* const sensor : sensors_) sensor->initialise(simulation);
 }
 void Entity::step(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->step(simulation);
+  for (Sensor* const sensor : sensors_) sensor->step(simulation);
 }
 void Entity::terminate(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->terminate(simulation);
+  for (Sensor* const sensor : sensors_) sensor->terminate(simulation);
 }
 
 std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup) {

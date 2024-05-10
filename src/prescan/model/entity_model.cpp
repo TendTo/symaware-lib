@@ -11,19 +11,13 @@
 
 namespace symaware {
 
-EntityModel::EntityModel() : object_{}, state_{nullptr} {}
+EntityModel::EntityModel(const bool existing) : existing_{existing}, state_{nullptr} {}
 
-void EntityModel::setObject(prescan::api::types::WorldObject object) { object_ = object; }
-
-void EntityModel::initialiseObject(prescan::api::experiment::Experiment& experiment,
-                                   prescan::api::types::WorldObject object) {
-  object_ = object;
-}
-
-void EntityModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
+void EntityModel::registerUnit(const prescan::api::types::WorldObject& object,
+                               const prescan::api::experiment::Experiment& experiment,
                                prescan::sim::ISimulation* simulation) {
   if (state_ != nullptr) SYMAWARE_RUNTIME_ERROR("EntityModel has alreasy been registered to a state");
-  state_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, object_);
+  state_ = prescan::sim::registerUnit<prescan::sim::StateActuatorUnit>(simulation, object);
 }
 
 void EntityModel::initialise(prescan::sim::ISimulation* simulation) {

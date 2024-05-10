@@ -21,27 +21,19 @@ class EntityModel {
  public:
   /**
    * @brief Construct a new Dynamical Model object with an initial model state.
-   * @param state initial model state
+   * @param existing whether the dynamical model is already present in the experiment or shall be created
    */
-  explicit EntityModel();
-
-  /**
-   * @brief Set the object in the simulation this model will control.
-   *
-   * No initialisation is done in this method.
-   * @param object simulation object this model will control
-   */
-  void setObject(prescan::api::types::WorldObject object);
+  explicit EntityModel(bool existing);
 
   /**
    * @brief Initialise the model by assigning the object in the simulation.
    *
    * The object is stored in @ref object_ .
-   * @param experiment experiment about to be run
    * @param object simulation object this model will control
+   * @param experiment experiment about to be run
    */
-  virtual void initialiseObject(prescan::api::experiment::Experiment& experiment,
-                                prescan::api::types::WorldObject object);
+  virtual void createModel(const prescan::api::types::WorldObject& object,
+                           prescan::api::experiment::Experiment& experiment) {};
 
   /**
    * @brief Set the new control input of the model.
@@ -65,10 +57,12 @@ class EntityModel {
    * Called at the beginning of the @p simulation.
    * Allows for the model to extract the @ref object_ from the @p simulation
    * and use it to register the @ref state_.
+   * @param object simulation object this model will control
    * @param experiment experiment about to be run
    * @param simulation simulation that will run the experiment
    */
-  virtual void registerUnit(const prescan::api::experiment::Experiment& experiment,
+  virtual void registerUnit(const prescan::api::types::WorldObject& object,
+                            const prescan::api::experiment::Experiment& experiment,
                             prescan::sim::ISimulation* simulation);
   /**
    * @brief Set the initial state of the model in the @p simulation.
@@ -92,7 +86,7 @@ class EntityModel {
    */
   virtual void terminate(prescan::sim::ISimulation* simulation);
 
-  const prescan::api::types::WorldObject& object() const { return object_; }
+  bool existing() const { return existing_; }
   const prescan::sim::StateActuatorUnit& state() const;
 
  protected:
@@ -104,8 +98,8 @@ class EntityModel {
    */
   virtual void updateState() = 0;
 
-  prescan::api::types::WorldObject object_;  ///< The object that represents the entity in the simulation
-  prescan::sim::StateActuatorUnit* state_;   ///< The state of the entity in the simulation
+  bool existing_;
+  prescan::sim::StateActuatorUnit* state_;  ///< The state of the entity in the simulation
 };
 
 }  // namespace symaware

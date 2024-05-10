@@ -23,6 +23,11 @@ namespace symaware {
 
 class CustomDynamicalModel : public EntityModel {
  public:
+  struct Setup {
+    Setup() : existing{false} {}
+    Setup(bool existing) : existing{existing} {}
+    bool existing;
+  };
   /** @brief The input of the model */
   struct Input {
     Input() = default;
@@ -41,6 +46,7 @@ class CustomDynamicalModel : public EntityModel {
    * @param state initial model state
    */
   explicit CustomDynamicalModel(Input initial_input = Input{false});
+  CustomDynamicalModel(const Setup& setup, Input initial_input = Input{false});
 
   /**
    * @brief Set the new control input of the model.
