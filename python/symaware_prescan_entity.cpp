@@ -102,7 +102,8 @@ void init_entity(py::module_& m) {
            py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
 
       .def("add_sensor", &symaware::Entity::addSensor, py::arg("sensor"))
-      .def("apply_setup", &symaware::Entity::applySetup, py::arg("setup"))
+      .def("apply_setup", py::overload_cast<>(&symaware::Entity::applySetup))
+      .def("apply_setup", py::overload_cast<symaware::Entity::Setup>(&symaware::Entity::applySetup), py::arg("setup"))
       .def("initialise_object", &symaware::Entity::initialiseObject, py::arg("experiment"), py::arg("object"))
       .def("register_unit", &symaware::Entity::registerUnit, py::arg("experiment"), py::arg("simulation"))
       .def("initialise", &symaware::Entity::initialise, py::arg("simulation"))

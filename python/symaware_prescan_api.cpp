@@ -173,6 +173,8 @@ void init_api(py::module_& m) {
             self.cogOffset().setXYZ(cog_offset.x, cog_offset.y, cog_offset.z);
           })
       .def_property("movable", prescan::api::types::WorldObject::movable, prescan::api::types::WorldObject::setMovable)
+      .def_property("sensor_detectability", prescan::api::types::WorldObject::sensorDetectability,
+                    prescan::api::types::WorldObject::setSensorDetectability)
       .def_property("collision_detectable", prescan::api::types::WorldObject::collisionDetectable,
                     prescan::api::types::WorldObject::setCollisionDetectable)
       .def_property("name", prescan::api::types::WorldObject::name, prescan::api::types::WorldObject::setName);
