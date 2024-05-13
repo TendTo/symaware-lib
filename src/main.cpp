@@ -28,28 +28,29 @@ using namespace std::chrono_literals;
 int main() {
   symaware::Environment env;
   auto viewer = env.addFreeViewer();
-  env.setSky(symaware::Environment::SkyType::DAY);
-  env.setWeather(symaware::Environment::WeatherType::SUNNY);
+  env.setSky(symaware::SkyType::DAY);
+  env.setWeather(symaware::WeatherType::SUNNY);
   env.addRoad().addStraightSection(100).addLane(prescan::api::roads::types::RoadSideType::RoadSideTypeLeft, 3.5);
 
   symaware::AmesimDynamicalModel toyota_model{};
-  symaware::TrackModel audi_a8_model{{{0, 0, 0},
-                                      {1, 1, 0},
-                                      {2, 2, 0},
-                                      {3, 3, 0},
-                                      {4, 4, 0},
-                                      {5, 5, 0},
-                                      {4, 6, 0},
-                                      {3, 7, 0},
-                                      {2, 8, 0},
-                                      {1, 9, 0},
-                                      {0, 10, 0}},
-                                     5,
-                                     0.1};
+  symaware::TrackModel audi_a8_model{{false,
+                                      {{0, 0, 0},
+                                       {1, 1, 0},
+                                       {2, 2, 0},
+                                       {3, 3, 0},
+                                       {4, 4, 0},
+                                       {5, 5, 0},
+                                       {4, 6, 0},
+                                       {3, 7, 0},
+                                       {2, 8, 0},
+                                       {1, 9, 0},
+                                       {0, 10, 0}},
+                                      5,
+                                      0.1}};
   symaware::CustomDynamicalModel baloon_model{};
 
   symaware::Entity baloon{
-      symaware::Environment::ObjectType::BalloonCar,
+      symaware::ObjectType::BalloonCar,
       symaware::Entity::Setup{{4, 5, 0},
                               {0, 0, 0},
                               {0, 0, 0},
@@ -58,12 +59,12 @@ int main() {
                               prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       baloon_model};
   symaware::Entity toyota{
-      symaware::Environment::ObjectType::Toyota_Yaris_Hatchback,
+      symaware::ObjectType::Toyota_Yaris_Hatchback,
       symaware::Entity::Setup{true, true, true,
                               prescan::api::types::SensorDetectability::SensorDetectabilityDetectable},
       toyota_model};
   symaware::Entity audi_a8{
-      symaware::Environment::ObjectType::Audi_A8_Sedan,
+      symaware::ObjectType::Audi_A8_Sedan,
       symaware::Entity::Setup{{0, 3, 0},
                               {0, 0, 0},
                               {0, 0, 0},
