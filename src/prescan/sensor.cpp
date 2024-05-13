@@ -23,16 +23,16 @@
       prescan::api::namespace ::getAttached##sensor_type##Sensors(object).at(id))
 
 #define INITIALISE_SENSOR(existing, namespace, sensor_type, object, id) \
-  existing ? CREATE_SENSOR(namespace, sensor_type, object) : GET_ATTACHED_SENSOR(namespace, sensor_type, object, id)
+  existing ? GET_ATTACHED_SENSOR(namespace, sensor_type, object, id) : CREATE_SENSOR(namespace, sensor_type, object)
 
-#define REGISTER_SENSOR_UNIT(namespace, sensor_type, object, id)                                              \
-  sensor_unit_ =                                                                                              \
-      std::make_unique<prescan::sim::Unit>(prescan::sim::registerUnit<prescan::sim::sensor_type##SensorUnit>( \
+#define REGISTER_SENSOR_UNIT(namespace, sensor_type, object, id)                                                \
+  sensor_unit_ =                                                                                                \
+      static_cast<const prescan::sim::Unit*>(prescan::sim::registerUnit<prescan::sim::sensor_type##SensorUnit>( \
           simulation, prescan::api::namespace ::getAttached##sensor_type##Sensors(object).at(id)));
 
-#define REGISTER_SENSOR_UNIT_ARGS(namespace, sensor_type, object, id, ...)                                    \
-  sensor_unit_ =                                                                                              \
-      std::make_unique<prescan::sim::Unit>(prescan::sim::registerUnit<prescan::sim::sensor_type##SensorUnit>( \
+#define REGISTER_SENSOR_UNIT_ARGS(namespace, sensor_type, object, id, ...)                                      \
+  sensor_unit_ =                                                                                                \
+      static_cast<const prescan::sim::Unit*>(prescan::sim::registerUnit<prescan::sim::sensor_type##SensorUnit>( \
           simulation, prescan::api::namespace ::getAttached##sensor_type##Sensors(object).at(id), __VA_ARGS__));
 
 namespace symaware {
@@ -116,10 +116,10 @@ inline void Sensor::applySetup(prescan::api::lms::LmsSensor* const sensor) {
 
 template <>
 inline void Sensor::updateState<prescan::sim::AirSensorUnit>() {
-  const prescan::sim::AirSensorUnit& sensor_unit = *static_cast<prescan::sim::AirSensorUnit*>(sensor_unit_.get());
+  const prescan::sim::AirSensorUnit* const sensor_unit = static_cast<const prescan::sim::AirSensorUnit*>(sensor_unit_);
   state_.clear();
-  state_.reserve(sensor_unit.airSensorOutput().size() * 6);
-  for (const auto& value : sensor_unit.airSensorOutput()) {
+  state_.reserve(sensor_unit->airSensorOutput().size() * 6);
+  for (const auto& value : sensor_unit->airSensorOutput()) {
     state_.push_back(value->Range);
     state_.push_back(value->Azimuth);
     state_.push_back(value->Elevation);
@@ -130,10 +130,10 @@ inline void Sensor::updateState<prescan::sim::AirSensorUnit>() {
 }
 template <>
 inline void Sensor::updateState<prescan::sim::BrsSensorUnit>() {
-  const prescan::sim::BrsSensorUnit& sensor_unit = *static_cast<prescan::sim::BrsSensorUnit*>(sensor_unit_.get());
+  const prescan::sim::BrsSensorUnit* const sensor_unit = static_cast<const prescan::sim::BrsSensorUnit*>(sensor_unit_);
   state_.clear();
-  state_.reserve(sensor_unit.brsSensorOutput().size() * 5);
-  for (const auto& value : sensor_unit.brsSensorOutput()) {
+  state_.reserve(sensor_unit->brsSensorOutput().size() * 5);
+  for (const auto& value : sensor_unit->brsSensorOutput()) {
     state_.push_back(static_cast<double>(value->ObjectID));
     state_.push_back(value->Left);
     state_.push_back(value->Right);
@@ -143,7 +143,7 @@ inline void Sensor::updateState<prescan::sim::BrsSensorUnit>() {
 }
 template <>
 inline void Sensor::updateState<prescan::sim::CameraSensorUnit>() {
-  const prescan::sim::CameraSensorUnit& sensor_unit = *static_cast<prescan::sim::CameraSensorUnit*>(sensor_unit_.get());
+  const prescan::sim::CameraSensorUnit& sensor_unit = *static_cast<const prescan::sim::CameraSensorUnit*>(sensor_unit_);
   state_.clear();
   image_ = sensor_unit.imageOutput();
 }
@@ -155,12 +155,12 @@ inline void Sensor::updateState<prescan::sim::CameraSensorUnit>() {
 // }
 template <>
 inline void Sensor::updateState<prescan::sim::LmsSensorUnit>() {
-  const prescan::sim::LmsSensorUnit& sensor_unit = *static_cast<prescan::sim::LmsSensorUnit*>(sensor_unit_.get());
+  const prescan::sim::LmsSensorUnit* const sensor_unit = static_cast<const prescan::sim::LmsSensorUnit*>(sensor_unit_);
   state_.clear();
   std::size_t total_size = 0;
-  for (const auto& lines : sensor_unit.linesOutput()) total_size += lines.size() * 4;
+  for (const auto& lines : sensor_unit->linesOutput()) total_size += lines.size() * 4;
   state_.reserve(total_size);
-  for (const auto& lines : sensor_unit.linesOutput()) {
+  for (const auto& lines : sensor_unit->linesOutput()) {
     for (const auto& value : lines) {
       state_.push_back(value.X);
       state_.push_back(value.Y);

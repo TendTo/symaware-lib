@@ -77,7 +77,7 @@ class Sensor {
   std::vector<double> setup_;
   std::vector<double> state_;
   prescan::sim::CameraSensorUnit::Image image_;
-  std::unique_ptr<prescan::sim::Unit> sensor_unit_;
+  const prescan::sim::Unit* sensor_unit_;
 };
 
 }  // namespace symaware
