@@ -58,6 +58,11 @@ class Simulation {
    */
   void setLogLevel(prescan::sim::ISimulationLogger::LogLevel log_level);
 
+  void setOnPreStep(const std::function<void()>& callback) { model_.setOnPreStep(callback); }
+  void setOpPostStep(const std::function<void()>& callback) { model_.setOpPostStep(callback); }
+  void removeOnPreStep() { model_.setOnPreStep(nullptr); }
+  void removeOnPostStep() { model_.setOpPostStep(nullptr); }
+
  private:
   bool is_initialised_;
   const Environment& environment_;

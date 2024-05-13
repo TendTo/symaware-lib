@@ -7,7 +7,8 @@
 
 namespace symaware {
 
-SimulationModel::SimulationModel(const Environment& environment) : environment_{environment} {};
+SimulationModel::SimulationModel(const Environment& environment)
+    : environment_{environment}, on_pre_step_{nullptr}, on_post_step_{nullptr} {};
 
 void SimulationModel::registerSimulationUnits(const prescan::api::experiment::Experiment& experiment,
                                               prescan::sim::ISimulation* simulation) {
@@ -19,7 +20,9 @@ void SimulationModel::initialize(prescan::sim::ISimulation* simulation) {
 };
 
 void SimulationModel::step(prescan::sim::ISimulation* simulation) {
+  if (on_pre_step_ != nullptr) on_pre_step_();
   for (const auto& [name, entity] : environment_.entities()) entity->step(simulation);
+  if (on_post_step_ != nullptr) on_post_step_();
 };
 
 void SimulationModel::terminate(prescan::sim::ISimulation* simulation) {

@@ -2134,6 +2134,16 @@ class _Simulation:
         Initialise the simulation.
         """
 
+    def remove_on_post_step(self) -> None:
+        """
+        Set a callback to be called as the last operation at each step.
+        """
+
+    def remove_on_pre_step(self) -> None:
+        """
+        Set a callback to be called as the first operation at each step.
+        """
+
     def run(self, seconds: float = -1.0) -> None:
         """
         Run the simulation automatically.
@@ -2142,6 +2152,16 @@ class _Simulation:
     def set_log_level(self, log_level: LogLevel) -> None:
         """
         Set the log level of the simulation logger.
+        """
+
+    def set_on_post_step(self, callback: typing.Callable[[], None]) -> None:
+        """
+        Set a callback to be called as the last operation at each step.
+        """
+
+    def set_on_pre_step(self, callback: typing.Callable[[], None]) -> None:
+        """
+        Set a callback to be called as the first operation at each step.
         """
 
     def step(self) -> None:

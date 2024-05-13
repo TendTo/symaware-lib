@@ -15,6 +15,8 @@ from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
+    from typing import Callable
+
     from symaware.base.utils import AsyncLoopLock
 
     from ._symaware_prescan import Position
@@ -128,6 +130,38 @@ class Environment(BaseEnvironment):
             log level the Prescan simulator will use
         """
         self._internal_simulation.set_log_level(log_level)
+
+    def set_on_pre_step(self, callback: "Callable[[], None] | None"):
+        """
+        Set a callback to be called as the first operation at each simulation step.
+        If none, the callback will be removed.
+
+        Args
+        ----
+        callback:
+            callback to be called as the first operation at each simulation step
+            If None, the callback will be removed
+        """
+        if callback is None:
+            self._internal_simulation.remove_on_pre_step()
+        else:
+            self._internal_simulation.set_on_pre_step(callback)
+
+    def set_on_post_step(self, callback: "Callable[[], None] | None"):
+        """
+        Set a callback to be called as the last operation at each simulation step.
+        If None, the callback will be removed.
+
+        Args
+        ----
+        callback:
+            callback to be called as the last operation at each simulation step.
+            If None, the callback will be removed
+        """
+        if callback is None:
+            self._internal_simulation.remove_on_post_step()
+        else:
+            self._internal_simulation.set_on_post_step(callback)
 
     def set_scheduler_frequencies(self, simulation_frequency: int, integration_frequency: int):
         """
