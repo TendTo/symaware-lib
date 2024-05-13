@@ -25,6 +25,6 @@ void init_sensor(py::module_& m) {
       .def("terminate", &symaware::Sensor::terminate, py::arg("simulation"))
 
       .def_property_readonly("sensor_type", &symaware::Sensor::sensor_type)
-      .def_property_readonly("setup", &symaware::Sensor::sensor_type)
-      .def_property_readonly("state", &symaware::Sensor::sensor_type);
+      .def_property_readonly("setup", &symaware::Sensor::setup)
+      .def_property_readonly("state", &symaware::Sensor::state);
 }
