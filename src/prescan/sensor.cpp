@@ -1,5 +1,6 @@
 #include "symaware/prescan/sensor.h"
 
+#include <limits>
 #include <prescan/api/Air.hpp>
 #include <prescan/api/Brs.hpp>
 #include <prescan/api/Camera.hpp>
@@ -159,7 +160,7 @@ inline void Sensor::updateState<prescan::sim::LmsSensorUnit>() {
   state_.clear();
   std::size_t total_size = 0;
   for (const auto& lines : sensor_unit->linesOutput()) total_size += lines.size() * 4;
-  state_.reserve(total_size);
+  state_.reserve(total_size + sensor_unit->linesOutput().size());
   for (const auto& lines : sensor_unit->linesOutput()) {
     for (const auto& value : lines) {
       state_.push_back(value.X);
@@ -167,6 +168,7 @@ inline void Sensor::updateState<prescan::sim::LmsSensorUnit>() {
       state_.push_back(value.Z);
       state_.push_back(value.Curvature);
     }
+    state_.push_back(std::numeric_limits<double>::quiet_NaN());
   }
 }
 
