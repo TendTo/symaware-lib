@@ -136,6 +136,10 @@ class Environment(BaseEnvironment):
         Set a callback to be called as the first operation at each simulation step.
         If none, the callback will be removed.
 
+        Note
+        ----
+        The callback will be removed when the environment is stopped.
+
         Args
         ----
         callback:
@@ -151,6 +155,10 @@ class Environment(BaseEnvironment):
         """
         Set a callback to be called as the last operation at each simulation step.
         If None, the callback will be removed.
+
+        Note
+        ----
+        The callback will be removed when the environment is stopped.
 
         Args
         ----
@@ -246,5 +254,7 @@ class Environment(BaseEnvironment):
     def stop(self):
         if not self._is_prescan_initialized:
             return
+        self.set_on_pre_step(None)
+        self.set_on_post_step(None)
         self._internal_simulation.terminate()
         self._is_prescan_initialized = False
