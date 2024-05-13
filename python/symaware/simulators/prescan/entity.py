@@ -34,8 +34,6 @@ class Entity(BaseEntity):
     ----
     model:
         Dynamical model associated with the entity. Must be a subclass of :class:`.PybulletDynamicalModel`
-    _internal_entity:
-        Internal entity object used by the Prescan simulator's python bindings. Do not initialise this object directly.
     """
 
     model: DynamicalModel = field(default_factory=NullDynamicalModel)
@@ -44,7 +42,7 @@ class Entity(BaseEntity):
 
     def __init__(
         self,
-        id: Identifier = -1,
+        id: Identifier = -1,  # pylint: disable=redefined-builtin
         model: DynamicalModel = NullDynamicalModel(),
         position: "Position | np.ndarray" = Position(),
         orientation: "Orientation | np.ndarray" = Orientation(),
@@ -671,11 +669,17 @@ class EmptyLightNodeEntity(Entity):
 
 @dataclass(frozen=True, init=False)
 class ExistingEntity(Entity):
+    """
+    Existing entity.
+    Used to load an entity from an experiment file without having to recreate it.
+    The object_name will be used to link the entity to the corresponding World object in the experiment file.
+    """
+
     object_name: str = ""
 
     def __init__(
         self,
-        id: Identifier = -1,
+        id: Identifier = -1,  # pylint: disable=redefined-builtin
         model: DynamicalModel = NullDynamicalModel(),
         object_name: str = "",
         position: "Position | np.ndarray" = Position(),
@@ -699,7 +703,7 @@ class ExistingEntity(Entity):
         )
         if object_name == "":
             raise AttributeError(
-                "object_name cannot be empty and must contain the unique name of the WorldObject in the Prescan experiment"
+                "object_name must contain the unique name of the WorldObject in the Prescan experiment"
             )
         object.__setattr__(self, "object_name", object_name)
 

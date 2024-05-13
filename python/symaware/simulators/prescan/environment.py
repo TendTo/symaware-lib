@@ -4,7 +4,13 @@ import numpy as np
 from symaware.base.models import Environment as BaseEnvironment
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation
+from ._symaware_prescan import (
+    LogLevel,
+    Road,
+    SimulationSpeed,
+    _Environment,
+    _Simulation,
+)
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
@@ -91,7 +97,7 @@ class Environment(BaseEnvironment):
         - orientation.yaw
         - velocity
         - yaw_rate
-        
+
         Args
         ----
         Entity to get the state from
@@ -122,6 +128,32 @@ class Environment(BaseEnvironment):
             log level the Prescan simulator will use
         """
         self._internal_simulation.set_log_level(log_level)
+
+    def set_scheduler_frequencies(self, simulation_frequency: int, integration_frequency: int):
+        """
+        Set the frequency of the scheduler
+
+        Args
+        ----
+        simulation_frequency:
+            frequency of the simulation
+        integration_frequency:
+            frequency of the intgration
+        """
+        self._internal_environment.set_scheduler_frequencies(simulation_frequency, integration_frequency)
+
+    def set_scheduler_speed(self, simulation_speed: SimulationSpeed, ignore_frame_overrun: bool):
+        """
+        Set the speed of the scheduler
+
+        Args
+        ----
+        simulation_speed:
+            speed of the simulation
+        ignore_frame_overrun:
+            whether to ignore frames that take to long to run
+        """
+        self._internal_environment.set_scheduler_speed(simulation_speed, ignore_frame_overrun)
 
     def import_open_drive_network(self, filename: str):
         """

@@ -1,11 +1,10 @@
-from typing import TypedDict
+from typing import TYPE_CHECKING, TypedDict
 
 import numpy as np
 from symaware.base.data import Identifier
 from symaware.base.models import DynamicalModel as BaseDynamicalModel
 
 from ._symaware_prescan import (
-    Position,
     _AmesimDynamicalModel,
     _CustomDynamicalModel,
     _EntityModel,
@@ -14,6 +13,10 @@ from ._symaware_prescan import (
     _TrackModel,
     _WorldObject,
 )
+
+if TYPE_CHECKING:
+    # String type hinting to support python 3.9
+    from ._symaware_prescan import Position
 
 
 class AmesimDynamicalModelInput(TypedDict):
@@ -152,11 +155,16 @@ class TrackModel(DynamicalModel):
     """
 
     def __init__(
-        self, ID: Identifier, path: list[Position] = [], speed: float = 0, tolerance: float = 0, existing: bool = False
+        self,
+        ID: Identifier,
+        path: "list[Position] | None" = None,
+        speed: float = 0,
+        tolerance: float = 0,
+        existing: bool = False,
     ):
         super().__init__(ID, control_input=np.zeros(0))
         self._internal_model = _TrackModel(
-            _TrackModel.Setup(existing=existing, path=path, speed=speed, tolerance=tolerance)
+            _TrackModel.Setup(existing=existing, path=path or [], speed=speed, tolerance=tolerance)
         )
 
     @property
