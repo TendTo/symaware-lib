@@ -117,6 +117,7 @@ void Entity::step(prescan::sim::ISimulation* const simulation) {
 void Entity::terminate(prescan::sim::ISimulation* const simulation) {
   if (model_ != nullptr) model_->terminate(simulation);
   for (Sensor* const sensor : sensors_) sensor->terminate(simulation);
+  state_ = nullptr;
 }
 
 std::ostream& operator<<(std::ostream& os, const Entity::Setup& setup) {

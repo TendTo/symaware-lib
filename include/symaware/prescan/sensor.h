@@ -62,7 +62,7 @@ class Sensor {
 
   SensorType sensor_type() const { return sensor_type_; }
   const std::vector<double>& setup() const { return setup_; }
-  const std::vector<double>& state() const { return state_; }
+  const std::vector<double>& state();
   const prescan::sim::CameraSensorUnit::Image& image() const { return image_; }
 
  private:

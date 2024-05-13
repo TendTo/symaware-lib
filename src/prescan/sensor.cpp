@@ -172,6 +172,7 @@ inline void Sensor::updateState<prescan::sim::LmsSensorUnit>() {
 
 template <>
 void Sensor::updateState<prescan::sim::Unit>() {
+  if (sensor_unit_ == nullptr) return;
   switch (sensor_type_) {
     case SensorType::AIR:
       updateState<prescan::sim::AirSensorUnit>();
@@ -261,8 +262,16 @@ void Sensor::registerUnit(const prescan::api::types::WorldObject& object,
       break;
   }
 }
-void Sensor::initialise(prescan::sim::ISimulation* simulation) {}
-void Sensor::step(prescan::sim::ISimulation* simulation) { updateState<prescan::sim::Unit>(); }
-void Sensor::terminate(prescan::sim::ISimulation* simulation) {}
+void Sensor::initialise(prescan::sim::ISimulation* simulation) { state_.clear(); }
+void Sensor::step(prescan::sim::ISimulation* simulation) { state_.clear(); }
+void Sensor::terminate(prescan::sim::ISimulation* simulation) {
+  state_.clear();
+  sensor_unit_ = nullptr;
+}
+
+const std::vector<double>& Sensor::state() {
+  if (state_.empty()) updateState<prescan::sim::Unit>();
+  return state_;
+}
 
 }  // namespace symaware
