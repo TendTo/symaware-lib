@@ -112,6 +112,7 @@ void init_entity(py::module_& m) {
       .def_property_readonly("is_initialised", &symaware::Entity::is_initialised,
                              "Wether the world object has been initialised")
       .def_property_readonly("state", &symaware::Entity::state, "Get the current state of the entity")
+      .def_property_readonly("setup", &symaware::Entity::setup, "Get the current initial setup of the entity")
       .def_property_readonly("type", &symaware::Entity::type, "Get the type of the entity")
       .def_property_readonly("object", &symaware::Entity::object, "Get the worldobject wrapped by the entity")
       .def("__repr__", REPR_LAMBDA(symaware::Entity));
