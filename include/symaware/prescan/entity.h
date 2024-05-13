@@ -76,9 +76,11 @@ class Entity {
   void addSensor(Sensor& sensor);
 
   /**
+   * @brief Apply the @ref setup_ to the entity.
+   */
+  void applySetup();
+  /**
    * @brief Apply the provided @p setup to the entity, overriding the current one.
-   *
-   * Since this operation only affects the world object, the model in the simulation is not updated.
    * @param setup new setup to apply
    */
   void applySetup(Setup setup);

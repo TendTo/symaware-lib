@@ -50,6 +50,7 @@ void Entity::addSensor(Sensor& sensor) {
   }
 }
 
+void Entity::applySetup() { updateObject(); }
 void Entity::applySetup(Setup setup) {
   setup_ = std::move(setup);
   updateObject();
