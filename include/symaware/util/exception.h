@@ -15,9 +15,11 @@
 
 #ifdef NDEBUG
 
+#include <utility>
+
 #define SYMAWARE_ASSERT(condition, msg) ((void)0)
 #define SYMAWARE_ASSERT_FMT(condition, msg, ...) ((void)0)
-#define SYMAWARE_UNREACHABLE() std::terminate()
+#define SYMAWARE_UNREACHABLE() std::unreachable()
 #define SYMAWARE_RUNTIME_ERROR(msg) throw std::runtime_error(msg)
 #define SYMAWARE_RUNTIME_ERROR_FMT(msg, ...) throw std::runtime_error(msg)
 #define SYMAWARE_OUT_OF_RANGE_FMT(msg, ...) throw std::out_of_range(msg)
