@@ -110,7 +110,7 @@ class Entity(BaseEntity):
         -------
             Sensor of the specified type
 
-        Raise
+        Raises
         -----
             IndexError: If no sensor of the specified type is found
         """

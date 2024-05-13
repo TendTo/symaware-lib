@@ -312,3 +312,4 @@ from .entity import (
     WulingHongguangEntity,
 )
 from .environment import Environment
+from .sensor import AirSensor, BrsSensor, LmsSensor, Sensor

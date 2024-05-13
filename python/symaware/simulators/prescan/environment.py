@@ -2,10 +2,9 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 from symaware.base.models import Environment as BaseEnvironment
-from symaware.base.models import NullDynamicalModel
 from symaware.base.utils import get_logger, log
 
-from ._symaware_prescan import LogLevel, ObjectType, Road, _Environment, _Simulation
+from ._symaware_prescan import LogLevel, Road, _Environment, _Simulation
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
@@ -13,7 +12,6 @@ if TYPE_CHECKING:
     from symaware.base.utils import AsyncLoopLock
 
     from ._symaware_prescan import Position
-    from .dynamical_model import DynamicalModel
 
 
 class Environment(BaseEnvironment):
@@ -81,6 +79,27 @@ class Environment(BaseEnvironment):
 
     @log(__LOGGER)
     def get_entity_state(self, entity: Entity) -> np.ndarray:
+        """
+        Get the state of the entity inside the simulation.
+        Structured as follows:
+
+        - position.x
+        - position.y
+        - position.z
+        - orientation.roll
+        - orientation.pitch
+        - orientation.yaw
+        - velocity
+        - yaw_rate
+        
+        Args
+        ----
+        Entity to get the state from
+
+        Returns
+        -------
+        State of the entity
+        """
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
         return np.array(entity.state)

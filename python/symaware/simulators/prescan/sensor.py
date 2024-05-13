@@ -148,6 +148,13 @@ class LmsSensor(Sensor):
     Lms sensor in the Prescan simulator.
     """
 
+    @dataclass(frozen=True)
+    class LmsLine:
+        x: float
+        y: float
+        z: float
+        curvature: float
+
     @property
     def sensor_type(self) -> SensorType:
         return SensorType.LMS
@@ -156,7 +163,7 @@ class LmsSensor(Sensor):
     def data(self) -> np.ndarray:
         """
         Data captured by the sensor.
-        Structured as follows:
+        Structured as a linearized array of lms lines, where each line is structured as follows:
 
         - x
         - y
@@ -166,17 +173,104 @@ class LmsSensor(Sensor):
         return np.array(self._internal_sensor.state)
 
     @property
-    def x(self) -> float:
-        return self._internal_sensor.state[0]
+    def lms_lines(self) -> tuple[LmsLine]:
+        """Tuple of lms lines detected by the sensor"""
+        return tuple(
+            LmsSensor.LmsLine(*self._internal_sensor.state[i : i + 4])
+            for i in range(0, len(self._internal_sensor.state), 4)
+        )
 
-    @property
-    def y(self) -> float:
-        return self._internal_sensor.state[1]
+    def get_lms_line(self, i: int) -> float:
+        """
+        Get the i-th lms line
 
-    @property
-    def z(self) -> float:
-        return self._internal_sensor.state[2]
+        Args
+        ----
+        i:
+            index of the line to get
 
-    @property
-    def curvature(self) -> float:
-        return self._internal_sensor.state[3]
+        Returns
+        -------
+            i-th lms line
+
+        Raises
+        ------
+        IndexError: if i is out of bounds
+        """
+        return LmsSensor.LmsLine(*self._internal_sensor.state[i * 4 : i * 4 + 4])
+
+    def get_x(self, i: int) -> float:
+        """
+        Get the x value of the i-th lms line
+
+        Args
+        ----
+        i:
+            index of the line to get the x value from
+
+        Returns
+        -------
+            x value of the i-th lms line
+
+        Raises
+        ------
+        IndexError: if i is out of bounds
+        """
+        return self._internal_sensor.state[i * 4]
+
+    def get_y(self, i: int) -> float:
+        """
+        Get the y value of the i-th lms line
+
+        Args
+        ----
+        i:
+            index of the line to get the y value from
+
+        Returns
+        -------
+            y value of the i-th lms line
+
+        Raises
+        ------
+        IndexError: if i is out of bounds
+        """
+        return self._internal_sensor.state[i * 4 + 1]
+
+    def get_z(self, i: int) -> float:
+        """
+        Get the z value of the i-th lms line
+
+        Args
+        ----
+        i:
+            index of the line to get the z value from
+
+        Returns
+        -------
+            z value of the i-th lms line
+
+        Raises
+        ------
+        IndexError: if i is out of bounds
+        """
+        return self._internal_sensor.state[i + 4 + 2]
+
+    def get_curvature(self, i: int) -> float:
+        """
+        Get the curvature of the i-th lms line
+
+        Args
+        ----
+        i:
+            index of the line to get the curvature from
+
+        Returns
+        -------
+            curvature value of the i-th lms line
+
+        Raises
+        ------
+        IndexError: if i is out of bounds
+        """
+        return self._internal_sensor.state[i * 4 + 3]
