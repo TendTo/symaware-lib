@@ -11,8 +11,8 @@
 namespace py = pybind11;
 
 void init_environment(py::module_ &m) {
-  py::class_<symaware::Environment> environment = py::class_<symaware::Environment>(m, "_Environment");
-  environment.def(py::init<>())
+  py::class_<symaware::Environment>(m, "_Environment")
+      .def(py::init<>())
       .def(py::init<const std::string &>(), py::arg("filename"))
       .def("set_weather", &symaware::Environment::setWeather, "Set the weather of the environment",
            py::arg_v("weather_type", symaware::WeatherType::SUNNY, "WeatherType.SUNNY"), py::arg("fog_visibility") = -1)
@@ -29,6 +29,10 @@ void init_environment(py::module_ &m) {
            "Add an entity to the environment", py::arg("entity"))
       .def("add_entity", py::overload_cast<const std::string &, symaware::Entity &>(&symaware::Environment::addEntity),
            "Collect an existing entity from the experiment", py::arg("name"), py::arg("entity"))
+      .def("remove_entity", py::overload_cast<symaware::Entity &>(&symaware::Environment::removeEntity),
+           "Add an entity to the environment", py::arg("entity"))
+      .def("remove_entity", py::overload_cast<const std::string &>(&symaware::Environment::removeEntity),
+           "Add an entity to the environment", py::arg("name"))
       .def("add_road", &symaware::Environment::addRoad, "Add a road to the environment",
            py::arg_v("position", symaware::Position{true}, "Position(true)"))
       .def("add_free_viewer", &symaware::Environment::addFreeViewer, "Add a free viewer in the environment")

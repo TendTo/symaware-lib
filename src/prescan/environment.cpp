@@ -91,6 +91,18 @@ Environment& Environment::addEntity(const std::string& name, Entity& entity) {
   return *this;
 }
 
+Environment& Environment::removeEntity(Entity& entity) {
+  if (!entity.is_initialised()) return *this;         // The entity was never initialised
+  if (!entities_.erase(entity.name())) return *this;  // The entity was not found in the environment
+  entity.remove();
+  return *this;
+}
+Environment& Environment::removeEntity(const std::string& name) {
+  entities_.erase(name);
+  experiment_.getObjectByName<prescan::api::types::WorldObject>(name).remove();
+  return *this;
+}
+
 Road Environment::addRoad(const Position& position) { return Road{*this}.setPosition(position); }
 
 Environment& Environment::importOpenDriveNetwork(const std::string& filename) {

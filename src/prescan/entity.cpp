@@ -50,6 +50,11 @@ void Entity::addSensor(Sensor& sensor) {
   }
 }
 
+void Entity::remove() {
+  object_.remove();
+  object_ = prescan::api::types::WorldObject{};
+}
+
 void Entity::applySetup() { updateObject(); }
 void Entity::applySetup(Setup setup) {
   setup_ = std::move(setup);

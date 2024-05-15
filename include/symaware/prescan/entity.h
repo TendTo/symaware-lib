@@ -68,6 +68,11 @@ class Entity {
   Entity(ObjectType type, Setup setup, EntityModel& model);
 
   /**
+   * @brief Remove the @ref object_ from the experiment.
+   */
+  void remove();
+
+  /**
    * @brief Add a sensor to the entity.
    *
    * Its poise will be relative to the WorldObject this entity represents.

@@ -106,6 +106,24 @@ class Environment {
   Environment& addEntity(const std::string& name, Entity& entity);
 
   /**
+   * @brief Remove an @p entity from both the experiment and the environment.
+   *
+   * If the @p entity is not present in the @ref entities_ map, the operation will be ignored.
+   * @param entity entity to remove
+   * @return instance reference
+   */
+  Environment& removeEntity(Entity& entity);
+  /**
+   * @brief Remove an entity with this @p name from the environment.
+   *
+   * Even if the entity is not present in the @ref entities_ map,
+   * the entity will be removed from the experiment.
+   * @param name name of the entity to remove
+   * @return instance reference
+   */
+  Environment& removeEntity(const std::string& name);
+
+  /**
    * @brief Add a road to the environment.
    *
    * The road will be placed in the world at the specified @p position .

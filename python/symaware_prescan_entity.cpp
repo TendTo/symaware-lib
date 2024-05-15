@@ -100,7 +100,7 @@ void init_entity(py::module_& m) {
       .def(py::init<symaware::ObjectType, symaware::Entity::Setup, symaware::EntityModel*>(), py::arg("object_type"),
            py::arg("setup") = symaware::Entity::Setup{},
            py::arg("entity_model") = static_cast<symaware::EntityModel*>(nullptr))
-
+      .def("remove", &symaware::Entity::remove, "Remove the object from the experiment")
       .def("add_sensor", &symaware::Entity::addSensor, py::arg("sensor"))
       .def("apply_setup", py::overload_cast<>(&symaware::Entity::applySetup))
       .def("apply_setup", py::overload_cast<symaware::Entity::Setup>(&symaware::Entity::applySetup), py::arg("setup"))
