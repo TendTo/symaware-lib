@@ -109,7 +109,7 @@ class MyController(Controller):
 
         aebs_brake = 1.6
         aebs_min = 1.0
-        aebs_stop_distance = 0.5
+        aebs_stop_distance = 1.5
 
         if time_to_collision <= aebs_brake:
             brake += 0.4
@@ -120,7 +120,6 @@ class MyController(Controller):
         steering_wheel_gain = 150 * 3.14 / 180
         if len(lines) > 1 and len(lines[0]) > 0 and len(lines[1]) > 0:
             steering = (lines[0][0].y + lines[1][0].y) * steering_wheel_gain
-            print(f"lines[0][0]: {lines[0][0].y}\tlines[0][1]: {lines[0][1].y}\tSteering angle: {steering}")
         else:
             throttle = 0
             brake = 1
@@ -162,12 +161,13 @@ def main():
     env = Environment(
         filename="Demo_AmesimPreconfiguredDynamics.pb", async_loop_lock=TimeIntervalAsyncLoopLock(TIME_INTERVAL)
     )
-    env.add_entities(DeerEntity(position=np.array([0, 4, 0]), orientation=np.array((0, 0, -90))))
+    # env.add_entities(DeerEntity(position=np.array([0, -1.5, 0]), orientation=np.array((0, 0, -90))))
 
     agent_coordinator = AgentCoordinator[MyKnowledgeDatabase](env)
 
     target_entity = ExistingEntity(id=-1, object_name="BMW_X5_SUV_1", model=TrackModel(-1, existing=True))
     env.add_entities(target_entity)
+    # env.remove_entities(target_entity)
 
     ###########################################################
     # 2. Add the agent in the environment                     #
