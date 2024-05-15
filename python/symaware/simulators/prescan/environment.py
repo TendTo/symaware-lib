@@ -15,7 +15,7 @@ from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
-    from typing import Callable
+    from typing import Callable, Iterable
 
     from symaware.base.utils import AsyncLoopLock
 
@@ -230,6 +230,36 @@ class Environment(BaseEnvironment):
         if not isinstance(entity, Entity):
             raise TypeError(f"Expected PrescanSpatialEntity, got {type(entity)}")
         self._internal_environment.add_entity(entity_name, entity._internal_entity)  # pylint: disable=protected-access
+
+    def remove_entities(self, entities: "Entity | str | Iterable[Entity | str]"):
+        """
+        Remove all the entities from the environment, based on the type of the entity parameter:
+        - **string**: it will be removed by the experiment name.
+        - **ExistingEntity**: it will be removed by the experiment by name and from the environment.
+        - **Entity**: it will be removed by environment and experiment using the internal entity.
+
+        Args
+        ----
+        entity:
+            Entities to remove
+        """
+        if isinstance(entities, str):
+            entities = (entities,)
+        elif isinstance(entities, Entity):
+            entities = (entities,)
+        for entity in entities:
+            if isinstance(entity, str):
+                self._internal_environment.remove_entity(entity)
+                continue
+            if isinstance(entity, ExistingEntity):
+                self.entities.discard(entity)
+                self._internal_environment.remove_entity(entity.object_name)
+                continue
+            if not isinstance(entities, Entity):
+                self.__LOGGER.error(f"Expected PrescanSpatialEntity, got {type(entities)}")
+                continue
+            self.entities.discard(entities)
+            self._internal_environment.remove_entity(entities._internal_entity)  # pylint: disable=protected-access
 
     @log(__LOGGER)
     def _add_entity(self, entity: Entity):

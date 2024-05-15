@@ -1955,6 +1955,11 @@ class _Entity:
     def initialise(self, simulation: _ISimulation) -> None: ...
     def initialise_object(self, experiment: _Experiment, object: _WorldObject) -> None: ...
     def register_unit(self, experiment: _Experiment, simulation: _ISimulation) -> None: ...
+    def remove(self) -> None:
+        """
+        Remove the object from the experiment
+        """
+
     def step(self, simulation: _ISimulation) -> None: ...
     def terminate(self, simulation: _ISimulation) -> None: ...
     @property
@@ -2065,6 +2070,18 @@ class _Environment:
     def remove_all_viewers(self) -> None:
         """
         Remove all viewers from the environment
+        """
+
+    @typing.overload
+    def remove_entity(self, entity: "_Entity") -> _Environment:
+        """
+        Add an entity to the environment
+        """
+
+    @typing.overload
+    def remove_entity(self, name: str) -> _Environment:
+        """
+        Add an entity to the environment
         """
 
     def save_experiment(self, filename: str) -> None:
