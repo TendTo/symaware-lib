@@ -35,18 +35,20 @@ The `symaware-prescan` package is a Python module that provides a simulation env
 To install the package, ideally this command should be sufficient:
 
 ```bash
-py -m pip install .
+py -m pip install . --index-url https://gitlab.mpi-sws.org/api/v4/projects/2668/packages/pypi/simple
 ```
 
 Based on the machine and software versions, the installation might fail.
 Here are some common issues and their solutions:
 
+- **Incompatible python or Prescan version**: make sure you are using a supported version. Older versions of Prescan may be supported by changing the appropriate version parameter in the `CMakeLists.txt` file
+- **Incompatible c++ compiler**: while all c++ compilers should work, some incompatibilities may still arise, especially for the untested ones. Please report them opening an issue
 - **Prescan_base_DIR** in the `CMakeLists.txt` file should be updated to the correct path of the Prescan installation directory
-- **pybind11** should have access to the shared libraries of the python distribution in use.
-- **mingw-w64** may need to run its own distribution of python in order to install the package.
+- **pybind11** should have access to the shared libraries of the python distribution in use
+- **mingw-w64** may need to run its own distribution of python in order to install the package
 
 The executable needs some shared libraries (`ddls`) to be in the `PATH` environment variable. 
-This can be done by using the following code snippet in the powershell coonsole:
+This can be done by using the following code snippets in the powershell console:
 
 ```powershell
 # Update the path to the Prescan installation directory
@@ -64,6 +66,10 @@ set prescan_dir=C:/Program Files/Simcenter Prescan/Prescan_2403
 set PATH=%PATH%;%prescan_dir%/bin;%prescan_dir%/Plugins/FullWaveformLidarPlugin/bin;%prescan_dir%/Plugins/PBRadarPlugin/bin;%prescan_dir%/Plugins/PointCloudLidarPlugin/bin;%prescan_dir%/Plugins/ProbabilisticSensorsPlugin/bin;%prescan_dir%/Plugins/V2XPlugin/bin
 ```
 
+before running the executable.
+Python scripts shoud use the `os.add_dll_directory` function to achieve the same result before importing the `symaware.simulators.prescan`.
+See the [example](https://gitlab.mpi-sws.org/sadegh/eicsymaware/-/blob/base/examples/prescan_main.py).
+
 ## Documentation
 
 The documentation for all the packages in the namespace `symaware` is available [here](https://sadegh.pages.mpi-sws.org/eicsymaware/).
@@ -75,82 +81,10 @@ The documentation for all the packages in the namespace `symaware` is available 
 - [Zengjie Zhang](mailto:z.zhang3@tue.nl)
 - [Ernesto Casablanca](mailto:casablancaernesto@gmail.com)
 
+## Useful scripts
 
-
-## Use
-
-### Build python bindings
+### ReBuild python bindings and format
 
 ```powershell
 python3.11.exe -m pip uninstall symaware-prescan symaware-base -y ; rm  -r -fo 'C:\msys64\mingw64\lib\python3.11\site-packages\symaware' ; python3.11.exe -m pip install . --index-url https://gitlab.mpi-sws.org/api/v4/projects/2668/packages/pypi/simple ; python3.11.exe .\script\stubs.py ; black python tests ; isort python tests ; cp .\python\symaware\simulators\prescan\_symaware_prescan.pyi 'C:\msys64\mingw64\lib\python3.11\site-packages\symaware\simulators\prescan'
-```
-
-
-## Dependecy graph
-
-```mermaid
-flowchart TD
-    sim[ManualSimulator]
-    sim_mod[SimulatorModel]
-    dynamical_model1[DynamicalModel]
-    dynamical_model2[DynamicalModel]
-    dynamical_model3[DynamicalModel]
-    env[Evironment]
-    exp[Experiment]
-    exp_guard[ExperimentGuard]
-
-sim --> sim_mod
-sim --> env
-sim --> exp_guard
-sim_mod --> dynamical_model1
-sim_mod --> dynamical_model2
-sim_mod --> dynamical_model3
-env --> exp
-dynamical_model1 --> exp
-dynamical_model2 --> exp
-dynamical_model3 --> exp
-exp_guard --> exp
-```
-
-```mermaid
-sequenceDiagram
-    actor user as User
-
-note right of user : Initialise the environment
-
-create participant env as Environment
-
-user ->> env : new
-
-create participant sim_mod as SimulatorModel
-env ->> sim_mod : new
-
-create participant sim as ManualSimulator
-env ->> sim : new 
-
-create participant exp as Experiment
-env ->> exp : new
-
-note over user, env : Change experiment setup (weather, time, etc.)
-
-user ->>+ env : setup
-env ->>+ exp : setup
-deactivate env
-deactivate exp
-
-note over user, env : Add agent to the experiment
-
-create participant dyn as DynamicalModel
-user -> dyn : new
-create participant ent2 as Entity
-user ->> ent2 : new(dynamic_model) // the dynamic model can be a nullptr
-user ->>+ env : addEntity(entity) (via reference)
-env ->>+ exp : createObject(entity.type)
-exp -->- env : object
-env ->>+ ent2 : initialise(object)
-deactivate ent2
-env -->- user : entity (updated)
-
-
-
 ```
