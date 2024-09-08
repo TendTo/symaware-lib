@@ -122,7 +122,7 @@ class MyController(Controller):
 
         return np.array([self.__clamp(throttle, 0, 1), self.__clamp(brake, 0, 1), steering, Gear.Forward]), TimeSeries()
 
-    def on_stepping(self):
+    def on_stepping(self, _: Environment):
         self._agent.entity.model.control_input, _ = self._compute(True)
         self._update((self._agent.entity.model.control_input, _))
 
