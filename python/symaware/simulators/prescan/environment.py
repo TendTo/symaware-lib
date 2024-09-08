@@ -131,7 +131,7 @@ class Environment(BaseEnvironment):
         """
         self._internal_simulation.set_log_level(log_level)
 
-    def set_on_pre_step(self, callback: "Callable[[], None] | None"):
+    def _set_on_pre_step(self, callback: "Callable[[], None] | None"):
         """
         Set a callback to be called as the first operation at each simulation step.
         If none, the callback will be removed.
@@ -151,7 +151,7 @@ class Environment(BaseEnvironment):
         else:
             self._internal_simulation.set_on_pre_step(callback)
 
-    def set_on_post_step(self, callback: "Callable[[], None] | None"):
+    def _set_on_post_step(self, callback: "Callable[[], None] | None"):
         """
         Set a callback to be called as the last operation at each simulation step.
         If None, the callback will be removed.
@@ -170,6 +170,14 @@ class Environment(BaseEnvironment):
             self._internal_simulation.remove_on_post_step()
         else:
             self._internal_simulation.set_on_post_step(callback)
+
+    def _notify_stepping(self):
+        """Run the `_notify` method for the `stepping` event"""
+        self._notify("stepping", self)
+
+    def _notify_stepped(self):
+        """Run the `_notify` method for the `stepping` event"""
+        self._notify("stepped", self)
 
     def set_scheduler_frequencies(self, simulation_frequency: int, integration_frequency: int):
         """
@@ -274,8 +282,12 @@ class Environment(BaseEnvironment):
     def initialise(self):
         if self._is_prescan_initialized:
             return
+        self._notify("initialising", self)
         self._internal_simulation.initialise()
+        self._set_on_pre_step(self._notify_stepping)
+        self._set_on_post_step(self._notify_stepped)
         self._is_prescan_initialized = True
+        self._notify("initialised", self)
 
     def step(self):
         self._internal_simulation.step()
@@ -284,7 +296,7 @@ class Environment(BaseEnvironment):
     def stop(self):
         if not self._is_prescan_initialized:
             return
-        self.set_on_pre_step(None)
-        self.set_on_post_step(None)
+        self._set_on_pre_step(None)
+        self._set_on_post_step(None)
         self._internal_simulation.terminate()
         self._is_prescan_initialized = False

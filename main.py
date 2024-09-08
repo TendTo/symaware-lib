@@ -7,11 +7,7 @@ from symaware.base import (
     AgentCoordinator,
     AwarenessVector,
     Controller,
-    DefaultCommunicationSystem,
-    DefaultInfoUpdater,
     DefaultPerceptionSystem,
-    DefaultRiskEstimator,
-    DefaultUncertaintyEstimator,
     KnowledgeDatabase,
     MultiAgentAwarenessVector,
     MultiAgentKnowledgeDatabase,
@@ -19,7 +15,6 @@ from symaware.base import (
     TimeSeries,
     get_logger,
     initialize_logger,
-    log,
 )
 
 PRESCAN_DIR = "C:/Program Files/Simcenter Prescan/Prescan_2403"  # Adjust if needed
@@ -28,15 +23,15 @@ os.environ["PATH"] = f"{PRESCAN_DIR}/bin;{os.environ['PATH']}"
 
 try:
     from symaware.simulators.prescan import (
-        AmesimDynamicalModel,
-        Environment,
-        Gear,
-        TrackModel,
-        ExistingEntity,
-        Entity,
-        DeerEntity,
         AirSensor,
+        AmesimDynamicalModel,
+        DeerEntity,
+        Entity,
+        Environment,
+        ExistingEntity,
+        Gear,
         LmsSensor,
+        TrackModel,
     )
 except ImportError as e:
     raise ImportError(
@@ -72,11 +67,7 @@ class MyController(Controller):
         self.__air: AirSensor = self._agent.entity.get_sensor_of_type(AirSensor)
         self.__lms: LmsSensor = self._agent.entity.get_sensor_of_type(LmsSensor)
 
-    def __compute_control_input(
-        self,
-        awareness_database: MultiAgentAwarenessVector,
-        knowledge_database: MultiAgentKnowledgeDatabase[MyKnowledgeDatabase],
-    ) -> tuple[np.ndarray, TimeSeries]:
+    def _compute(self, compute_control_input: bool = False) -> tuple[np.ndarray, TimeSeries]:
         """
         Given the awareness and knowledge databases, the controller computes the control input
         and the goal position for the agent.
@@ -95,6 +86,9 @@ class MyController(Controller):
             - Control input to be applied to the agent
             - TimeSeries representing the intent of the agent
         """
+        if not compute_control_input:
+            return np.array([np.nan, np.nan, np.nan, np.nan]), TimeSeries()
+        awareness_database = self._agent.awareness_database
         assert isinstance(self._agent._entity, Entity)
         x, y, z, roll, pitch, yaw, v, yaw_rate = awareness_database[self._agent_id].state
         if v == 0:
@@ -109,7 +103,7 @@ class MyController(Controller):
 
         aebs_brake = 1.6
         aebs_min = 1.0
-        aebs_stop_distance = 1.5
+        aebs_stop_distance = 0.5
 
         if time_to_collision <= aebs_brake:
             brake += 0.4
@@ -120,6 +114,7 @@ class MyController(Controller):
         steering_wheel_gain = 150 * 3.14 / 180
         if len(lines) > 1 and len(lines[0]) > 0 and len(lines[1]) > 0:
             steering = (lines[0][0].y + lines[1][0].y) * steering_wheel_gain
+            print(f"lines[0][0]: {lines[0][0].y}\tlines[0][1]: {lines[0][1].y}\tSteering angle: {steering}")
         else:
             throttle = 0
             brake = 1
@@ -127,19 +122,14 @@ class MyController(Controller):
 
         return np.array([self.__clamp(throttle, 0, 1), self.__clamp(brake, 0, 1), steering, Gear.Forward]), TimeSeries()
 
-    def on_pre_step(self):
-        self._agent.entity.model.control_input, _ = self.__compute_control_input(
-            self._agent.awareness_database, self._agent.knowledge_database
-        )
+    def on_stepping(self):
+        self._agent.entity.model.control_input, _ = self._compute(True)
+        self._update((self._agent.entity.model.control_input, _))
 
-    @log(__LOGGER)
-    def _compute_control_input(
-        self,
-        awareness_database: MultiAgentAwarenessVector,
-        knowledge_database: MultiAgentKnowledgeDatabase[MyKnowledgeDatabase],
-    ) -> tuple[np.ndarray, TimeSeries]:
-        return np.array([np.nan, np.nan, np.nan, np.nan]), TimeSeries()
-        # return self.__compute_control_input(awareness_database, knowledge_database)
+    def _update(self, control_input_and_intent: tuple[np.ndarray, TimeSeries]):
+        if np.isnan(control_input_and_intent[0][0]):
+            return
+        super()._update(control_input_and_intent)
 
     def __clamp(self, value: float, min_value: float, max_value: float) -> float:
         return max(min(value, max_value), min_value)
@@ -161,13 +151,12 @@ def main():
     env = Environment(
         filename="Demo_AmesimPreconfiguredDynamics.pb", async_loop_lock=TimeIntervalAsyncLoopLock(TIME_INTERVAL)
     )
-    # env.add_entities(DeerEntity(position=np.array([0, -1.5, 0]), orientation=np.array((0, 0, -90))))
+    env.add_entities(DeerEntity(position=np.array([0, 4, 0]), orientation=np.array((0, 0, -90))))
 
     agent_coordinator = AgentCoordinator[MyKnowledgeDatabase](env)
 
     target_entity = ExistingEntity(id=-1, object_name="BMW_X5_SUV_1", model=TrackModel(-1, existing=True))
     env.add_entities(target_entity)
-    # env.remove_entities(target_entity)
 
     ###########################################################
     # 2. Add the agent in the environment                     #
@@ -186,15 +175,8 @@ def main():
     # 3. Create and set the component of the agent            #
     ###########################################################
     controller = MyController(agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    risk = DefaultRiskEstimator(agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    uncertainty = DefaultUncertaintyEstimator(agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    perception = DefaultPerceptionSystem(agent.id, env, TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    communication = DefaultCommunicationSystem(
-        agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL), TimeIntervalAsyncLoopLock(TIME_INTERVAL)
-    )
-    info_updater = DefaultInfoUpdater(agent.id)
-    agent.set_components(controller, risk, uncertainty, perception, communication, info_updater)
-    env.set_on_pre_step(controller.on_pre_step)
+    agent.add_components(controller, DefaultPerceptionSystem(agent.id, env, TimeIntervalAsyncLoopLock(TIME_INTERVAL)))
+    env.add_on_stepping(controller.on_stepping)
 
     ###########################################################
     # 4. Initialise the agent with some starting information  #
