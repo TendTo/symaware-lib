@@ -16,7 +16,14 @@ from ._symaware_prescan import (
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
-    from ._symaware_prescan import Position
+    from ._symaware_prescan import (
+        Acceleration,
+        AngularVelocity,
+        Gear,
+        Orientation,
+        Position,
+        Velocity,
+    )
 
 
 class AmesimDynamicalModelInput(TypedDict):
@@ -52,7 +59,6 @@ class DynamicalModel(BaseDynamicalModel):
 
     def __init__(self, ID: Identifier, control_input: np.ndarray):
         super().__init__(ID, control_input=control_input)
-        self._entity_id = -1
         self._internal_model: _EntityModel
 
     @property
@@ -105,6 +111,11 @@ class AmesimDynamicalModel(DynamicalModel):
             )
         )
 
+    def control_input_to_array(
+        self, throttle: float, brake: float, steering_wheel_angle: float, gear: "Gear"
+    ) -> np.ndarray:
+        return np.array([throttle, brake, steering_wheel_angle, gear.value])
+
     @property
     def subinputs_dict(self) -> AmesimDynamicalModelInput:
         return {
@@ -130,6 +141,26 @@ class CustomDynamicalModel(DynamicalModel):
     def __init__(self, ID: Identifier, existing: bool = False):
         super().__init__(ID, control_input=np.zeros(15))
         self._internal_model = _CustomDynamicalModel(_CustomDynamicalModel.Setup(existing=existing))
+
+    def control_input_to_array(
+        self,
+        position: "np.ndarray | Position",
+        orientation: "np.ndarray | Orientation",
+        acceleration: "np.ndarray | Acceleration",
+        velocity: "np.ndarray | Velocity",
+        angular_velocity: "np.ndarray | AngularVelocity",
+    ) -> np.ndarray:
+        if isinstance(position, np.ndarray):
+            position = np.array(position)
+        if isinstance(orientation, np.ndarray):
+            orientation = np.array(orientation)
+        if isinstance(acceleration, np.ndarray):
+            acceleration = np.array(acceleration)
+        if isinstance(velocity, np.ndarray):
+            velocity = np.array(velocity)
+        if isinstance(angular_velocity, np.ndarray):
+            angular_velocity = np.array(angular_velocity)
+        return np.concatenate((position, orientation, acceleration, velocity, angular_velocity))
 
     @property
     def subinputs_dict(self) -> CustomDynamicalModelInput:
@@ -162,10 +193,34 @@ class TrackModel(DynamicalModel):
         tolerance: float = 0,
         existing: bool = False,
     ):
-        super().__init__(ID, control_input=np.zeros(0))
+        super().__init__(ID, control_input=np.array([1, 0, 1, 0, 1, 0]))
         self._internal_model = _TrackModel(
             _TrackModel.Setup(existing=existing, path=path or [], speed=speed, tolerance=tolerance)
         )
+
+    def control_input_to_array(self, speed: float) -> np.ndarray:
+        return np.array([speed])
+
+    def trajectory_poses(self, num_segments: int) -> np.ndarray:
+        """
+        Get the poses of the trajectory followed by the entity.
+        The poses are returned as a numpy array of shape (num_segments, 6), where each row is a pose
+        and each column is a component of the pose (x, y, z, roll, pitch, yaw).
+
+        Args
+        ----
+        num_segments:
+            Number of segments to interpolate the trajectory
+
+        Returns
+        -------
+            A list of num_segments poses along the trajectory
+        """
+        return self._internal_model.trajectory_poses(num_segments)
+
+    @property
+    def trajectory_positions(self) -> np.ndarray:
+        return self._internal_model.trajectory_positions()
 
     @property
     def subinputs_dict(self) -> TrackModelInput:

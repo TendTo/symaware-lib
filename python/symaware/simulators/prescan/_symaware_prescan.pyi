@@ -47,6 +47,7 @@ __all__ = [
     "ParamPolyRangeTypeArcLength",
     "ParamPolyRangeTypeNormalized",
     "ParameterRange",
+    "Pose",
     "Position",
     "Reverse",
     "Road",
@@ -1288,6 +1289,24 @@ class ParameterRange:
     @property
     def value(self) -> int: ...
 
+class Pose:
+    orientation: Orientation
+    position: Position
+    def __array__(self) -> numpy.ndarray[numpy.float64]: ...
+    @typing.overload
+    def __init__(self) -> None: ...
+    @typing.overload
+    def __init__(self, x: float, y: float, z: float, roll: float, pitch: float, yaw: float) -> None: ...
+    @typing.overload
+    def __init__(self, zero_init: bool) -> None:
+        """
+        Initialise with zeros or with NaNs
+        """
+
+    @typing.overload
+    def __init__(self, array: numpy.ndarray[numpy.float64]) -> None: ...
+    def __repr__(self) -> str: ...
+
 class Position:
     x: float
     y: float
@@ -2192,6 +2211,32 @@ class _Simulation:
         """
 
 class _TrackModel(_EntityModel):
+    class Input:
+        acceleration_multiplier: float
+        acceleration_offset: float
+        distance_multiplier: float
+        distance_offset: float
+        velocity_multiplier: float
+        velocity_offset: float
+        def __array__(self) -> numpy.ndarray[numpy.float64]: ...
+        @typing.overload
+        def __init__(self) -> None: ...
+        @typing.overload
+        def __init__(self, zero_init: bool) -> None: ...
+        @typing.overload
+        def __init__(
+            self,
+            velocity_mutiplier: float,
+            velocity_offset: float,
+            acceleration_multiplier: float,
+            acceleration_offset: float,
+            distance_multiplier: float,
+            distance_offset: float,
+        ) -> None: ...
+        @typing.overload
+        def __init__(self, array: numpy.ndarray[numpy.float64]) -> None: ...
+        def __repr__(self) -> str: ...
+
     class Setup:
         existing: bool
         path: list[Position]
@@ -2207,6 +2252,17 @@ class _TrackModel(_EntityModel):
     @typing.overload
     def __init__(self, setup: _TrackModel.Setup) -> None: ...
     def __repr__(self) -> str: ...
+    @typing.overload
+    def set_input(self, input: numpy.ndarray[numpy.float64]) -> None: ...
+    @typing.overload
+    def set_input(self, input: _TrackModel.Input) -> None: ...
+    def trajectory_poses(self, num_segments: int) -> numpy.ndarray[numpy.float64]: ...
+    @typing.overload
+    def update_input(self, input: numpy.ndarray[numpy.float64]) -> None: ...
+    @typing.overload
+    def update_input(self, input: _TrackModel.Input) -> None: ...
+    @property
+    def trajectory_positions(self) -> numpy.ndarray[numpy.float64]: ...
 
 class _Unit:
     pass

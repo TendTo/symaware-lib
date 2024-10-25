@@ -71,8 +71,95 @@ void init_model(py::module_& m) {
       .def_readwrite("speed", &symaware::TrackModel::Setup::speed)
       .def_readwrite("tolerance", &symaware::TrackModel::Setup::tolerance);
 
+  py::class_<symaware::TrackModel::Input>(track_model, "Input")
+      .def(py::init<>())
+      .def(py::init<bool>(), py::arg("zero_init"))
+      .def(py::init<double, double, double, double, double, double>(), py::arg("velocity_mutiplier"),
+           py::arg("velocity_offset"), py::arg("acceleration_multiplier"), py::arg("acceleration_offset"),
+           py::arg("distance_multiplier"), py::arg("distance_offset"))
+      .def(py::init([](py::array_t<double> a) {
+             if (a.size() != 6) throw std::invalid_argument("Expected 6 elements");
+             auto view = a.unchecked<1>();
+             return symaware::TrackModel::Input{view(0), view(1), view(2), view(3), view(4), view(5)};
+           }),
+           py::arg("array"))
+      .def_readwrite("velocity_multiplier", &symaware::TrackModel::Input::velocity_multiplier)
+      .def_readwrite("velocity_offset", &symaware::TrackModel::Input::velocity_offset)
+      .def_readwrite("acceleration_multiplier", &symaware::TrackModel::Input::acceleration_multiplier)
+      .def_readwrite("acceleration_offset", &symaware::TrackModel::Input::acceleration_offset)
+      .def_readwrite("distance_multiplier", &symaware::TrackModel::Input::distance_multiplier)
+      .def_readwrite("distance_offset", &symaware::TrackModel::Input::distance_offset)
+      .def("__array__",
+           [](const symaware::TrackModel::Input& self) -> py::array_t<double> {
+             py::array_t a = py::array_t<double>({6}, {sizeof(double)});
+             auto view = a.mutable_unchecked<1>();
+             view(0) = self.velocity_multiplier;
+             view(1) = self.velocity_offset;
+             view(2) = self.acceleration_multiplier;
+             view(3) = self.acceleration_offset;
+             view(4) = self.distance_multiplier;
+             view(5) = self.distance_offset;
+             return a;
+           })
+      .def("__repr__", REPR_LAMBDA(symaware::TrackModel::Input));
+
   track_model.def(py::init<>())
       .def(py::init<const symaware::TrackModel::Setup&>(), py::arg("setup"))
+      .def(
+          "set_input",
+          [](symaware::TrackModel& model, const py::array_t<double>& input) {
+            if (input.size() != 6) throw std::invalid_argument("Input must have 6 elements");
+            std::vector<double> input_vector;
+            input_vector.reserve(input.size());
+            for (int i = 0; i < input.size(); i++) input_vector.push_back(input.at(i));
+            model.setInput(input_vector);
+          },
+          py::arg("input"))
+      .def(
+          "update_input",
+          [](symaware::TrackModel& model, const py::array_t<double>& input) {
+            if (input.size() != 6) throw std::invalid_argument("Input must have 6 elements");
+            std::vector<double> input_vector;
+            input_vector.reserve(input.size());
+            for (int i = 0; i < input.size(); i++) input_vector.push_back(input.at(i));
+            model.updateInput(input_vector);
+          },
+          py::arg("input"))
+      .def("set_input", py::overload_cast<symaware::TrackModel::Input>(&symaware::TrackModel::setInput),
+           py::arg("input"))
+      .def("update_input", py::overload_cast<const symaware::TrackModel::Input&>(&symaware::TrackModel::updateInput),
+           py::arg("input"))
+      .def(
+          "trajectory_poses",
+          [](const symaware::TrackModel& self, std::size_t num_segments) -> py::array_t<double> {
+            py::array_t a =
+                py::array_t<double>({num_segments, static_cast<std::size_t>(6)}, {6 * sizeof(double), sizeof(double)});
+            auto view = a.mutable_unchecked<2>();
+            const std::vector<symaware::Pose> poses = self.trajectoryPoses(num_segments);
+            for (std::size_t i = 0; i < poses.size(); i++) {
+              view(i, 0) = poses[i].position.x;
+              view(i, 1) = poses[i].position.y;
+              view(i, 2) = poses[i].position.z;
+              view(i, 3) = poses[i].orientation.roll;
+              view(i, 4) = poses[i].orientation.pitch;
+              view(i, 5) = poses[i].orientation.yaw;
+            }
+            return a;
+          },
+          py::arg("num_segments"))
+      .def_property_readonly("trajectory_positions",
+                             [](const symaware::TrackModel& self) -> py::array_t<double> {
+                               py::array_t a =
+                                   py::array_t<double>({self.trajectoryPositions().size(), static_cast<std::size_t>(3)},
+                                                       {3 * sizeof(double), sizeof(double)});
+                               auto view = a.mutable_unchecked<2>();
+                               for (std::size_t i = 0; i < self.trajectoryPositions().size(); i++) {
+                                 view(i, 0) = self.trajectoryPositions()[i].x;
+                                 view(i, 1) = self.trajectoryPositions()[i].y;
+                                 view(i, 2) = self.trajectoryPositions()[i].z;
+                               }
+                               return a;
+                             })
       .def("__repr__", REPR_LAMBDA(symaware::TrackModel));
 
   py::class_<symaware::AmesimDynamicalModel, symaware::EntityModel> amesimDynamicalModel =
