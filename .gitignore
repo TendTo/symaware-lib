@@ -50,7 +50,7 @@ doxygen*
 docs/
 
 # Prescan simulation and experiment files
-Models/
+Models*/
 *.pb
 *.osgb
 *.psscene
