@@ -55,6 +55,33 @@ void init_data(py::module_ &m) {
              return a;
            })
       .def("__repr__", REPR_LAMBDA(symaware::Orientation));
+  py::class_<symaware::Pose>(m, "Pose")
+      .def(py::init<>())
+      .def(py::init<double, double, double, double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"),
+           py::arg("roll"), py::arg("pitch"), py::arg("yaw"))
+      .def(py::init<bool>(), py::arg("zero_init"), "Initialise with zeros or with NaNs")
+      .def(py::init([](py::array_t<double> a) {
+             if (a.size() != 6) SYMAWARE_OUT_OF_RANGE_FMT("Expected 6 elements, got {}", a.size());
+
+             auto view = a.unchecked<1>();
+             return symaware::Pose{view(0), view(1), view(2), view(3), view(4), view(5)};
+           }),
+           py::arg("array"))
+      .def_readwrite("position", &symaware::Pose::position)
+      .def_readwrite("orientation", &symaware::Pose::orientation)
+      .def("__array__",
+           [](const symaware::Pose &self) -> py::array_t<double> {
+             py::array_t a = py::array_t<double>({6}, {sizeof(double)});
+             auto view = a.mutable_unchecked<1>();
+             view(0) = self.position.x;
+             view(1) = self.position.y;
+             view(2) = self.position.z;
+             view(3) = self.orientation.roll;
+             view(4) = self.orientation.pitch;
+             view(5) = self.orientation.yaw;
+             return a;
+           })
+      .def("__repr__", REPR_LAMBDA(symaware::Pose));
   py::class_<symaware::Velocity>(m, "Velocity")
       .def(py::init<>())
       .def(py::init<double, double, double>(), py::arg("x"), py::arg("y"), py::arg("z"))

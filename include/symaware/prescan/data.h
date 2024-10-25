@@ -40,6 +40,15 @@ struct Orientation {
   double yaw;
 };
 
+struct Pose {
+  Pose() = default;
+  Pose(double x, double y, double z, double roll, double pitch, double yaw)
+      : position{x, y, z}, orientation{roll, pitch, yaw} {}
+  explicit Pose(bool zero_init) : position{zero_init}, orientation{zero_init} {}
+  Position position;
+  Orientation orientation;
+};
+
 struct Velocity {
   Velocity() = default;
   Velocity(double x, double y, double z) : x{x}, y{y}, z{z} {}
@@ -78,6 +87,7 @@ struct AngularVelocity {
 
 std::ostream& operator<<(std::ostream& os, const Position& position);
 std::ostream& operator<<(std::ostream& os, const Orientation& orientation);
+std::ostream& operator<<(std::ostream& os, const Pose& pose);
 std::ostream& operator<<(std::ostream& os, const Velocity& velocity);
 std::ostream& operator<<(std::ostream& os, const Acceleration& acceleration);
 std::ostream& operator<<(std::ostream& os, const AngularVelocity& angular_velocity);
@@ -88,6 +98,8 @@ template <>
 struct fmt::formatter<symaware::Position> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::Orientation> : fmt::ostream_formatter {};
+template <>
+struct fmt::formatter<symaware::Pose> : fmt::ostream_formatter {};
 template <>
 struct fmt::formatter<symaware::Velocity> : fmt::ostream_formatter {};
 template <>
