@@ -57,8 +57,7 @@ class TrackModel : public EntityModel {
   explicit TrackModel(const Setup& setup = {}, const Input& initial_input = Input{false});
   explicit TrackModel(const Input& initial_input);
 
-  void createModel(const prescan::api::types::WorldObject& object,
-                   prescan::api::experiment::Experiment& experiment) override;
+  void createIfNotExists(prescan::api::experiment::Experiment& experiment) override;
 
   void setInput(const std::vector<double>& input) override;
   void updateInput(const std::vector<double>& input) override;
@@ -76,8 +75,7 @@ class TrackModel : public EntityModel {
    */
   void updateInput(const Input& input);
 
-  void registerUnit(const prescan::api::types::WorldObject& object,
-                    const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override;
 
   const std::vector<Position>& trajectoryPositions() const { return trajectory_positions_; }

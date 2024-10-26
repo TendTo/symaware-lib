@@ -1,5 +1,6 @@
 #include "symaware/prescan/environment.h"
 
+#include <algorithm>
 #include <iostream>
 #include <prescan/api/Opendrive.hpp>
 
@@ -70,6 +71,16 @@ Environment& Environment::setSchedulerSpeed(const prescan::api::types::Simulatio
                                             const bool ignore_frame_overrun) {
   experiment_.scheduler().setSimulationSpeed(simulation_speed);
   experiment_.scheduler().setIgnoreFrameOverrun(ignore_frame_overrun);
+  return *this;
+}
+
+Environment& Environment::addModel(EntityModel& model) {
+  models_.push_back(&model);
+  return *this;
+}
+
+Environment& Environment::removeModel(EntityModel& model) {
+  models_.erase(std::remove(models_.begin(), models_.end(), &model), models_.end());
   return *this;
 }
 

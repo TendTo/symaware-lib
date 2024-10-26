@@ -57,8 +57,7 @@ class AmesimDynamicalModel : public EntityModel {
    */
   explicit AmesimDynamicalModel(const Setup& setup, Input initial_input = Input{false});
 
-  void createModel(const prescan::api::types::WorldObject& object,
-                   prescan::api::experiment::Experiment& experiment) override;
+  void createIfNotExists(prescan::api::experiment::Experiment& experiment) override;
   /**
    * @brief Set the new control input of the model.
    * @param input model input to set
@@ -75,8 +74,7 @@ class AmesimDynamicalModel : public EntityModel {
   void setInput(const std::vector<double>& input) override;
   void updateInput(const std::vector<double>& input) override;
 
-  void registerUnit(const prescan::api::types::WorldObject& object,
-                    const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override;
 
   const Input& input() const { return input_; }

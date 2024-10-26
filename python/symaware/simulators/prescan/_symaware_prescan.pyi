@@ -1840,8 +1840,6 @@ class _AmesimDynamicalModel(_EntityModel):
         self, setup: _AmesimDynamicalModel.Setup, initial_input: _AmesimDynamicalModel.Input = ...
     ) -> None: ...
     def __repr__(self) -> str: ...
-    def create_model(self, object: _WorldObject, experiment: _Experiment) -> None: ...
-    def register_unit(self, object: _WorldObject, experiment: _Experiment, simulation: _ISimulation) -> None: ...
     @typing.overload
     def set_input(self, input: numpy.ndarray[numpy.float64]) -> None: ...
     @typing.overload
@@ -2015,7 +2013,7 @@ class _Entity:
 
 class _EntityModel:
     def __init__(self, existing: bool, active: bool) -> None: ...
-    def create_model(self, object: _WorldObject, experiment: _Experiment) -> None:
+    def create_if_not_exists(self, experiment: _Experiment) -> None:
         """
         Initialise the object of the model
         """
@@ -2025,7 +2023,19 @@ class _EntityModel:
         Called when the simulation is initialised
         """
 
-    def register_unit(self, object: _WorldObject, experiment: _Experiment, simulation: _ISimulation) -> None:
+    @typing.overload
+    def link_entity(self, object: _WorldObject) -> None:
+        """
+        Link the model to the object
+        """
+
+    @typing.overload
+    def link_entity(self, entity: "_Entity") -> None:
+        """
+        Link the model to the entity
+        """
+
+    def register_unit(self, experiment: _Experiment, simulation: _ISimulation) -> None:
         """
         Register the unit of the model
         """
@@ -2078,6 +2088,11 @@ class _Environment:
         Add a free viewer in the environment
         """
 
+    def add_model(self, model: _EntityModel) -> _Environment:
+        """
+        Add a free model to the environment
+        """
+
     def add_road(self, position: Position = None) -> Road:
         """
         Add a road to the environment
@@ -2103,6 +2118,11 @@ class _Environment:
     def remove_entity(self, name: str) -> _Environment:
         """
         Add an entity to the environment
+        """
+
+    def remove_model(self, model: _EntityModel) -> _Environment:
+        """
+        Remove a free model from the environment
         """
 
     def save_experiment(self, filename: str) -> None:

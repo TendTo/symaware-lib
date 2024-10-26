@@ -80,6 +80,24 @@ class Environment {
   void removeAllViewers();
 
   /**
+   * @brief Add a model to the environment.
+   *
+   * It can add a model to the environment without linking it to any entity.
+   * Useful to gather information about a model you may not want to run in the simulation.
+   * @param model model to add
+   * @return Environment& instance reference
+   */
+  Environment& addModel(EntityModel& model);
+  /**
+   * @brief Remove a model from the environment.
+   *
+   * Removes a model added with @ref addModel from the environment.
+   * @param model model to remove
+   * @return Environment& instance reference
+   */
+  Environment& removeModel(EntityModel& model);
+
+  /**
    * @brief Add an entity to the environment.
    *
    * The entity will be placed in the world at the specified position and orientation.
@@ -161,6 +179,12 @@ class Environment {
   const std::unordered_map<std::string, Entity*>& entities() const { return entities_; }
 
   /**
+   * @brief Get the models in the environment
+   * @return models
+   */
+  const std::vector<EntityModel*>& models() const { return models_; }
+
+  /**
    * @brief Save the internal file to a file
    * @param filename name of the file
    */
@@ -181,6 +205,7 @@ class Environment {
  private:
   prescan::api::experiment::Experiment experiment_;
   std::unordered_map<std::string, Entity*> entities_;
+  std::vector<EntityModel*> models_;
 };
 
 }  // namespace symaware

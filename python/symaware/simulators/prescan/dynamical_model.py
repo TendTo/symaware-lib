@@ -24,6 +24,7 @@ if TYPE_CHECKING:
         Position,
         Velocity,
     )
+    from .entity import Entity
 
 
 class AmesimDynamicalModelInput(TypedDict):
@@ -65,6 +66,9 @@ class DynamicalModel(BaseDynamicalModel):
     def control_input(self) -> np.ndarray:
         return super().control_input
 
+    def link_entity(self, entity: "_WorldObject | Entity"):
+        self._internal_model.link_entity(entity._internal_entity)
+
     @control_input.setter
     def control_input(self, value: np.ndarray):
         if not isinstance(value, np.ndarray):
@@ -79,7 +83,7 @@ class DynamicalModel(BaseDynamicalModel):
         return self._internal_model
 
     def initialise(self, experiment: _Experiment, obj: _WorldObject):
-        self._internal_model.create_model(obj, experiment)
+        self._internal_model.create_if_not_exists(obj, experiment)
 
     def step(self, simulation: _ISimulation):
         self._internal_model.step(simulation)
@@ -100,7 +104,9 @@ class AmesimDynamicalModel(DynamicalModel):
     existing:
         Whether the model is already present in the experiment or shall be created
     active:
-        Whether the model will step in the simulation
+        Whether the model is active or not.
+        Inactive models will have no role in the simulation, but can be used to query information about themselves.
+        They must be explicitly linked to an entity already added to the environment.
     """
 
     def __init__(
@@ -144,7 +150,9 @@ class CustomDynamicalModel(DynamicalModel):
     ID:
         Identifier of the agent this model belongs to
     active:
-        Whether the model will step in the simulation
+        Whether the model is active or not.
+        Inactive models will have no role in the simulation, but can be used to query information about themselves.
+        They must be explicitly linked to an entity already added to the environment.
     """
 
     def __init__(self, ID: Identifier, existing: bool = False, active: bool = True):
@@ -201,7 +209,9 @@ class TrackModel(DynamicalModel):
     existing:
         Whether the model is already present in the experiment or shall be created
     active:
-        Whether the model will step in the simulation
+        Whether the model is active or not.
+        Inactive models will have no role in the simulation, but can be used to query information about themselves.
+        They must be explicitly linked to an entity already added to the environment.
     """
 
     def __init__(

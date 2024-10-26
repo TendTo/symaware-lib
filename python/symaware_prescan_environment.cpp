@@ -25,6 +25,9 @@ void init_environment(py::module_ &m) {
            py::arg("integration_frequency"))
       .def("set_scheduler_speed", &symaware::Environment::setSchedulerSpeed,
            "Set the scheduler speed of the environment", py::arg("simulation_speed"), py::arg("ignore_frame_overrun"))
+      .def("add_model", &symaware::Environment::addModel, "Add a free model to the environment", py::arg("model"))
+      .def("remove_model", &symaware::Environment::removeModel, "Remove a free model from the environment",
+           py::arg("model"))
       .def("add_entity", py::overload_cast<symaware::Entity &>(&symaware::Environment::addEntity),
            "Add an entity to the environment", py::arg("entity"))
       .def("add_entity", py::overload_cast<const std::string &, symaware::Entity &>(&symaware::Environment::addEntity),

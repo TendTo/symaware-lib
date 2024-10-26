@@ -65,7 +65,10 @@ void Entity::initialiseObject(prescan::api::experiment::Experiment& experiment,
                               const prescan::api::types::WorldObject object) {
   object_ = object;
   if (type_ != ObjectType::Existing) updateObject();
-  if (model_ != nullptr) model_->createModel(object_, experiment);
+  if (model_ != nullptr) {
+    model_->linkEntity(object_);
+    model_->createIfNotExists(experiment);
+  }
   for (Sensor* const sensor : sensors_) {
     int id = sensor_count_[to_underlying(sensor->sensor_type())]++;
     sensor->createSensor(object_, id);
@@ -108,7 +111,7 @@ void Entity::registerUnit(const prescan::api::experiment::Experiment& experiment
                           prescan::sim::ISimulation* const simulation) {
   // TODO: a flag may be needed if registering the SelfSensorUnit is expensive over objects that will not be used
   state_ = prescan::sim::registerUnit<prescan::sim::SelfSensorUnit>(simulation, object_);
-  if (model_ != nullptr) model_->registerUnit(object_, experiment, simulation);
+  if (model_ != nullptr) model_->registerUnit(experiment, simulation);
   for (Sensor* const sensor : sensors_) sensor->registerUnit(object_, experiment, simulation);
 }
 void Entity::initialise(prescan::sim::ISimulation* const simulation) {

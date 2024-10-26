@@ -41,10 +41,9 @@ TrackModel::TrackModel(const Setup& setup, const Input& initial_input)
       input_{initial_input} {}
 TrackModel::TrackModel(const Input& initial_input) : TrackModel{{}, initial_input} {}
 
-void TrackModel::createModel(const prescan::api::types::WorldObject& object,
-                             prescan::api::experiment::Experiment& experiment) {
+void TrackModel::createIfNotExists(prescan::api::experiment::Experiment& experiment) {
   if (existing_) return;
-  EntityModel::createModel(object, experiment);
+  EntityModel::createIfNotExists(experiment);
   std::vector<double> x, y, z;
   x.reserve(trajectory_positions_.size());
   y.reserve(trajectory_positions_.size());
@@ -59,7 +58,7 @@ void TrackModel::createModel(const prescan::api::types::WorldObject& object,
       prescan::api::trajectory::createFittedPath(experiment, x, y, z, trajectory_tolerance_)};
   const prescan::api::trajectory::SpeedProfile speed_profile{
       prescan::api::trajectory::createSpeedProfileOfConstantSpeed(experiment, trajectory_speed_)};
-  prescan::api::trajectory::createTrajectory(object, path, speed_profile);
+  prescan::api::trajectory::createTrajectory(object_, path, speed_profile);
 }
 
 void TrackModel::setInput(const std::vector<double>& input) {
@@ -89,14 +88,13 @@ void TrackModel::updateInput(const Input& input) {
   if (!std::isnan(input.distance_offset)) input_.distance_offset = input.distance_offset;
 }
 
-void TrackModel::registerUnit(const prescan::api::types::WorldObject& object,
-                              const prescan::api::experiment::Experiment& experiment,
+void TrackModel::registerUnit(const prescan::api::experiment::Experiment& experiment,
                               prescan::sim::ISimulation* simulation) {
-  EntityModel::registerUnit(object, experiment, simulation);
+  EntityModel::registerUnit(experiment, simulation);
 
-  trajectory_ = prescan::api::trajectory::getActiveTrajectory(object);
+  trajectory_ = prescan::api::trajectory::getActiveTrajectory(object_);
   speed_profile_ = prescan::sim::registerUnit<prescan::sim::SpeedProfileUnit>(simulation, trajectory_.speedProfile());
-  path_ = prescan::sim::registerUnit<prescan::sim::PathUnit>(simulation, trajectory_.path(), object);
+  path_ = prescan::sim::registerUnit<prescan::sim::PathUnit>(simulation, trajectory_.path(), object_);
 }
 
 std::vector<Pose> TrackModel::trajectoryPoses(const std::size_t num_segments) const {

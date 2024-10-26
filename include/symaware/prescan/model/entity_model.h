@@ -17,6 +17,8 @@
 
 namespace symaware {
 
+class Entity;  // Forward declaration
+
 class EntityModel {
  public:
   /**
@@ -33,8 +35,26 @@ class EntityModel {
    * @param object simulation object this model will control
    * @param experiment experiment about to be run
    */
-  virtual void createModel(const prescan::api::types::WorldObject& object,
-                           prescan::api::experiment::Experiment& experiment) {};
+  virtual void createIfNotExists(prescan::api::experiment::Experiment& experiment);
+
+  /**
+   * @brief Link the model to the entity represented by the @p object.
+   *
+   * The bot the entity and this model must exist in the simulation.
+   * @warning This method will only create the link model -> entity, but not viceversa.
+   * Add the model to the Entity object to achieve a full link.
+   * @param object_name name of the entity in the simulation
+   */
+  void linkEntity(const prescan::api::types::WorldObject& object);
+  /**
+   * @brief Link the model to the @p entity.
+   *
+   * The bot the entity and this model must exist in the simulation.
+   * @warning This method will only create the link model -> entity, but not viceversa.
+   * Add the model to the Entity object to achieve a full link.
+   * @param object_name name of the entity in the simulation
+   */
+  void linkEntity(const Entity& entity);
 
   /**
    * @brief Set the new control input of the model.
@@ -58,12 +78,10 @@ class EntityModel {
    * Called at the beginning of the @p simulation.
    * Allows for the model to extract the @ref object_ from the @p simulation
    * and use it to register the @ref state_.
-   * @param object simulation object this model will control
    * @param experiment experiment about to be run
    * @param simulation simulation that will run the experiment
    */
-  virtual void registerUnit(const prescan::api::types::WorldObject& object,
-                            const prescan::api::experiment::Experiment& experiment,
+  virtual void registerUnit(const prescan::api::experiment::Experiment& experiment,
                             prescan::sim::ISimulation* simulation);
   /**
    * @brief Set the initial state of the model in the @p simulation.
@@ -100,9 +118,10 @@ class EntityModel {
    */
   virtual void updateState() = 0;
 
-  bool existing_;                           ///< Whether the model is already present in the experiment
-  bool active_;                             ///< Whether the model will step in the simulation
-  prescan::sim::StateActuatorUnit* state_;  ///< The state of the entity in the simulation
+  bool existing_;                            ///< Whether the model is already present in the experiment
+  bool active_;                              ///< Whether the model will step in the simulation
+  prescan::sim::StateActuatorUnit* state_;   ///< The state of the entity in the simulation
+  prescan::api::types::WorldObject object_;  ///< The object in the simulation this model is attached to
 };
 
 }  // namespace symaware

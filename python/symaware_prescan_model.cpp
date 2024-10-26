@@ -12,9 +12,8 @@ class PyEntityModel : public symaware::EntityModel {
  public:
   using symaware::EntityModel::EntityModel;
 
-  void createModel(const prescan::api::types::WorldObject& object,
-                   prescan::api::experiment::Experiment& experiment) override {
-    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "create_model", createModel, object, experiment);
+  void createIfNotExists(prescan::api::experiment::Experiment& experiment) override {
+    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "create_if_not_exists", createIfNotExists, experiment);
   }
   void setInput(const std::vector<double>& input) override {
     PYBIND11_OVERRIDE_PURE_NAME(void, symaware::EntityModel, "set_input", setInput, input);
@@ -22,10 +21,9 @@ class PyEntityModel : public symaware::EntityModel {
   void updateInput(const std::vector<double>& input) override {
     PYBIND11_OVERRIDE_PURE_NAME(void, symaware::EntityModel, "update_input", updateInput, input);
   }
-  void registerUnit(const prescan::api::types::WorldObject& object,
-                    const prescan::api::experiment::Experiment& experiment,
+  void registerUnit(const prescan::api::experiment::Experiment& experiment,
                     prescan::sim::ISimulation* simulation) override {
-    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "register_unit", registerUnit, object, experiment, simulation);
+    PYBIND11_OVERRIDE_NAME(void, symaware::EntityModel, "register_unit", registerUnit, experiment, simulation);
   }
   void initialise(prescan::sim::ISimulation* simulation) override {
     PYBIND11_OVERRIDE(void, symaware::EntityModel, initialise, simulation);
@@ -44,12 +42,17 @@ class PyEntityModel : public symaware::EntityModel {
 void init_model(py::module_& m) {
   py::class_<symaware::EntityModel, PyEntityModel>(m, "_EntityModel")
       .def(py::init<bool, bool>(), py::arg("existing"), py::arg("active"))
-      .def("create_model", &symaware::EntityModel::createModel, py::arg("object"), py::arg("experiment"),
+      .def("link_entity",
+           py::overload_cast<const prescan::api::types::WorldObject&>(&symaware::EntityModel::linkEntity),
+           py::arg("object"), "Link the model to the object")
+      .def("link_entity", py::overload_cast<const symaware::Entity&>(&symaware::EntityModel::linkEntity),
+           py::arg("entity"), "Link the model to the entity")
+      .def("create_if_not_exists", &symaware::EntityModel::createIfNotExists, py::arg("experiment"),
            "Initialise the object of the model")
       .def("set_input", &symaware::EntityModel::setInput, py::arg("input"), "Set the input of the model")
       .def("update_input", &symaware::EntityModel::updateInput, py::arg("input"), "Update the input of the model")
-      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("object"), py::arg("experiment"),
-           py::arg("simulation"), "Register the unit of the model")
+      .def("register_unit", &symaware::EntityModel::registerUnit, py::arg("experiment"), py::arg("simulation"),
+           "Register the unit of the model")
       .def("initialise", &symaware::EntityModel::initialise, py::arg("simulation"),
            "Called when the simulation is initialised")
       .def("step", &symaware::EntityModel::step, py::arg("simulation"), "Called at each simulation step")
@@ -64,8 +67,8 @@ void init_model(py::module_& m) {
 
   py::class_<symaware::TrackModel::Setup>(track_model, "Setup")
       .def(py::init<>())
-      .def(py::init<bool, bool, std::vector<symaware::Position>, double, double>(), py::arg("existing"), py::arg("active"),
-           py::arg("path"), py::arg("speed"), py::arg("tolerance"))
+      .def(py::init<bool, bool, std::vector<symaware::Position>, double, double>(), py::arg("existing"),
+           py::arg("active"), py::arg("path"), py::arg("speed"), py::arg("tolerance"))
       .def_readwrite("existing", &symaware::TrackModel::Setup::existing)
       .def_readwrite("active", &symaware::TrackModel::Setup::active)
       .def_readwrite("path", &symaware::TrackModel::Setup::path)
@@ -208,9 +211,6 @@ void init_model(py::module_& m) {
       .def(py::init<symaware::AmesimDynamicalModel::Input>(), py::arg("initial_input"))
       .def(py::init<const symaware::AmesimDynamicalModel::Setup&, symaware::AmesimDynamicalModel::Input>(),
            py::arg("setup"), py::arg("initial_input") = symaware::AmesimDynamicalModel::Input{false})
-      .def("create_model", &symaware::AmesimDynamicalModel::createModel, py::arg("object"), py::arg("experiment"))
-      .def("register_unit", &symaware::AmesimDynamicalModel::registerUnit, py::arg("object"), py::arg("experiment"),
-           py::arg("simulation"))
       .def(
           "set_input",
           [](symaware::AmesimDynamicalModel& model, const py::array_t<double>& input) {

@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -11,11 +12,12 @@ from ._symaware_prescan import (
     _Environment,
     _Simulation,
 )
+from .dynamical_model import DynamicalModel
 from .entity import Entity, ExistingEntity
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
-    from typing import Callable, Iterable
+    from typing import Callable
 
     from symaware.base.utils import AsyncLoopLock
 
@@ -120,6 +122,44 @@ class Environment(BaseEnvironment):
             else self._internal_environment.add_road()
         )
 
+    def add_models(self, models: "Iterable[DynamicalModel] | DynamicalModel"):
+        """
+        Add a model to the environment
+
+        Args
+        ----
+        model:
+            Model to add to the environment
+        """
+        if isinstance(models, DynamicalModel):
+            models = (models,)
+        if not isinstance(models, Iterable):
+            raise TypeError(f"Expected Iterable, got {type(models)}")
+
+        for model in models:
+            if not isinstance(model, DynamicalModel):
+                raise TypeError(f"Expected DynamicalModel, got {type(model)}")
+            self._internal_environment.add_model(model._internal_model)
+
+    def remove_models(self, models: "Iterable[DynamicalModel] | DynamicalModel"):
+        """
+        Add a model to the environment
+
+        Args
+        ----
+        model:
+            Model to add to the environment
+        """
+        if isinstance(models, DynamicalModel):
+            models = (models,)
+        if not isinstance(models, Iterable):
+            raise TypeError(f"Expected Iterable, got {type(models)}")
+
+        for model in models:
+            if not isinstance(model, DynamicalModel):
+                raise TypeError(f"Expected DynamicalModel, got {type(model)}")
+            self._internal_environment.remove_model(model._internal_model)
+
     def set_log_level(self, log_level: LogLevel):
         """
         Set the log level of the Prescan simulator
@@ -223,7 +263,7 @@ class Environment(BaseEnvironment):
         self._internal_environment.add_free_viewer()
 
     @log(__LOGGER)
-    def add_entity(self, entity_name: str, entity: "Entity"):
+    def add_entity(self, entity_name: str, entity: Entity):
         """
         Add an existing entity to the environment based on their name.
         The entity must already exist within the internal experiment.
