@@ -26,10 +26,11 @@ class AmesimDynamicalModel : public EntityModel {
  public:
   /** @brief Setup of the model */
   struct Setup {
-    Setup() : existing{false}, is_flat_ground{true}, initial_velocity{0} {}
-    Setup(bool existing, bool is_flat_ground, double initial_velocity)
-        : existing{existing}, is_flat_ground{is_flat_ground}, initial_velocity{initial_velocity} {}
+    Setup() : existing{false}, active{true}, is_flat_ground{true}, initial_velocity{0} {}
+    Setup(bool existing, bool active, bool is_flat_ground, double initial_velocity)
+        : existing{existing}, active{active}, is_flat_ground{is_flat_ground}, initial_velocity{initial_velocity} {}
     bool existing;
+    bool active;
     bool is_flat_ground;
     double initial_velocity;
   };

@@ -28,10 +28,11 @@ class TrackModel : public EntityModel {
  public:
   /** @brief Setup of the model */
   struct Setup {
-    Setup() : existing{false}, path{}, speed{0}, tolerance{0} {}
-    Setup(bool existing, std::vector<Position> path, double speed, double tolerance)
-        : existing{existing}, path{std::move(path)}, speed{speed}, tolerance{tolerance} {}
+    Setup() : existing{false}, active{false}, path{}, speed{0}, tolerance{0} {}
+    Setup(bool existing, bool active, std::vector<Position> path, double speed, double tolerance)
+        : existing{existing}, active{active}, path{std::move(path)}, speed{speed}, tolerance{tolerance} {}
     bool existing;
+    bool active;
     std::vector<Position> path;
     double speed;
     double tolerance;

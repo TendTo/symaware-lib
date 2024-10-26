@@ -32,22 +32,14 @@ TrackModel::Input::Input(double velocity_multiplier, double velocity_offset, dou
       distance_offset{distance_offset} {}
 
 TrackModel::TrackModel(const Setup& setup, const Input& initial_input)
-    : EntityModel{setup.existing},
+    : EntityModel{setup.existing, setup.active},
       trajectory_positions_{setup.path},
       trajectory_speed_{setup.speed},
       trajectory_tolerance_{setup.tolerance},
       speed_profile_{nullptr},
       path_{nullptr},
       input_{initial_input} {}
-
-TrackModel::TrackModel(const Input& initial_input)
-    : EntityModel{false},
-      trajectory_positions_{},
-      trajectory_speed_{0},
-      trajectory_tolerance_{0},
-      speed_profile_{nullptr},
-      path_{nullptr},
-      input_{initial_input} {}
+TrackModel::TrackModel(const Input& initial_input) : TrackModel{{}, initial_input} {}
 
 void TrackModel::createModel(const prescan::api::types::WorldObject& object,
                              prescan::api::experiment::Experiment& experiment) {

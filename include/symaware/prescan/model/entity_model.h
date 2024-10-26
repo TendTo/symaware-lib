@@ -22,8 +22,9 @@ class EntityModel {
   /**
    * @brief Construct a new Dynamical Model object with an initial model state.
    * @param existing whether the dynamical model is already present in the experiment or shall be created
+   * @param active whether the dynamical model will step in the simulation
    */
-  explicit EntityModel(bool existing);
+  explicit EntityModel(bool existing, bool active);
 
   /**
    * @brief Initialise the model by assigning the object in the simulation.
@@ -87,6 +88,7 @@ class EntityModel {
   virtual void terminate(prescan::sim::ISimulation* simulation);
 
   bool existing() const { return existing_; }
+  bool active() const { return active_; }
   const prescan::sim::StateActuatorUnit& state() const;
 
  protected:
@@ -98,7 +100,8 @@ class EntityModel {
    */
   virtual void updateState() = 0;
 
-  bool existing_;
+  bool existing_;                           ///< Whether the model is already present in the experiment
+  bool active_;                             ///< Whether the model will step in the simulation
   prescan::sim::StateActuatorUnit* state_;  ///< The state of the entity in the simulation
 };
 

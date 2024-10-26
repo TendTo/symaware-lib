@@ -99,15 +99,22 @@ class AmesimDynamicalModel(DynamicalModel):
         Initial velocity of the entity
     existing:
         Whether the model is already present in the experiment or shall be created
+    active:
+        Whether the model will step in the simulation
     """
 
     def __init__(
-        self, ID: Identifier, is_flat_ground: bool = True, initial_velocity: float = 0, existing: bool = False
+        self,
+        ID: Identifier,
+        is_flat_ground: bool = True,
+        initial_velocity: float = 0,
+        existing: bool = False,
+        active: bool = True,
     ):
         super().__init__(ID, control_input=np.zeros(4))
         self._internal_model = _AmesimDynamicalModel(
             _AmesimDynamicalModel.Setup(
-                existing=existing, is_flat_ground=is_flat_ground, initial_velocity=initial_velocity
+                existing=existing, active=active, is_flat_ground=is_flat_ground, initial_velocity=initial_velocity
             )
         )
 
@@ -136,11 +143,13 @@ class CustomDynamicalModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
+    active:
+        Whether the model will step in the simulation
     """
 
-    def __init__(self, ID: Identifier, existing: bool = False):
+    def __init__(self, ID: Identifier, existing: bool = False, active: bool = True):
         super().__init__(ID, control_input=np.zeros(15))
-        self._internal_model = _CustomDynamicalModel(_CustomDynamicalModel.Setup(existing=existing))
+        self._internal_model = _CustomDynamicalModel(_CustomDynamicalModel.Setup(existing=existing, active=active))
 
     def control_input_to_array(
         self,
@@ -183,6 +192,16 @@ class TrackModel(DynamicalModel):
     ----
     ID:
         Identifier of the agent this model belongs to
+    path:
+        List of positions defining the track
+    speed:
+        Speed of the entity along the track
+    tolerance:
+        Tolerance of the entity to the track
+    existing:
+        Whether the model is already present in the experiment or shall be created
+    active:
+        Whether the model will step in the simulation
     """
 
     def __init__(
@@ -192,10 +211,11 @@ class TrackModel(DynamicalModel):
         speed: float = 0,
         tolerance: float = 0,
         existing: bool = False,
+        active: bool = True,
     ):
         super().__init__(ID, control_input=np.array([1, 0, 1, 0, 1, 0]))
         self._internal_model = _TrackModel(
-            _TrackModel.Setup(existing=existing, path=path or [], speed=speed, tolerance=tolerance)
+            _TrackModel.Setup(existing=existing, active=active, path=path or [], speed=speed, tolerance=tolerance)
         )
 
     def control_input_to_array(self, speed: float) -> np.ndarray:

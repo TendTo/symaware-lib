@@ -1822,13 +1822,14 @@ class _AmesimDynamicalModel(_EntityModel):
         def __repr__(self) -> str: ...
 
     class Setup:
+        active: bool
         existing: bool
         initial_velocity: float
         is_flat_ground: bool
         @typing.overload
         def __init__(self) -> None: ...
         @typing.overload
-        def __init__(self, existing: bool, is_flat_ground: bool, initial_velocity: float) -> None: ...
+        def __init__(self, existing: bool, active: bool, is_flat_ground: bool, initial_velocity: float) -> None: ...
 
     @typing.overload
     def __init__(self) -> None: ...
@@ -1887,11 +1888,12 @@ class _CustomDynamicalModel(_EntityModel):
         def __repr__(self) -> str: ...
 
     class Setup:
+        active: bool
         existing: bool
         @typing.overload
         def __init__(self) -> None: ...
         @typing.overload
-        def __init__(self, existing: bool) -> None: ...
+        def __init__(self, existing: bool, active: bool) -> None: ...
 
     @typing.overload
     def __init__(self) -> None: ...
@@ -2012,7 +2014,7 @@ class _Entity:
         """
 
 class _EntityModel:
-    def __init__(self, arg0: bool) -> None: ...
+    def __init__(self, existing: bool, active: bool) -> None: ...
     def create_model(self, object: _WorldObject, experiment: _Experiment) -> None:
         """
         Initialise the object of the model
@@ -2238,6 +2240,7 @@ class _TrackModel(_EntityModel):
         def __repr__(self) -> str: ...
 
     class Setup:
+        active: bool
         existing: bool
         path: list[Position]
         speed: float
@@ -2245,7 +2248,9 @@ class _TrackModel(_EntityModel):
         @typing.overload
         def __init__(self) -> None: ...
         @typing.overload
-        def __init__(self, existing: bool, path: list[Position], speed: float, tolerance: float) -> None: ...
+        def __init__(
+            self, existing: bool, active: bool, path: list[Position], speed: float, tolerance: float
+        ) -> None: ...
 
     @typing.overload
     def __init__(self) -> None: ...

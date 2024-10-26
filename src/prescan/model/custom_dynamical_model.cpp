@@ -27,7 +27,7 @@ CustomDynamicalModel::Input::Input(bool zero_init)
 
 CustomDynamicalModel::CustomDynamicalModel(Input initial_input) : CustomDynamicalModel{{}, initial_input} {}
 CustomDynamicalModel::CustomDynamicalModel(const Setup& setup, Input initial_input)
-    : EntityModel{setup.existing}, input_{std::move(initial_input)} {}
+    : EntityModel{setup.existing, setup.active}, input_{std::move(initial_input)} {}
 
 void CustomDynamicalModel::setInput(const std::vector<double>& input) {
   if (input.size() != 15) {

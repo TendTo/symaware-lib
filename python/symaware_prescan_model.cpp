@@ -43,7 +43,7 @@ class PyEntityModel : public symaware::EntityModel {
 
 void init_model(py::module_& m) {
   py::class_<symaware::EntityModel, PyEntityModel>(m, "_EntityModel")
-      .def(py::init<bool>())
+      .def(py::init<bool, bool>(), py::arg("existing"), py::arg("active"))
       .def("create_model", &symaware::EntityModel::createModel, py::arg("object"), py::arg("experiment"),
            "Initialise the object of the model")
       .def("set_input", &symaware::EntityModel::setInput, py::arg("input"), "Set the input of the model")
@@ -64,9 +64,10 @@ void init_model(py::module_& m) {
 
   py::class_<symaware::TrackModel::Setup>(track_model, "Setup")
       .def(py::init<>())
-      .def(py::init<bool, std::vector<symaware::Position>, double, double>(), py::arg("existing"), py::arg("path"),
-           py::arg("speed"), py::arg("tolerance"))
+      .def(py::init<bool, bool, std::vector<symaware::Position>, double, double>(), py::arg("existing"), py::arg("active"),
+           py::arg("path"), py::arg("speed"), py::arg("tolerance"))
       .def_readwrite("existing", &symaware::TrackModel::Setup::existing)
+      .def_readwrite("active", &symaware::TrackModel::Setup::active)
       .def_readwrite("path", &symaware::TrackModel::Setup::path)
       .def_readwrite("speed", &symaware::TrackModel::Setup::speed)
       .def_readwrite("tolerance", &symaware::TrackModel::Setup::tolerance);
@@ -167,8 +168,10 @@ void init_model(py::module_& m) {
 
   py::class_<symaware::AmesimDynamicalModel::Setup>(amesimDynamicalModel, "Setup")
       .def(py::init<>())
-      .def(py::init<bool, bool, double>(), py::arg("existing"), py::arg("is_flat_ground"), py::arg("initial_velocity"))
+      .def(py::init<bool, bool, bool, double>(), py::arg("existing"), py::arg("active"), py::arg("is_flat_ground"),
+           py::arg("initial_velocity"))
       .def_readwrite("existing", &symaware::AmesimDynamicalModel::Setup::existing)
+      .def_readwrite("active", &symaware::AmesimDynamicalModel::Setup::active)
       .def_readwrite("is_flat_ground", &symaware::AmesimDynamicalModel::Setup::is_flat_ground)
       .def_readwrite("initial_velocity", &symaware::AmesimDynamicalModel::Setup::initial_velocity);
 
@@ -246,8 +249,9 @@ void init_model(py::module_& m) {
 
   py::class_<symaware::CustomDynamicalModel::Setup>(customDynamicalModel, "Setup")
       .def(py::init<>())
-      .def(py::init<bool>(), py::arg("existing"))
-      .def_readwrite("existing", &symaware::CustomDynamicalModel::Setup::existing);
+      .def(py::init<bool, bool>(), py::arg("existing"), py::arg("active"))
+      .def_readwrite("existing", &symaware::CustomDynamicalModel::Setup::existing)
+      .def_readwrite("active", &symaware::CustomDynamicalModel::Setup::active);
 
   py::class_<symaware::CustomDynamicalModel::Input>(customDynamicalModel, "Input")
       .def(py::init<>())

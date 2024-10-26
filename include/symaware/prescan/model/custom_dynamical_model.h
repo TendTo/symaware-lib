@@ -24,9 +24,10 @@ namespace symaware {
 class CustomDynamicalModel : public EntityModel {
  public:
   struct Setup {
-    Setup() : existing{false} {}
-    Setup(bool existing) : existing{existing} {}
+    Setup() : existing{false}, active{true} {}
+    Setup(bool existing, bool active) : existing{existing}, active{active} {}
     bool existing;
+    bool active;
   };
   /** @brief The input of the model */
   struct Input {
