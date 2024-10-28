@@ -34,6 +34,7 @@ int main() {
 
   symaware::AmesimDynamicalModel toyota_model{};
   symaware::TrackModel audi_a8_model{{false,
+                                      true,
                                       {{0, 0, 0},
                                        {1, 1, 0},
                                        {2, 2, 0},

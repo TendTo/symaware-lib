@@ -4,6 +4,7 @@ from ._symaware_prescan import (
     Gear,
     ObjectType,
     Orientation,
+    Pose,
     Position,
     Road,
     SensorType,

@@ -5,6 +5,12 @@ from symaware.base.data import Identifier
 from symaware.base.models import DynamicalModel as BaseDynamicalModel
 
 from ._symaware_prescan import (
+    Acceleration,
+    AngularVelocity,
+    Gear,
+    Orientation,
+    Position,
+    Velocity,
     _AmesimDynamicalModel,
     _CustomDynamicalModel,
     _EntityModel,
@@ -16,14 +22,6 @@ from ._symaware_prescan import (
 
 if TYPE_CHECKING:
     # String type hinting to support python 3.9
-    from ._symaware_prescan import (
-        Acceleration,
-        AngularVelocity,
-        Gear,
-        Orientation,
-        Position,
-        Velocity,
-    )
     from .entity import Entity
 
 
@@ -125,7 +123,11 @@ class AmesimDynamicalModel(DynamicalModel):
         )
 
     def control_input_to_array(
-        self, throttle: float, brake: float, steering_wheel_angle: float, gear: "Gear"
+        self,
+        throttle: float = np.nan,
+        brake: float = np.nan,
+        steering_wheel_angle: float = np.nan,
+        gear: "Gear" = Gear.Undefined,
     ) -> np.ndarray:
         return np.array([throttle, brake, steering_wheel_angle, gear.value])
 
@@ -161,11 +163,11 @@ class CustomDynamicalModel(DynamicalModel):
 
     def control_input_to_array(
         self,
-        position: "np.ndarray | Position",
-        orientation: "np.ndarray | Orientation",
-        acceleration: "np.ndarray | Acceleration",
-        velocity: "np.ndarray | Velocity",
-        angular_velocity: "np.ndarray | AngularVelocity",
+        position: "np.ndarray | Position" = Position(False),
+        orientation: "np.ndarray | Orientation" = Orientation(False),
+        acceleration: "np.ndarray | Acceleration" = Acceleration(False),
+        velocity: "np.ndarray | Velocity" = Velocity(False),
+        angular_velocity: "np.ndarray | AngularVelocity" = AngularVelocity(False),
     ) -> np.ndarray:
         if isinstance(position, np.ndarray):
             position = np.array(position)
@@ -228,8 +230,25 @@ class TrackModel(DynamicalModel):
             _TrackModel.Setup(existing=existing, active=active, path=path or [], speed=speed, tolerance=tolerance)
         )
 
-    def control_input_to_array(self, speed: float) -> np.ndarray:
-        return np.array([speed])
+    def control_input_to_array(
+        self,
+        velocity_multiplier: float = np.nan,
+        velocity_offset: float = np.nan,
+        acceleration_multiplier: float = np.nan,
+        acceleration_offset: float = np.nan,
+        distance_multiplier: float = np.nan,
+        distance_offset: float = np.nan,
+    ) -> np.ndarray:
+        return np.array(
+            [
+                velocity_multiplier,
+                velocity_offset,
+                acceleration_multiplier,
+                acceleration_offset,
+                distance_multiplier,
+                distance_offset,
+            ]
+        )
 
     def trajectory_poses(self, num_segments: int) -> np.ndarray:
         """
