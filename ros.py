@@ -1,8 +1,6 @@
 import os
 
 import numpy as np
-import time
-import json
 
 from symaware.base import (
     Agent,
@@ -10,20 +8,13 @@ from symaware.base import (
     AwarenessVector,
     Controller,
     KnowledgeDatabase,
-    CommunicationReceiver,
     MultiAgentAwarenessVector,
     MultiAgentKnowledgeDatabase,
     TimeIntervalAsyncLoopLock,
     TimeSeries,
     initialize_logger,
-    CommunicationSender,
-    Identifier,
-    Tasynclooplock,
     PerceptionSystem,
 )
-
-import roslibpy
-from typing import TypedDict
 
 PRESCAN_DIR = "C:/Program Files/Simcenter Prescan/Prescan_2403"  # Adjust if needed
 os.add_dll_directory(f"{PRESCAN_DIR}/bin")
@@ -38,6 +29,7 @@ try:
         ExistingEntity,
         Pose,
         TrackModel,
+        DeerEntity,
     )
 except ImportError as e:
     raise ImportError(
@@ -66,7 +58,7 @@ except ImportError as e:
     ) from e
 
 
-ROS_MASTER_HOST = "139.19.164.86"
+ROS_MASTER_HOST = "139.19.164.117"
 PATH_TOPIC = "path"
 PRESCAN_STATUS_TOPIC = "/prescan_status"
 AIR_SENSOR_OUTPUT_TOPIC = "air_sensor_output"
@@ -242,7 +234,7 @@ def main():
     # Load the environment from the file and add entities     #
     ###########################################################
     env = Environment(filename="PrescanDemoAMC.pb", async_loop_lock=TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    # env.add_entities(DeerEntity(position=np.array([0, -14, 0]), orientation=np.array((0, 0, -90))))
+    env.add_entities(DeerEntity(position=np.array([0, -14, 0]), orientation=np.array((0, 0, -90))))
 
     traffic_light_1 = env.add_entities(ExistingEntity(id=1, object_name="RoadsideLight_NL_1"))
     traffic_light_2 = env.add_entities(ExistingEntity(id=2, object_name="RoadsideLight_NL_2"))
@@ -331,7 +323,9 @@ def main():
 
     agent_coordinator.add_agents(agent, pedestrian_1, pedestrian_2)
 
-    agent_coordinator.run(TIME_INTERVAL, timeout=40)
+    agent_coordinator.run(TIME_INTERVAL, timeout=17)
+
+    RosClient.publish_topic(PRESCAN_STATUS_TOPIC, PrescanStatus.msg_type()).publish(PrescanStatus(stop=True).to_dict())
 
     print("Closing...")
 
