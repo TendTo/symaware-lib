@@ -52,6 +52,7 @@ docs/
 # Prescan simulation and experiment files
 Models*/
 *.pb
+*.pepb
 *.osgb
 *.psscene
 *.psdb

@@ -58,7 +58,7 @@ except ImportError as e:
     ) from e
 
 
-ROS_MASTER_HOST = "139.19.164.117"
+ROS_MASTER_HOST = "139.19.164.229"
 PATH_TOPIC = "path"
 PRESCAN_STATUS_TOPIC = "/prescan_status"
 AIR_SENSOR_OUTPUT_TOPIC = "air_sensor_output"
@@ -118,6 +118,7 @@ class PoseStampedRosCommunicationReceiver(RosCommunicationReceiver):
     def __init__(
         self,
         agent_id,
+        ros_client: RosClient,
         compression=None,
         throttle_rate=0,
         queue_size=100,
@@ -127,6 +128,7 @@ class PoseStampedRosCommunicationReceiver(RosCommunicationReceiver):
     ):
         super().__init__(
             agent_id,
+            ros_client,
             f"/car_{agent_id}/{POSE_TOPIC}",
             PoseStamped,
             compression,
@@ -168,7 +170,6 @@ class CarAirSensor(PerceptionSystem):
         )
 
     def _compute(self) -> tuple[np.ndarray, TimeSeries]:
-        # data = json.dumps({"id": str(self._agent_id), "position": [-1.7422, 1.6658, 0.0000], "status": "red"})
         if len(self.__air.data) == 0:
             data = AirSensorOutput(range=999999)
         else:
@@ -215,7 +216,7 @@ class TrafficLightController(Controller):
         return np.concatenate((np.array(pose), nan_array)), TimeSeries()
 
 
-def main():
+def main(ros_client: RosClient):
 
     ###########################################################
     # 0. Parameters                                           #
@@ -234,7 +235,7 @@ def main():
     # Load the environment from the file and add entities     #
     ###########################################################
     env = Environment(filename="PrescanDemoAMC.pb", async_loop_lock=TimeIntervalAsyncLoopLock(TIME_INTERVAL))
-    env.add_entities(DeerEntity(position=np.array([0, -14, 0]), orientation=np.array((0, 0, -90))))
+    # env.add_entities(DeerEntity(position=np.array([0, -14, 0]), orientation=np.array((0, 0, -90))))
 
     traffic_light_1 = env.add_entities(ExistingEntity(id=1, object_name="RoadsideLight_NL_1"))
     traffic_light_2 = env.add_entities(ExistingEntity(id=2, object_name="RoadsideLight_NL_2"))
@@ -283,13 +284,17 @@ def main():
     ###########################################################
     # Create and set the component of the agent               #
     ###########################################################
-    status_publisher = RosCommunicationSender(agent.id, topic=PRESCAN_STATUS_TOPIC, message_type=PrescanStatus)
-    path_publisher = RosCommunicationSender(agent.id, topic=f"/car_{agent.id}/{PATH_TOPIC}", message_type=Path)
+    status_publisher = RosCommunicationSender(
+        agent.id, ros_client, topic=PRESCAN_STATUS_TOPIC, message_type=PrescanStatus
+    )
+    path_publisher = RosCommunicationSender(
+        agent.id, ros_client, topic=f"/car_{agent.id}/{PATH_TOPIC}", message_type=Path
+    )
     air_publisher = RosCommunicationSender(
-        agent.id, topic=f"/car_{agent.id}/{AIR_SENSOR_OUTPUT_TOPIC}", message_type=AirSensorOutput
+        agent.id, ros_client, topic=f"/car_{agent.id}/{AIR_SENSOR_OUTPUT_TOPIC}", message_type=AirSensorOutput
     )
 
-    pose_subscriber = PoseStampedRosCommunicationReceiver(agent.id)
+    pose_subscriber = PoseStampedRosCommunicationReceiver(agent.id, ros_client)
     agent.add_components(
         CarController(agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL)),
         CarAirSensor(agent.id, TimeIntervalAsyncLoopLock(TIME_INTERVAL)),
@@ -323,13 +328,13 @@ def main():
 
     agent_coordinator.add_agents(agent, pedestrian_1, pedestrian_2)
 
-    agent_coordinator.run(TIME_INTERVAL, timeout=17)
+    agent_coordinator.run(TIME_INTERVAL, timeout=20)
 
-    RosClient.publish_topic(PRESCAN_STATUS_TOPIC, PrescanStatus.msg_type()).publish(PrescanStatus(stop=True).to_dict())
+    ros_client.publish_topic(PRESCAN_STATUS_TOPIC, PrescanStatus.msg_type()).publish(PrescanStatus(stop=True).to_dict())
 
     print("Closing...")
 
 
 if __name__ == "__main__":
-    with RosClient(host=ROS_MASTER_HOST):
-        main()
+    with RosClient(host=ROS_MASTER_HOST) as ros_client:
+        main(ros_client)
